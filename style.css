@@ -1,0 +1,14 @@
+/* ambient light glow */
+.shadow-light { box-shadow: 0 0 18px rgba(255, 235, 130, 0.8), 0 0 48px rgba(255, 235, 130, 0.35); }
+.swing { animation: swing 4s ease-in-out infinite; }
+@keyframes swing { 0%{ transform: rotate(0deg) } 25%{ transform: rotate(2deg) } 75%{ transform: rotate(-2deg) } 100%{ transform: rotate(0deg) } }
+
+/* decor */
+.decor.box { position:absolute; width:5rem; height:3.5rem; background:#525252; border:1px solid #c0c0c0; border-radius:2px; box-shadow: 0 4px 10px rgba(0,0,0,.3); }
+.decor.paint { position:absolute; width:34px; height:40px; border:2px solid #d6b300; border-radius:6px 6px 4px 4px; background:#3a3a3a; }
+.decor.paint::after { content:''; position:absolute; bottom:-6px; left:8px; width:18px; height:6px; background:#facc15; border-radius:0 0 6px 6px; animation: drip 2.8s ease-in-out infinite; }
+@keyframes drip { 0%{ height:6px } 50%{ height:16px } 100%{ height:6px } }
+.decor.paper { position:absolute; width:32px; height:22px; background:#e5e7eb; border:1px solid #d1d5db; box-shadow: 0 2px 4px rgba(0,0,0,.25); }
+
+/* message chips */
+.msg { position:absolute; font-size:12px; color:#f5f5f5; background:rgba(31,41,55,.8); border:1px solid rgba(209,213,219,.2); padding:4px 6px; border-radius:8px; box-shadow: 0 2px 8px rgba(0,0,0,.25); }
