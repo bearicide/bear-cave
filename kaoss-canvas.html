@@ -42,13 +42,14 @@ label{font:800 13px "Nunito",sans-serif;color:#275f7c}.control{display:grid;grid
 .scene:nth-child(4){background:linear-gradient(180deg,rgba(238,255,228,.94),rgba(164,213,127,.84))}
 .scene.on{transform:translateY(2px);box-shadow:0 4px 12px rgba(27,72,99,.18),inset 0 0 0 2px rgba(255,255,255,.65)}
 .hud{position:fixed;z-index:4;top:106px;left:20px;font:800 12px "Nunito",sans-serif;pointer-events:none}.hud span{display:inline-block;background:rgba(245,252,255,.74);color:#245c7a;padding:6px 9px;margin-right:5px;border:1px solid rgba(255,255,255,.92);border-radius:999px;box-shadow:0 6px 16px rgba(28,74,103,.14);backdrop-filter:blur(10px)}
+.xycursor{position:fixed;z-index:3;width:34px;height:34px;border:3px solid #fff;border-radius:50%;box-shadow:0 0 0 2px rgba(30,92,128,.65),0 8px 24px rgba(28,80,110,.28);pointer-events:none;transform:translate(-50%,-50%);left:50%;top:50%;background:rgba(255,255,255,.14);backdrop-filter:blur(4px)}.xycursor:before,.xycursor:after{content:"";position:absolute;background:#fff}.xycursor:before{left:50%;top:-10px;bottom:-10px;width:2px;transform:translateX(-50%)}.xycursor:after{top:50%;left:-10px;right:-10px;height:2px;transform:translateY(-50%)}
 .help{font-size:10px;font-weight:700;margin-top:10px;line-height:1.45;color:#51758b}
 @media(max-width:780px){.scenes{right:16px;top:112px;bottom:auto}.scene{min-width:76px;height:46px;font-size:12px}.panel{padding:11px}.brand b{font-size:25px}.nav a{display:none}}
 </style></head>
 <body>
-<canvas id="c"></canvas><div id="fx"></div>
+<canvas id="c"></canvas><div id="fx"></div><div id="xycursor" class="xycursor"></div>
 <div class="top"><div class="brand"><b>KAOSS CANVAS</b><small>MATTBEAR LIVE VISUAL INSTRUMENT</small></div><div class="nav"><a href="index.html">← BEAR CAVE</a><a href="drum-machine.html">DRUM MACHINE</a></div></div>
-<div class="hud"><span id="midiStat">MIDI OFF</span><span id="audioStat">AUDIO OFF</span><span id="noteStat">NOTE —</span><span id="actionStat">READY</span></div>
+<div class="hud"><span id="midiStat">MIDI OFF</span><span id="audioStat">AUDIO OFF</span><span id="noteStat">NOTE —</span><span id="xyStat">X 50 · Y 50</span><span id="actionStat">READY</span></div>
 <div class="scenes"><button class="scene on" data-scene="space">SPACE</button><button class="scene" data-scene="liquid">LIQUID</button><button class="scene" data-scene="glitch">GLITCH</button><button class="scene" data-scene="pulse">PULSE</button></div>
 <div class="panel">
  <div class="row">
@@ -60,7 +61,7 @@ label{font:800 13px "Nunito",sans-serif;color:#275f7c}.control{display:grid;grid
   <div class="control"><label>TRAIL</label><input id="trail" type="range" min=".02" max=".4" step=".01" value=".12"><span class="read" id="trailR">12</span></div>
   <div class="control"><label>BPM</label><input id="bpm" type="range" min="60" max="200" step="1" value="120"><span class="read" id="bpmR">120</span></div>
  </div>
- <div class="help">DRAG THE CANVAS = XY CONTROL · MIDI NOTES = BURSTS · CC 1 = X · CC 2 = Y · CC 3 = CHAOS · CC 4 = TRAIL · SPACE = DROP · F = FREEZE · 1–4 = SCENES</div>
+ <div class="help">DRAG ANYWHERE ON THE CANVAS = XY CONTROL · X = PITCH · Y = FILTER · MIDI NOTES = BURSTS · CC1 = X · CC2 = Y · CC3 = CHAOS · CC4 = TRAIL · SPACE = DROP · F = FREEZE · 1–4 = SCENES</div>
 </div>
 <script>
 (function(){
@@ -105,8 +106,29 @@ function burst(n,vel){
  for(i=0;i<count;i++){a=Math.random()*Math.PI*2;s=1+Math.random()*5+(vel||.7)*5;parts.push({x:px*W,y:py*H,vx:Math.cos(a)*s,vy:Math.sin(a)*s,r:6+Math.random()*24,life:1,c:cols[(n+i)%cols.length],note:n||0})}
  document.getElementById("noteStat").textContent="NOTE "+(n==null?"XY":n)
 }
-function pointer(e){var r=cv.getBoundingClientRect();tx=Math.max(0,Math.min(1,(e.clientX-r.left)/r.width));ty=Math.max(0,Math.min(1,(e.clientY-r.top)/r.height));burst(Math.floor(tx*12),.45);updateDrone()}
-cv.addEventListener("pointerdown",function(e){cv.setPointerCapture(e.pointerId);pointer(e)});cv.addEventListener("pointermove",function(e){if(e.buttons)pointer(e)});
+function updateXY(clientX,clientY,doBurst){
+ var r=cv.getBoundingClientRect();
+ tx=Math.max(0,Math.min(1,(clientX-r.left)/r.width));
+ ty=Math.max(0,Math.min(1,(clientY-r.top)/r.height));
+ px=tx;py=ty;
+ var cur=document.getElementById("xycursor");cur.style.left=(r.left+tx*r.width)+"px";cur.style.top=(r.top+ty*r.height)+"px";
+ document.getElementById("xyStat").textContent="X "+Math.round(tx*100)+" · Y "+Math.round((1-ty)*100);
+ if(doBurst)burst(Math.floor(tx*12),.45);
+ updateDrone()
+}
+cv.addEventListener("pointerdown",function(e){
+ e.preventDefault();
+ try{cv.setPointerCapture(e.pointerId)}catch(err){}
+ updateXY(e.clientX,e.clientY,true)
+});
+cv.addEventListener("pointermove",function(e){
+ if(e.pointerType==="mouse" && e.buttons===0)return;
+ e.preventDefault();
+ updateXY(e.clientX,e.clientY,false)
+});
+cv.addEventListener("pointerup",function(e){updateXY(e.clientX,e.clientY,false)});
+cv.addEventListener("touchstart",function(e){if(e.touches&&e.touches[0]){e.preventDefault();updateXY(e.touches[0].clientX,e.touches[0].clientY,true)}},{passive:false});
+cv.addEventListener("touchmove",function(e){if(e.touches&&e.touches[0]){e.preventDefault();updateXY(e.touches[0].clientX,e.touches[0].clientY,false)}},{passive:false});
 function drawBg(t){
  if(scene==="space"){x.fillStyle="#dff5ff";x.fillRect(0,0,W,H);for(var i=0;i<40;i++){x.fillStyle=cols[i%5];x.globalAlpha=.12;x.beginPath();x.arc((i*173+t*.02)%W,(i*97)%H,2+(i%3),0,7);x.fill()}x.globalAlpha=1}
  if(scene==="liquid"){x.fillStyle="#9ddfcf";x.fillRect(0,0,W,H);for(var j=0;j<8;j++){x.fillStyle=cols[j%4];x.beginPath();x.arc((Math.sin(t*.0005+j)*.4+.5)*W,(Math.cos(t*.0004+j)*.4+.5)*H,80+j*18,0,7);x.fill()}}
@@ -115,7 +137,7 @@ function drawBg(t){
 }
 function frame(t){
  requestAnimationFrame(frame);if(frozen)return;
- px+=(tx-px)*.12;py+=(ty-py)*.12;updateDrone();
+ px=tx;py=ty;updateDrone();
  if(analyser){var d=new Uint8Array(analyser.frequencyBinCount);analyser.getByteFrequencyData(d);var sum=0;for(var z=0;z<d.length;z++)sum+=d[z];amp=sum/d.length/255;if(amp>.18&&t-lastBeat>110){burst(Math.floor(amp*20),Math.min(1,amp*2));lastBeat=t}}
  x.globalAlpha=1;drawBg(t);
  if(black){x.fillStyle="#000";x.fillRect(0,0,W,H);return}
@@ -136,7 +158,7 @@ document.getElementById("bpm").oninput=function(){bpm=+this.value;document.getEl
 document.getElementById("freeze").onclick=function(){setFreeze(!frozen)};
 document.getElementById("blackout").onclick=function(){setBlack(!black)};
 document.getElementById("clear").onclick=function(){parts=[];if(frozen)setFreeze(false);action("CANVAS CLEARED")};
-document.getElementById("midi").onclick=async function(){if(!navigator.requestMIDIAccess){document.getElementById("midiStat").textContent="MIDI N/A";return}try{midi=await navigator.requestMIDIAccess();midi.inputs.forEach(function(inp){inp.onmidimessage=function(e){var d=e.data,cmd=d[0]&240,n=d[1],v=d[2]/127;if(cmd===144&&d[2]){burst(n,v);noteSound(n,v)}if(cmd===176){if(n===1){tx=v;updateDrone()}if(n===2){ty=1-v;updateDrone()}if(n===3){chaos=v;document.getElementById("chaos").value=v;document.getElementById("chaosR").textContent=Math.round(v*100)+"%"}if(n===4){trail=.02+v*.38;document.getElementById("trail").value=trail;document.getElementById("trailR").textContent=Math.round(trail*100)+"%"}}}});document.getElementById("midiStat").textContent=midi.inputs.size?"MIDI LIVE":"MIDI READY";this.classList.add("on");this.textContent=midi.inputs.size?"MIDI ON":"MIDI READY";action(midi.inputs.size?"MIDI CONNECTED":"MIDI ENABLED")}catch(e){document.getElementById("midiStat").textContent="MIDI DENIED"}};
+document.getElementById("midi").onclick=async function(){if(!navigator.requestMIDIAccess){document.getElementById("midiStat").textContent="MIDI N/A";return}try{midi=await navigator.requestMIDIAccess();midi.inputs.forEach(function(inp){inp.onmidimessage=function(e){var d=e.data,cmd=d[0]&240,n=d[1],v=d[2]/127;if(cmd===144&&d[2]){burst(n,v);noteSound(n,v)}if(cmd===176){if(n===1){tx=v;px=v}if(n===2){ty=1-v;py=1-v}if(n===1||n===2){var rr=cv.getBoundingClientRect(),cur=document.getElementById("xycursor");cur.style.left=(rr.left+tx*rr.width)+"px";cur.style.top=(rr.top+ty*rr.height)+"px";document.getElementById("xyStat").textContent="X "+Math.round(tx*100)+" · Y "+Math.round((1-ty)*100);updateDrone()}if(n===3){chaos=v;document.getElementById("chaos").value=v;document.getElementById("chaosR").textContent=Math.round(v*100)+"%"}if(n===4){trail=.02+v*.38;document.getElementById("trail").value=trail;document.getElementById("trailR").textContent=Math.round(trail*100)+"%"}}}});document.getElementById("midiStat").textContent=midi.inputs.size?"MIDI LIVE":"MIDI READY";this.classList.add("on");this.textContent=midi.inputs.size?"MIDI ON":"MIDI READY";action(midi.inputs.size?"MIDI CONNECTED":"MIDI ENABLED")}catch(e){document.getElementById("midiStat").textContent="MIDI DENIED"}};
 document.getElementById("mic").onclick=async function(){
  if(micStream){
   micStream.getTracks().forEach(function(t){t.stop()});micStream=null;analyser=null;
