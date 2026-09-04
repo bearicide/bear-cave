@@ -161,10 +161,10 @@ const voices=["kick","snare","clap","ch","oh","tom","perc","crash"];
 const labels={kick:"Kick",snare:"Snare",clap:"Clap",ch:"Closed Hat",oh:"Open Hat",tom:"Tom",perc:"Perc",crash:"Crash"};
 const keys=["a","s","d","f","j","k","l",";"];
 const colors={kick:"#f3c95e",snare:"#ff7d7d",clap:"#b89cff",ch:"#6eb8ff",oh:"#71d489",tom:"#ff9c5f",perc:"#5bd5cf",crash:"#e6e6e6"};
-let pattern=Object.fromEntries(voices.map(v=>[v,Array(16).fill(0)]));
+let pattern={};voices.forEach(function(v){pattern[v]=Array(16).fill(0)});
 let ac=null,master=null,playing=false,rec=false,currentStep=-1,nextTime=0,timer=null,midiAccess=null;
 let brush=1,painting=false,lastPaintKey="";
-const settings=Object.fromEntries(voices.map(v=>[v,{level:1,pan:0,tone:.5}]));
+const settings={};voices.forEach(function(v){settings[v]={level:1,pan:0,tone:.5}});
 
 function ctx(){if(!ac){ac=new (window.AudioContext||window.webkitAudioContext)();master=ac.createGain();master.gain.value=+$("#master").value;master.connect(ac.destination)}return ac}
 function noiseBuffer(dur=.5){const c=ctx(),b=c.createBuffer(1,Math.floor(c.sampleRate*dur),c.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;return b}
@@ -219,7 +219,7 @@ function buildGrid(){
    root.appendChild(row)
  });
  root.onpointerdown=e=>{const b=e.target.closest(".step");if(!b)return;e.preventDefault();painting=true;lastPaintKey="";paintStep(b)};
- root.onpointermove=e=>{if(!painting)return;e.preventDefault();const el=document.elementFromPoint(e.clientX,e.clientY),b=el?.closest?.(".step");paintStep(b)};
+ root.onpointermove=e=>{if(!painting)return;e.preventDefault();const el=document.elementFromPoint(e.clientX,e.clientY),b=el&&el.closest?el.closest(".step"):null;paintStep(b)};
 }
 window.addEventListener("pointerup",()=>{painting=false;lastPaintKey=""});
 window.addEventListener("pointercancel",()=>{painting=false;lastPaintKey=""});
@@ -261,14 +261,14 @@ function randomize(){
 }
 function save(){localStorage.setItem("mattbear-drum-pattern",JSON.stringify({pattern,kit:$("#kit").value,bpm:+$("#bpm").value,swing:+$("#swing").value,settings}))}
 function load(){
- try{const d=JSON.parse(localStorage.getItem("mattbear-drum-pattern")||"null");if(!d)return;pattern=d.pattern||pattern;voices.forEach(v=>pattern[v]=(pattern[v]||Array(16).fill(0)).map(x=>x===true?1:(x===false?0:(+x||0)));$("#kit").value=d.kit||"classic";$("#bpm").value=d.bpm||120;$("#swing").value=d.swing||0;if(d.settings)Object.assign(settings,d.settings);buildGrid();buildMixer();$("#bpmRead").textContent=$("#bpm").value+" BPM"}catch{}
+ try{const d=JSON.parse(localStorage.getItem("mattbear-drum-pattern")||"null");if(!d)return;pattern=d.pattern||pattern;voices.forEach(v=>pattern[v]=(pattern[v]||Array(16).fill(0)).map(x=>x===true?1:(x===false?0:(+x||0)));$("#kit").value=d.kit||"classic";$("#bpm").value=d.bpm||120;$("#swing").value=d.swing||0;if(d.settings)Object.assign(settings,d.settings);buildGrid();buildMixer();$("#bpmRead").textContent=$("#bpm").value+" BPM"}catch(e){}
 }
 function exportJSON(){
  const blob=new Blob([JSON.stringify({version:1,pattern,kit:$("#kit").value,bpm:+$("#bpm").value,swing:+$("#swing").value,settings},null,2)],{type:"application/json"}),u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download="MATTBEAR-drum-pattern.json";a.click();setTimeout(()=>URL.revokeObjectURL(u),30000)
 }
 async function enableMidi(){
  if(!navigator.requestMIDIAccess){$("#midiText").textContent="Web MIDI unavailable";return}
- try{midiAccess=await navigator.requestMIDIAccess();for(const input of midiAccess.inputs.values())input.onmidimessage=e=>{const [st,note,vel]=e.data;if((st&0xf0)===0x90&&vel>0&&note>=36&&note<=43)padHit(voices[note-36])};$("#midiLight").classList.add("on");$("#midiText").textContent=midiAccess.inputs.size?"MIDI connected":"MIDI enabled · no device found"}catch{$("#midiText").textContent="MIDI permission denied"}
+ try{midiAccess=await navigator.requestMIDIAccess();for(const input of midiAccess.inputs.values())input.onmidimessage=e=>{const [st,note,vel]=e.data;if((st&0xf0)===0x90&&vel>0&&note>=36&&note<=43)padHit(voices[note-36])};$("#midiLight").classList.add("on");$("#midiText").textContent=midiAccess.inputs.size?"MIDI connected":"MIDI enabled · no device found"}catch(e){$("#midiText").textContent="MIDI permission denied"}
 }
 $("[data-brush]").forEach(b=>b.onclick=()=>{brush=+b.dataset.brush;$("[data-brush]").forEach(x=>x.classList.toggle("active",x===b))});
 $("#play").onclick=()=>playing?stop():play();$("#stop").onclick=stop;$("#rec").onclick=()=>{rec=!rec;$("#rec").classList.toggle("on",rec);$("#rec").textContent=rec?"● REC ON":"● REC"};
