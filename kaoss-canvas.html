@@ -58,7 +58,7 @@ label{font:800 13px "Nunito",sans-serif;color:#275f7c}.control{display:grid;grid
  </div>
  <div class="row" style="margin-top:10px"><div class="control"><label>VOLUME</label><input id="vol" type="range" min="0" max=".8" step=".01" value=".28"><span class="read" id="volR">28%</span></div></div>
  <div class="row" style="margin-top:10px">
-  <span class="read">KAOSS PAD: X=CC12 · Y=CC13 · TOUCH=CC92</span>
+  <span class="read">KAOSS PAD AUTO: NORMAL CC12/13 · EXT X NOTES 48–72 + Y CC117 · TOUCH CC92</span>
   <button class="btn" id="learnChaos">LEARN CHAOS</button><button class="btn" id="learnTrail">LEARN TRAIL</button>
   <button class="btn" id="learnVol">LEARN VOLUME</button><button class="btn" id="learnFreeze">LEARN FREEZE</button>
   <button class="btn" id="learnDrop">LEARN DROP</button><button class="btn" id="learnScene">LEARN SCENE</button><button class="btn red" id="unlearn">UNLEARN ALL</button>
@@ -68,7 +68,7 @@ label{font:800 13px "Nunito",sans-serif;color:#275f7c}.control{display:grid;grid
   <div class="control"><label>TRAIL</label><input id="trail" type="range" min=".02" max=".4" step=".01" value=".12"><span class="read" id="trailR">12</span></div>
   <div class="control"><label>BPM</label><input id="bpm" type="range" min="60" max="200" step="1" value="120"><span class="read" id="bpmR">120</span></div>
  </div>
- <div class="help">DRAG ANYWHERE = XY · KAOSS PAD MAPS DIRECTLY TO CANVAS PAD · X = PITCH · Y = FILTER · MIDI NOTES = BURSTS · MIDI LEARN IS ONLY FOR EXTRA/CUSTOM CONTROLS · SPACE = DROP · F = FREEZE · 1–4 = SCENES</div>
+ <div class="help">DRAG ANYWHERE = XY · KAOSS PAD AUTO-DETECTS NORMAL + EXTERNAL CONTROL MODE · X = PITCH · Y = FILTER · MIDI LEARN IS FOR EXTRA CONTROLS · SPACE = DROP · F = FREEZE · 1–4 = SCENES</div>
 </div>
 <script>
 (function(){
@@ -210,7 +210,11 @@ document.getElementById("midi").onclick=async function(){
    var d=e.data,cmd=d[0]&240,n=d[1],raw=d[2],v=raw/127,type=cmd===176?"cc":cmd===144?"note":cmd===224?"bend":"other";
    document.getElementById("midiInspect").textContent="MIDI INSPECTOR: "+midiDesc(type,n,raw);
    if((type==="cc"||type==="note")&&learnedMessage(type,n))return;
-if(cmd===144&&raw){burst(n,v);noteSound(n,v)}
+if(cmd===144&&raw){
+    burst(n,v);noteSound(n,v);
+    // KAOSSILATOR PRO External Control mode: pad X is note 48–72.
+    if(n>=48&&n<=72){tx=(n-48)/24;px=tx;redrawXY()}
+   }
    if(type==="cc"||type==="note"){
     if(type==="cc"&&n===92){document.getElementById("xycursor").style.opacity=raw>=64?"1":".35";action(raw>=64?"PAD TOUCH":"PAD RELEASE")}
     var padMoved=false;
