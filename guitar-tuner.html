@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#17191c" />
+<title>Bear Cave Guitar Tuner</title>
+<style>
+:root{--bg:#17191c;--panel:#23262b;--panel2:#2d3137;--line:#454b54;--text:#f4f0e6;--muted:#aeb4bd;--warm:#f0c85b;--good:#7ee39a;--bad:#ff7878}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:radial-gradient(circle at 50% -10%,#34383f 0,#1d2024 36%,var(--bg) 75%);color:var(--text);font-family:Georgia,'Times New Roman',serif}body{min-height:100svh;padding:18px;display:flex;justify-content:center}.wrap{width:min(760px,100%)}
+a{color:inherit}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}.brand{font-size:.82rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}.back{font-family:system-ui,sans-serif;font-size:.78rem;text-decoration:none;color:var(--muted);border:1px solid var(--line);padding:8px 11px;border-radius:999px;background:#202328}.card{border:1px solid var(--line);background:linear-gradient(180deg,rgba(45,49,55,.92),rgba(29,32,36,.96));border-radius:24px;padding:clamp(18px,4vw,32px);box-shadow:0 24px 60px rgba(0,0,0,.38),inset 0 1px rgba(255,255,255,.04)}
+h1{font-size:clamp(1.65rem,5vw,2.65rem);margin:0 0 5px}.sub{margin:0 0 24px;color:var(--muted);font-family:system-ui,sans-serif;font-size:.9rem}.display{position:relative;overflow:hidden;background:#111316;border:1px solid #3b4047;border-radius:20px;padding:22px 16px 18px;text-align:center;box-shadow:inset 0 0 30px rgba(0,0,0,.55)}.note{font-family:system-ui,sans-serif;font-weight:800;font-size:clamp(4.8rem,23vw,8rem);line-height:.9;letter-spacing:-.05em;color:var(--warm);text-shadow:0 0 24px rgba(240,200,91,.15)}.octave{font-size:.34em;color:var(--muted);margin-left:4px}.freq{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--muted);margin-top:9px;font-size:.9rem}.meter{height:84px;position:relative;margin:18px auto 0;max-width:540px}.scale{position:absolute;left:0;right:0;top:39px;height:2px;background:linear-gradient(90deg,var(--bad),#b08a59 36%,var(--good) 50%,#b08a59 64%,var(--bad))}.tick{position:absolute;top:32px;width:1px;height:16px;background:#6e747d}.needle{position:absolute;left:50%;top:9px;width:3px;height:57px;border-radius:4px;background:#fff;transform-origin:50% 44px;transform:translateX(-50%);transition:transform .085s linear;box-shadow:0 0 10px rgba(255,255,255,.5)}.centerMark{position:absolute;left:50%;top:26px;height:28px;width:2px;background:var(--good);transform:translateX(-50%)}.labels{display:flex;justify-content:space-between;color:var(--muted);font:700 .7rem system-ui,sans-serif;margin-top:-3px}.cents{font:800 1rem system-ui,sans-serif;margin-top:2px;min-height:1.4em}.status{margin:20px 0 0;text-align:center;font:700 .85rem system-ui,sans-serif;color:var(--muted)}.status.good{color:var(--good)}
+.controls{display:grid;grid-template-columns:1fr;gap:12px;margin-top:18px}.start{appearance:none;border:0;border-radius:15px;padding:15px 18px;background:var(--warm);color:#191b1e;font:800 1rem system-ui,sans-serif;cursor:pointer;box-shadow:0 5px 0 #a98935;transition:.12s transform,.12s box-shadow}.start:active{transform:translateY(3px);box-shadow:0 2px 0 #a98935}.start.live{background:#30353b;color:var(--text);box-shadow:0 5px 0 #17191c}.strings{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}.string{border:1px solid var(--line);background:#24282d;color:var(--text);border-radius:13px;padding:10px 4px;text-align:center;font-family:system-ui,sans-serif;cursor:pointer}.string strong{display:block;font-size:1.05rem}.string small{display:block;color:var(--muted);font-size:.65rem;margin-top:2px}.string.active{border-color:var(--warm);box-shadow:0 0 0 1px var(--warm) inset;background:#332f22}.modeRow{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:15px;font:700 .76rem system-ui,sans-serif;color:var(--muted)}.toggle{display:flex;background:#1b1e22;border:1px solid var(--line);border-radius:999px;padding:3px}.toggle button{border:0;background:transparent;color:var(--muted);padding:7px 10px;border-radius:999px;font:700 .72rem system-ui,sans-serif;cursor:pointer}.toggle button.active{background:#3a4047;color:var(--text)}.help{font:400 .78rem/1.5 system-ui,sans-serif;color:#9299a3;margin:18px 4px 0}.glow{position:absolute;inset:auto 15% -55px;height:100px;background:var(--warm);filter:blur(70px);opacity:.08;pointer-events:none}
+@media(max-width:480px){body{padding:12px}.card{border-radius:20px}.strings{gap:5px}.string{padding:9px 2px}.top{margin:4px 2px 14px}.modeRow{align-items:flex-start;flex-direction:column}.toggle{width:100%}.toggle button{flex:1}.note{font-size:30vw}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <div class="top"><div class="brand">MATTBEAR · BEAR CAVE</div><a class="back" href="./">← basement</a></div>
+  <section class="card">
+    <h1>Guitar Tuner</h1>
+    <p class="sub">Chromatic pitch detection with standard guitar-string targets.</p>
+
+    <div class="display">
+      <div class="glow"></div>
+      <div id="note" class="note">—</div>
+      <div id="freq" class="freq">tap Start Tuner</div>
+      <div class="meter" aria-label="tuning meter">
+        <div class="scale"></div>
+        <div class="centerMark"></div>
+        <div class="tick" style="left:10%"></div><div class="tick" style="left:30%"></div><div class="tick" style="left:70%"></div><div class="tick" style="left:90%"></div>
+        <div id="needle" class="needle"></div>
+      </div>
+      <div class="labels"><span>FLAT</span><span>IN TUNE</span><span>SHARP</span></div>
+      <div id="cents" class="cents">&nbsp;</div>
+    </div>
+
+    <div id="status" class="status">Microphone is off.</div>
+
+    <div class="controls">
+      <button id="start" class="start">Start Tuner</button>
+      <div class="strings" aria-label="guitar string targets">
+        <button class="string" data-midi="40"><strong>E</strong><small>6 · 82.4</small></button>
+        <button class="string" data-midi="45"><strong>A</strong><small>5 · 110</small></button>
+        <button class="string" data-midi="50"><strong>D</strong><small>4 · 146.8</small></button>
+        <button class="string" data-midi="55"><strong>G</strong><small>3 · 196</small></button>
+        <button class="string" data-midi="59"><strong>B</strong><small>2 · 246.9</small></button>
+        <button class="string" data-midi="64"><strong>E</strong><small>1 · 329.6</small></button>
+      </div>
+    </div>
+
+    <div class="modeRow">
+      <span>Target mode</span>
+      <div class="toggle"><button id="autoMode" class="active">Chromatic / Auto</button><button id="stringMode">Selected String</button></div>
+    </div>
+    <p class="help">Pluck one string at a time and let it ring. The center is ±3 cents. Mic access works on HTTPS pages and stays entirely in your browser. Nothing is uploaded, because apparently privacy can still exist in small pockets of civilization.</p>
+  </section>
+</main>
+<script>
+(() => {
+  const noteEl=document.getElementById('note'),freqEl=document.getElementById('freq'),centsEl=document.getElementById('cents'),needle=document.getElementById('needle'),statusEl=document.getElementById('status'),startBtn=document.getElementById('start');
+  const stringBtns=[...document.querySelectorAll('.string')],autoBtn=document.getElementById('autoMode'),stringBtn=document.getElementById('stringMode');
+  const names=['C','C♯','D','D♯','E','F','F♯','G','G♯','A','A♯','B'];
+  let ctx,analyser,source,stream,raf,running=false,mode='auto',selectedMidi=40,lastMidi=null,stableCount=0;
+
+  const midiToFreq=m=>440*Math.pow(2,(m-69)/12);
+  const freqToMidi=f=>69+12*Math.log2(f/440);
+  const centsOff=(f,m)=>1200*Math.log2(f/midiToFreq(m));
+
+  function setMode(next){mode=next;autoBtn.classList.toggle('active',next==='auto');stringBtn.classList.toggle('active',next==='string');stringBtns.forEach(b=>b.classList.toggle('active',next==='string'&&+b.dataset.midi===selectedMidi));}
+  autoBtn.onclick=()=>setMode('auto'); stringBtn.onclick=()=>setMode('string');
+  stringBtns.forEach(b=>b.onclick=()=>{selectedMidi=+b.dataset.midi;setMode('string');});
+
+  function autoCorrelate(buf,sampleRate){
+    let rms=0; for(let i=0;i<buf.length;i++) rms+=buf[i]*buf[i]; rms=Math.sqrt(rms/buf.length); if(rms<0.012) return -1;
+    let r1=0,r2=buf.length-1,th=.2; for(let i=0;i<buf.length/2;i++){if(Math.abs(buf[i])<th){r1=i;break}} for(let i=1;i<buf.length/2;i++){if(Math.abs(buf[buf.length-i])<th){r2=buf.length-i;break}}
+    const trimmed=buf.slice(r1,r2),size=trimmed.length,c=new Float32Array(size); for(let lag=0;lag<size;lag++){let sum=0;for(let i=0;i<size-lag;i++)sum+=trimmed[i]*trimmed[i+lag];c[lag]=sum;}
+    let d=0;while(d+1<size&&c[d]>c[d+1])d++; let max=-1,pos=-1;for(let i=d;i<size;i++){if(c[i]>max){max=c[i];pos=i}} if(pos<1)return -1;
+    let T0=pos; if(pos>0&&pos<size-1){const x1=c[pos-1],x2=c[pos],x3=c[pos+1],a=(x1+x3-2*x2)/2,b=(x3-x1)/2;if(a)T0=pos-b/(2*a);} return sampleRate/T0;
+  }
+
+  function render(){
+    if(!running)return; const data=new Float32Array(analyser.fftSize); analyser.getFloatTimeDomainData(data); const f=autoCorrelate(data,ctx.sampleRate);
+    if(f>55&&f<1200){
+      let detected=Math.round(freqToMidi(f));
+      if(detected===lastMidi)stableCount++;else{lastMidi=detected;stableCount=0}
+      const target=mode==='string'?selectedMidi:detected, cents=centsOff(f,target),clamped=Math.max(-50,Math.min(50,cents));
+      if(mode==='string'||stableCount>1){const n=((target%12)+12)%12,oct=Math.floor(target/12)-1;noteEl.innerHTML=names[n]+'<span class="octave">'+oct+'</span>';freqEl.textContent=f.toFixed(1)+' Hz';centsEl.textContent=(cents>0?'+':'')+cents.toFixed(1)+' cents';needle.style.transform='translateX(-50%) rotate('+(clamped*0.78)+'deg)';const tuned=Math.abs(cents)<=3;statusEl.textContent=tuned?'In tune':'Keep '+(cents<0?'tightening':'loosening')+' slightly';statusEl.classList.toggle('good',tuned);}
+    } else {freqEl.textContent='listening…';centsEl.innerHTML='&nbsp;';statusEl.textContent='Pluck a string';statusEl.classList.remove('good');}
+    raf=requestAnimationFrame(render);
+  }
+
+  async function start(){
+    try{stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false},video:false});ctx=new (window.AudioContext||window.webkitAudioContext)();await ctx.resume();analyser=ctx.createAnalyser();analyser.fftSize=4096;source=ctx.createMediaStreamSource(stream);source.connect(analyser);running=true;startBtn.textContent='Stop Tuner';startBtn.classList.add('live');statusEl.textContent='Listening…';render();}
+    catch(err){statusEl.textContent='Microphone permission is required.';console.error(err)}
+  }
+  function stop(){running=false;cancelAnimationFrame(raf);if(stream)stream.getTracks().forEach(t=>t.stop());if(ctx)ctx.close();startBtn.textContent='Start Tuner';startBtn.classList.remove('live');noteEl.textContent='—';freqEl.textContent='tap Start Tuner';centsEl.innerHTML='&nbsp;';needle.style.transform='translateX(-50%)';statusEl.textContent='Microphone is off.';statusEl.classList.remove('good');}
+  startBtn.onclick=()=>running?stop():start();
+})();
+</script>
+</body>
+</html>
