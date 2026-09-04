@@ -58,7 +58,7 @@ label{font:800 13px "Nunito",sans-serif;color:#275f7c}.control{display:grid;grid
  </div>
  <div class="row" style="margin-top:10px"><div class="control"><label>VOLUME</label><input id="vol" type="range" min="0" max=".8" step=".01" value=".28"><span class="read" id="volR">28%</span></div></div>
  <div class="row" style="margin-top:10px">
-  <span class="read">KAOSS PAD AUTO: NORMAL X CC12 / Y CC13 · EXT X NOTES 48–72 / Y CC117 · TOUCH CC92</span>
+  <span class="read">KAOSS PAD AUTO: X + Y DETECTED FROM LIVE PAD DATA · TOUCH CC92</span>
   <button class="btn" id="learnChaos">LEARN CHAOS</button><button class="btn" id="learnTrail">LEARN TRAIL</button>
   <button class="btn" id="learnVol">LEARN VOLUME</button><button class="btn" id="learnFreeze">LEARN FREEZE</button>
   <button class="btn" id="learnDrop">LEARN DROP</button><button class="btn" id="learnScene">LEARN SCENE</button><button class="btn red" id="unlearn">UNLEARN ALL</button>
@@ -68,11 +68,11 @@ label{font:800 13px "Nunito",sans-serif;color:#275f7c}.control{display:grid;grid
   <div class="control"><label>TRAIL</label><input id="trail" type="range" min=".02" max=".4" step=".01" value=".12"><span class="read" id="trailR">12</span></div>
   <div class="control"><label>BPM</label><input id="bpm" type="range" min="60" max="200" step="1" value="120"><span class="read" id="bpmR">120</span></div>
  </div>
- <div class="help">DRAG ANYWHERE = XY · KAOSS PAD AUTO-DETECTS NORMAL + EXTERNAL CONTROL MODE · X = PITCH · Y = FILTER · MIDI LEARN IS FOR EXTRA CONTROLS · SPACE = DROP · F = FREEZE · 1–4 = SCENES</div>
+ <div class="help">DRAG ANYWHERE = XY · KAOSS PAD X/Y AUTO-DETECT FROM YOUR UNIT · X = PITCH · Y = FILTER · MIDI LEARN IS FOR EXTRA CONTROLS · SPACE = DROP · F = FREEZE · 1–4 = SCENES</div>
 </div>
 <script>
 (function(){
-var cv=document.getElementById("c"),x=cv.getContext("2d"),W=0,H=0,dpr=1,px=.5,py=.5,tx=.5,ty=.5,scene="space",chaos=.25,trail=.12,bpm=120,frozen=false,black=false,parts=[],amp=0,analyser=null,micStream=null,micCtx=null,midi=null,lastBeat=0,audioCtx=null,master=null,filter=null,drone=null,droneGain=null,soundOn=false,volume=.28,learnTarget=null,midiMap=null,lastToggle={},padDetect={last:null,time:0};
+var cv=document.getElementById("c"),x=cv.getContext("2d"),W=0,H=0,dpr=1,px=.5,py=.5,tx=.5,ty=.5,scene="space",chaos=.25,trail=.12,bpm=120,frozen=false,black=false,parts=[],amp=0,analyser=null,micStream=null,micCtx=null,midi=null,lastBeat=0,audioCtx=null,master=null,filter=null,drone=null,droneGain=null,soundOn=false,volume=.28,learnTarget=null,midiMap=null,lastToggle={},padDetect={last:null,time:0},padTouch=false,yAutoCC=null,yCandidates={};
 var cols=["#8fd3ff","#5ea8d9","#8bcf7a","#d9f2ff","#6fb3a2","#ffffff"];
 function action(msg){document.getElementById("actionStat").textContent=msg;clearTimeout(action._t);action._t=setTimeout(function(){document.getElementById("actionStat").textContent="READY"},1200)}
 function defaultMap(){return {chaos:{type:"cc",num:3},trail:{type:"cc",num:4}}}
@@ -101,7 +101,25 @@ function matchMap(target,type,num){var m=midiMap[target];return m&&m.type===type
 function directPadCC(num,v){
  // KAOSS-style factory pad mapping: X=CC12, Y=CC13. Learned mappings still work for custom setups.
  if(num===12){tx=v;px=v;return true}
- if(num===13){ty=v;py=v;return true}
+ if(num===13){ty=v;py=v;yAutoCC=13;return true}
+ return false
+}
+function observeYCC(num,raw){
+ if(!padTouch)return false;
+ if([12,92,90,91,93,94].indexOf(num)>=0)return false;
+ var s=yCandidates[num]||(yCandidates[num]={min:raw,max:raw,last:raw,moves:0});
+ if(raw!==s.last){s.moves++;s.last=raw}
+ if(raw<s.min)s.min=raw;if(raw>s.max)s.max=raw;
+ if(num===13||num===117||num===118||num===119)yAutoCC=num;
+ else if(!yAutoCC&&s.moves>=3&&(s.max-s.min)>=8)yAutoCC=num;
+ if(yAutoCC===num){
+   var norm=raw/127;
+   if(num===118)norm=.5-(norm*.5);
+   else if(num===119)norm=.5+(norm*.5);
+   ty=Math.max(0,Math.min(1,norm));py=ty;
+   document.getElementById("midiInspect").textContent="PAD Y AUTO: CC "+num+" · "+raw;
+   return true
+ }
  return false
 }
 function redrawXY(){
@@ -216,7 +234,12 @@ if(cmd===144&&raw){
     if(n>=48&&n<=72){tx=(n-48)/24;px=tx;redrawXY()}
    }
    if(type==="cc"||type==="note"){
-    if(type==="cc"&&n===92){document.getElementById("xycursor").style.opacity=raw>=64?"1":".35";action(raw>=64?"PAD TOUCH":"PAD RELEASE")}
+    if(type==="cc"&&n===92){
+    padTouch=raw>=64;
+    document.getElementById("xycursor").style.opacity=padTouch?"1":".35";
+    if(padTouch){yCandidates={};yAutoCC=null}
+    action(padTouch?"PAD TOUCH":"PAD RELEASE")
+   }
     var padMoved=false;
     if(type==="cc")padMoved=directPadCC(n,v)
     if(padMoved)redrawXY()
