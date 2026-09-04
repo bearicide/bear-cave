@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MATTBEAR Drum Machine</title>
+<style>
+:root{
+  --bg:#0b0d10;--panel:#15191e;--panel2:#1d232a;--line:#333c45;--text:#f2efe8;--muted:#aab4bd;
+  --gold:#f3c95e;--green:#71d489;--red:#ff7d7d;--blue:#6eb8ff;--purple:#b89cff;
+}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:
+radial-gradient(circle at 10% -10%,#42351d77 0,transparent 30%),
+radial-gradient(circle at 90% 10%,#17354f66 0,transparent 28%),
+linear-gradient(180deg,#101318,#090b0e 75%);color:var(--text);font-family:Inter,Segoe UI,system-ui,sans-serif}
+button,input,select{font:inherit}button{cursor:pointer}
+.top{position:sticky;top:0;z-index:30;background:#0b0d10e8;border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}
+.topin{max-width:1320px;margin:auto;padding:13px 18px;display:flex;gap:12px;align-items:center;justify-content:space-between}
+.brand{font:800 17px Georgia,serif;letter-spacing:.06em}.brand b{color:var(--gold)}
+.nav{display:flex;gap:8px;flex-wrap:wrap}.nav a{font-size:12px;text-decoration:none;color:var(--text);border:1px solid var(--line);padding:8px 11px;border-radius:999px;background:#171b20}
+.wrap{max-width:1320px;margin:auto;padding:24px 18px 70px}
+.card{background:linear-gradient(180deg,#1a1f25f2,#12161af2);border:1px solid var(--line);border-radius:18px;box-shadow:0 18px 52px #0007}
+.hero{display:grid;grid-template-columns:1.25fr .75fr;gap:14px}
+.heroMain{padding:24px}.kicker{font-size:11px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+h1,h2,h3{font-family:Georgia,serif}h1{font-size:clamp(40px,7vw,74px);line-height:.92;margin:7px 0 14px}h2{font-size:21px;margin:0 0 10px}
+p{color:var(--muted);line-height:1.55}
+.guide{padding:20px}.guide ol{padding-left:20px;color:var(--muted);font-size:13px;line-height:1.65}
+.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin-top:18px}
+.field{min-width:120px}.field label{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}
+input[type=range]{width:100%}select,input[type=number]{width:100%;background:#0e1216;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:9px}
+.btn{border:1px solid var(--line);background:#20262d;color:var(--text);padding:10px 13px;border-radius:11px;font-weight:800}
+.btn.primary{background:var(--gold);color:#17130a;border-color:var(--gold)}.btn.on{background:#183322;border-color:#2d6740}.btn.danger{background:#321d1f;border-color:#63353a}
+.transport{display:flex;gap:9px;align-items:center;flex-wrap:wrap;padding:14px;margin-top:14px}
+.bpmRead{min-width:56px;text-align:center;font:700 12px/1 Georgia,serif;color:var(--gold)}
+.status{margin-top:12px;color:var(--muted);font-size:12px}
+.sectionTitle{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:22px 0 10px}.sectionTitle h2{margin:0}.tiny{font-size:11px;color:var(--muted)}
+.seq{padding:14px;overflow-x:auto}
+.grid{min-width:980px}
+.headrow,.track{display:grid;grid-template-columns:140px repeat(16,1fr);gap:6px;align-items:center}
+.headrow{margin-bottom:6px}.stepnum{font-size:9px;color:#6f7982;text-align:center}.stepnum.beat{color:var(--gold);font-weight:900}
+.track{margin:6px 0}.trackname{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-right:8px}.trackname b{font-size:12px}.trackname span{font-size:9px;color:var(--muted)}
+.step{aspect-ratio:1/1;border:1px solid #2e3740;border-radius:7px;background:#12171c;min-width:34px;position:relative}
+.step:hover{border-color:#66717b}.step.active{background:var(--accent);border-color:var(--accent);box-shadow:0 0 14px color-mix(in srgb,var(--accent) 35%,transparent)}.step.playing:after{content:"";position:absolute;inset:-3px;border:2px solid #fff;border-radius:9px}
+.track[data-voice="kick"]{--accent:#f3c95e}.track[data-voice="snare"]{--accent:#ff7d7d}.track[data-voice="clap"]{--accent:#b89cff}.track[data-voice="ch"]{--accent:#6eb8ff}.track[data-voice="oh"]{--accent:#71d489}.track[data-voice="tom"]{--accent:#ff9c5f}.track[data-voice="perc"]{--accent:#5bd5cf}.track[data-voice="crash"]{--accent:#e6e6e6}
+.pads{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.pad{min-height:120px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,#252c33,#15191e);color:var(--text);text-align:left;padding:14px;position:relative;overflow:hidden}
+.pad:before{content:"";position:absolute;inset:auto 0 0;height:5px;background:var(--accent)}
+.pad:active,.pad.hit{transform:translateY(1px);box-shadow:inset 0 0 0 2px var(--accent),0 0 28px color-mix(in srgb,var(--accent) 32%,transparent)}
+.pad b{display:block;font:700 20px Georgia,serif}.pad span{display:block;color:var(--muted);font-size:10px;margin-top:5px}.pad em{position:absolute;right:10px;top:10px;font-style:normal;color:var(--gold);font-size:10px}
+.mixer{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.strip{padding:13px;border-left:4px solid var(--accent)}
+.strip h3{font-size:15px;margin:0 0 10px}.strip label{display:block;font-size:9px;color:var(--muted);text-transform:uppercase;margin:7px 0 3px}.strip input{width:100%}
+.midi{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:11px}.light{width:8px;height:8px;border-radius:50%;background:#5b636b}.light.on{background:var(--green);box-shadow:0 0 10px var(--green)}
+.footer{text-align:center;color:#6f7880;font-size:11px;margin-top:28px}
+@media(max-width:900px){.hero{grid-template-columns:1fr}.mixer{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:620px){.pads{grid-template-columns:repeat(2,1fr)}.mixer{grid-template-columns:1fr 1fr}.topin{align-items:flex-start}.heroMain{padding:20px}}
+</style>
+</head>
+<body>
+<header class="top"><div class="topin">
+<div class="brand"><b>MATTBEAR</b> / DRUM MACHINE</div>
+<nav class="nav"><a href="index.html">← basement</a><a href="stem-separator.html">stem separator</a><a href="guitar-tuner.html">guitar tuner</a></nav>
+</div></header>
+
+<main class="wrap">
+<section class="hero">
+  <div class="card heroMain">
+    <div class="kicker">browser drum workstation</div>
+    <h1>Build the beat.</h1>
+    <p>Program a 16-step pattern, tap the live pads, record hits into the sequence, change kits, add swing, and control it from MIDI. Everything is generated locally in the browser.</p>
+    <div class="controls">
+      <div class="field"><label>Kit</label><select id="kit">
+        <option value="classic">Classic 808-ish</option>
+        <option value="tight">Tight Electro</option>
+        <option value="dirty">Dirty Basement</option>
+        <option value="glass">Glass Digital</option>
+        <option value="boom">Boom Room</option>
+        <option value="minimal">Minimal Click</option>
+      </select></div>
+      <div class="field"><label>BPM</label><input id="bpm" type="number" min="45" max="220" value="120"></div>
+      <div class="field"><label>Swing</label><input id="swing" type="range" min="0" max=".45" step=".01" value="0"></div>
+      <div class="field"><label>Master</label><input id="master" type="range" min="0" max="1.2" step=".01" value=".82"></div>
+    </div>
+    <div class="status">Tip: click steps to program. Turn on REC and tap pads while the sequencer plays to write hits into the nearest step.</div>
+  </div>
+  <aside class="card guide">
+    <div class="kicker">Quick start</div>
+    <ol>
+      <li>Choose a kit and tempo.</li>
+      <li>Click squares in the 16-step sequencer.</li>
+      <li>Press <b>Play</b> to hear the loop.</li>
+      <li>Use the pads live with mouse, touch, keyboard, or MIDI notes 36–43.</li>
+      <li>Turn on <b>REC</b> while playing to capture pad hits.</li>
+      <li>Save patterns in your browser or export them as JSON.</li>
+    </ol>
+  </aside>
+</section>
+
+<div class="card transport">
+  <button id="play" class="btn primary">▶ PLAY</button>
+  <button id="stop" class="btn">■ STOP</button>
+  <button id="rec" class="btn">● REC</button>
+  <button id="clear" class="btn danger">CLEAR</button>
+  <button id="random" class="btn">RANDOMIZE</button>
+  <button id="save" class="btn">SAVE PATTERN</button>
+  <button id="load" class="btn">LOAD PATTERN</button>
+  <button id="export" class="btn">EXPORT JSON</button>
+  <button id="midi" class="btn">ENABLE MIDI</button>
+  <div class="midi"><i id="midiLight" class="light"></i><span id="midiText">MIDI off</span></div>
+  <div id="bpmRead" class="bpmRead">120 BPM</div>
+</div>
+
+<div class="sectionTitle"><h2>16-step sequencer</h2><div class="tiny">4/4 · 16th notes</div></div>
+<section class="card seq">
+  <div id="grid" class="grid"></div>
+</section>
+
+<div class="sectionTitle"><h2>Live pads</h2><div class="tiny">Keyboard: A S D F / J K L ;</div></div>
+<section id="pads" class="pads"></section>
+
+<div class="sectionTitle"><h2>Mixer</h2><div class="tiny">Per-voice level + pan + tone</div></div>
+<section id="mixer" class="mixer"></section>
+
+<div class="footer">MATTBEAR / BEAR CAVE · synthesized drums · browser-only · no audio uploads</div>
+</main>
+
+<script>
+(()=>{
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const voices=["kick","snare","clap","ch","oh","tom","perc","crash"];
+const labels={kick:"Kick",snare:"Snare",clap:"Clap",ch:"Closed Hat",oh:"Open Hat",tom:"Tom",perc:"Perc",crash:"Crash"};
+const keys=["a","s","d","f","j","k","l",";"];
+const colors={kick:"#f3c95e",snare:"#ff7d7d",clap:"#b89cff",ch:"#6eb8ff",oh:"#71d489",tom:"#ff9c5f",perc:"#5bd5cf",crash:"#e6e6e6"};
+let pattern=Object.fromEntries(voices.map(v=>[v,Array(16).fill(false)]));
+let ac=null,master=null,playing=false,rec=false,currentStep=-1,nextTime=0,timer=null,midiAccess=null;
+const settings=Object.fromEntries(voices.map(v=>[v,{level:1,pan:0,tone:.5}]));
+
+function ctx(){if(!ac){ac=new (window.AudioContext||window.webkitAudioContext)();master=ac.createGain();master.gain.value=+$("#master").value;master.connect(ac.destination)}return ac}
+function noiseBuffer(dur=.5){const c=ctx(),b=c.createBuffer(1,Math.floor(c.sampleRate*dur),c.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;return b}
+function route(node,v,time,dur=.3){
+ const c=ctx(),filter=c.createBiquadFilter(),pan=c.createStereoPanner(),g=c.createGain(),s=settings[v];
+ filter.type="lowpass";filter.frequency.setValueAtTime(1200+17000*s.tone,time);pan.pan.setValueAtTime(s.pan,time);g.gain.setValueAtTime(s.level,time);
+ node.connect(filter).connect(pan).connect(g).connect(master);return {filter,pan,g}
+}
+const kits={
+ classic:{kick:[58,.55,1.2],snare:[190,.18,.7],hat:[8500,.08,.55],tom:[125,.3,.7],perc:[480,.11,.5],crash:[5200,.8,.5]},
+ tight:{kick:[72,.28,.85],snare:[240,.11,.55],hat:[11000,.045,.38],tom:[170,.18,.5],perc:[720,.07,.45],crash:[7200,.5,.35]},
+ dirty:{kick:[48,.7,1.3],snare:[145,.26,.9],hat:[6400,.12,.7],tom:[92,.4,.85],perc:[340,.15,.7],crash:[4200,1.0,.7]},
+ glass:{kick:[82,.32,.72],snare:[310,.13,.45],hat:[13500,.05,.32],tom:[220,.16,.4],perc:[980,.09,.35],crash:[9300,.65,.38]},
+ boom:{kick:[42,.9,1.45],snare:[165,.3,1],hat:[7200,.1,.65],tom:[78,.55,1],perc:[280,.18,.75],crash:[5000,1.2,.75]},
+ minimal:{kick:[92,.18,.6],snare:[330,.08,.35],hat:[12500,.025,.22],tom:[260,.12,.32],perc:[1200,.045,.3],crash:[8500,.28,.22]}
+};
+function kit(){return kits[$("#kit").value]}
+
+function oscHit(freq,dur,amp,v,time,type="sine",drop=1.5){
+ const c=ctx(),o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.setValueAtTime(freq,time);o.frequency.exponentialRampToValueAtTime(Math.max(25,freq/drop),time+dur);g.gain.setValueAtTime(amp,time);g.gain.exponentialRampToValueAtTime(.0001,time+dur);o.connect(g);route(g,v,time,dur);o.start(time);o.stop(time+dur+.02)
+}
+function noiseHit(v,time,dur,amp,cut,type="highpass"){
+ const c=ctx(),s=c.createBufferSource(),f=c.createBiquadFilter(),g=c.createGain();s.buffer=noiseBuffer(dur+.05);f.type=type;f.frequency.setValueAtTime(cut,time);g.gain.setValueAtTime(amp,time);g.gain.exponentialRampToValueAtTime(.0001,time+dur);s.connect(f).connect(g);route(g,v,time,dur);s.start(time);s.stop(time+dur+.05)
+}
+function hit(v,time=ctx().currentTime){
+ const k=kit();
+ if(v==="kick"){const [f,d,a]=k.kick;oscHit(f,d,a,v,time,"sine",3.2)}
+ if(v==="snare"){const [f,d,a]=k.snare;oscHit(f,d,a*.42,v,time,"triangle",1.5);noiseHit(v,time,d,a*.8,1800,"highpass")}
+ if(v==="clap"){const [f,d,a]=k.snare;[0,.018,.037].forEach(t=>noiseHit(v,time+t,d*.55,a*.55,1100,"bandpass"))}
+ if(v==="ch"){const [f,d,a]=k.hat;noiseHit(v,time,d,a,f,"highpass")}
+ if(v==="oh"){const [f,d,a]=k.hat;noiseHit(v,time,d*5.2,a*.82,f*.72,"highpass")}
+ if(v==="tom"){const [f,d,a]=k.tom;oscHit(f,d,a,v,time,"sine",1.7)}
+ if(v==="perc"){const [f,d,a]=k.perc;oscHit(f,d,a,v,time,"square",1.25)}
+ if(v==="crash"){const [f,d,a]=k.crash;noiseHit(v,time,d,a,f,"highpass")}
+ flashPad(v)
+}
+function flashPad(v){const b=$('[data-pad="'+v+'"]');if(!b)return;b.classList.add("hit");setTimeout(()=>b.classList.remove("hit"),90)}
+
+function buildGrid(){
+ const root=$("#grid");root.innerHTML="";
+ const head=document.createElement("div");head.className="headrow";head.innerHTML="<div></div>"+Array.from({length:16},(_,i)=>'<div class="stepnum '+(i%4===0?"beat":"")+'">'+(i+1)+"</div>").join("");root.appendChild(head);
+ voices.forEach(v=>{
+   const row=document.createElement("div");row.className="track";row.dataset.voice=v;
+   const name=document.createElement("div");name.className="trackname";name.innerHTML="<b>"+labels[v]+"</b><span>"+keys[voices.indexOf(v)].toUpperCase()+"</span>";row.appendChild(name);
+   pattern[v].forEach((on,i)=>{const b=document.createElement("button");b.className="step"+(on?" active":"");b.dataset.voice=v;b.dataset.step=i;b.onclick=()=>{pattern[v][i]=!pattern[v][i];b.classList.toggle("active",pattern[v][i])};row.appendChild(b)});
+   root.appendChild(row)
+ })
+}
+function buildPads(){
+ const root=$("#pads");root.innerHTML="";
+ voices.forEach((v,i)=>{const b=document.createElement("button");b.className="pad";b.style.setProperty("--accent",colors[v]);b.dataset.pad=v;b.innerHTML="<b>"+labels[v]+"</b><span>Tap or press "+keys[i].toUpperCase()+"</span><em>MIDI "+(36+i)+"</em>";b.onpointerdown=()=>padHit(v);root.appendChild(b)})
+}
+function buildMixer(){
+ const root=$("#mixer");root.innerHTML="";
+ voices.forEach(v=>{const s=document.createElement("div");s.className="card strip";s.style.setProperty("--accent",colors[v]);s.innerHTML="<h3>"+labels[v]+"</h3><label>Level</label><input data-level='"+v+"' type='range' min='0' max='1.5' step='.01' value='1'><label>Pan</label><input data-pan='"+v+"' type='range' min='-1' max='1' step='.01' value='0'><label>Tone</label><input data-tone='"+v+"' type='range' min='0' max='1' step='.01' value='.5'>";root.appendChild(s)});
+ $$("[data-level]").forEach(x=>x.oninput=()=>settings[x.dataset.level].level=+x.value);$$("[data-pan]").forEach(x=>x.oninput=()=>settings[x.dataset.pan].pan=+x.value);$$("[data-tone]").forEach(x=>x.oninput=()=>settings[x.dataset.tone].tone=+x.value)
+}
+function nearestStep(){
+ if(currentStep<0)return 0;return currentStep
+}
+function padHit(v){
+ hit(v);if(rec&&playing){const st=nearestStep();pattern[v][st]=true;const b=$('[data-voice="'+v+'"][data-step="'+st+'"]');if(b)b.classList.add("active")}
+}
+function stepDuration(){return 60/Math.max(45,+$("#bpm").value||120)/4}
+function schedule(){
+ const c=ctx(),ahead=.12;
+ while(nextTime<c.currentTime+ahead){
+   currentStep=(currentStep+1)%16;
+   const swing=(currentStep%2?+$("#swing").value:0)*stepDuration();
+   const t=nextTime+swing;
+   voices.forEach(v=>{if(pattern[v][currentStep])hit(v,t)});
+   highlight(currentStep,t-c.currentTime);
+   nextTime+=stepDuration()
+ }
+}
+function highlight(step,delay){
+ setTimeout(()=>{$$(".step.playing").forEach(x=>x.classList.remove("playing"));$$('.step[data-step="'+step+'"]').forEach(x=>x.classList.add("playing"))},Math.max(0,delay*1000))
+}
+function play(){if(playing)return;ctx();playing=true;currentStep=-1;nextTime=ac.currentTime+.05;$("#play").textContent="❚❚ PLAYING";timer=setInterval(schedule,25)}
+function stop(){playing=false;clearInterval(timer);timer=null;currentStep=-1;$("#play").textContent="▶ PLAY";$$(".step.playing").forEach(x=>x.classList.remove("playing"))}
+function randomize(){
+ voices.forEach(v=>pattern[v]=pattern[v].map((_,i)=>Math.random()<(v==="kick"?.24:v==="snare"?.16:v==="ch"?.45:v==="oh"?.08:.12)));
+ pattern.kick[0]=true;pattern.snare[4]=true;pattern.snare[12]=true;buildGrid()
+}
+function save(){localStorage.setItem("mattbear-drum-pattern",JSON.stringify({pattern,kit:$("#kit").value,bpm:+$("#bpm").value,swing:+$("#swing").value,settings}))}
+function load(){
+ try{const d=JSON.parse(localStorage.getItem("mattbear-drum-pattern")||"null");if(!d)return;pattern=d.pattern||pattern;$("#kit").value=d.kit||"classic";$("#bpm").value=d.bpm||120;$("#swing").value=d.swing||0;if(d.settings)Object.assign(settings,d.settings);buildGrid();buildMixer();$("#bpmRead").textContent=$("#bpm").value+" BPM"}catch{}
+}
+function exportJSON(){
+ const blob=new Blob([JSON.stringify({version:1,pattern,kit:$("#kit").value,bpm:+$("#bpm").value,swing:+$("#swing").value,settings},null,2)],{type:"application/json"}),u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download="MATTBEAR-drum-pattern.json";a.click();setTimeout(()=>URL.revokeObjectURL(u),30000)
+}
+async function enableMidi(){
+ if(!navigator.requestMIDIAccess){$("#midiText").textContent="Web MIDI unavailable";return}
+ try{midiAccess=await navigator.requestMIDIAccess();for(const input of midiAccess.inputs.values())input.onmidimessage=e=>{const [st,note,vel]=e.data;if((st&0xf0)===0x90&&vel>0&&note>=36&&note<=43)padHit(voices[note-36])};$("#midiLight").classList.add("on");$("#midiText").textContent=midiAccess.inputs.size?"MIDI connected":"MIDI enabled · no device found"}catch{$("#midiText").textContent="MIDI permission denied"}
+}
+$("#play").onclick=()=>playing?stop():play();$("#stop").onclick=stop;$("#rec").onclick=()=>{rec=!rec;$("#rec").classList.toggle("on",rec);$("#rec").textContent=rec?"● REC ON":"● REC"};
+$("#clear").onclick=()=>{voices.forEach(v=>pattern[v].fill(false));buildGrid()};$("#random").onclick=randomize;$("#save").onclick=save;$("#load").onclick=load;$("#export").onclick=exportJSON;$("#midi").onclick=enableMidi;
+$("#bpm").oninput=()=>$("#bpmRead").textContent=$("#bpm").value+" BPM";$("#master").oninput=()=>{if(master)master.gain.value=+$("#master").value};
+window.addEventListener("keydown",e=>{if(e.repeat||/INPUT|SELECT/.test(document.activeElement.tagName))return;const i=keys.indexOf(e.key.toLowerCase());if(i>=0){e.preventDefault();padHit(voices[i])}if(e.code==="Space"){e.preventDefault();playing?stop():play()}});
+buildGrid();buildPads();buildMixer();
+})();
+</script>
+</body>
+</html>
