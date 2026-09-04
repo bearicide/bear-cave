@@ -58,7 +58,7 @@ label{font:800 13px "Nunito",sans-serif;color:#275f7c}.control{display:grid;grid
  </div>
  <div class="row" style="margin-top:10px"><div class="control"><label>VOLUME</label><input id="vol" type="range" min="0" max=".8" step=".01" value=".28"><span class="read" id="volR">28%</span></div></div>
  <div class="row" style="margin-top:10px">
-  <span class="read">KAOSS PAD AUTO: NORMAL CC12/13 · EXT X NOTES 48–72 + Y CC117 · TOUCH CC92</span>
+  <span class="read">KAOSS PAD AUTO: NORMAL X CC12 / Y CC13 · EXT X NOTES 48–72 / Y CC117 · TOUCH CC92</span>
   <button class="btn" id="learnChaos">LEARN CHAOS</button><button class="btn" id="learnTrail">LEARN TRAIL</button>
   <button class="btn" id="learnVol">LEARN VOLUME</button><button class="btn" id="learnFreeze">LEARN FREEZE</button>
   <button class="btn" id="learnDrop">LEARN DROP</button><button class="btn" id="learnScene">LEARN SCENE</button><button class="btn red" id="unlearn">UNLEARN ALL</button>
@@ -101,7 +101,7 @@ function matchMap(target,type,num){var m=midiMap[target];return m&&m.type===type
 function directPadCC(num,v){
  // KAOSS-style factory pad mapping: X=CC12, Y=CC13. Learned mappings still work for custom setups.
  if(num===12){tx=v;px=v;return true}
- if(num===13){ty=1-v;py=1-v;return true}
+ if(num===13){ty=v;py=v;return true}
  return false
 }
 function redrawXY(){
