@@ -68,14 +68,14 @@ label{font:800 13px "Nunito",sans-serif;color:#275f7c}.control{display:grid;grid
   <div class="control"><label>TRAIL</label><input id="trail" type="range" min=".02" max=".4" step=".01" value=".12"><span class="read" id="trailR">12</span></div>
   <div class="control"><label>BPM</label><input id="bpm" type="range" min="60" max="200" step="1" value="120"><span class="read" id="bpmR">120</span></div>
  </div>
- <div class="help">DRAG ANYWHERE ON THE CANVAS = XY CONTROL · X = PITCH · Y = FILTER · MIDI NOTES = BURSTS · CC1 = X · CC2 = Y · CC3 = CHAOS · CC4 = TRAIL · SPACE = DROP · F = FREEZE · 1–4 = SCENES</div>
+ <div class="help">DRAG ANYWHERE = XY · KAOSS PAD MAPS DIRECTLY TO CANVAS PAD · X = PITCH · Y = FILTER · MIDI NOTES = BURSTS · MIDI LEARN IS ONLY FOR EXTRA/CUSTOM CONTROLS · SPACE = DROP · F = FREEZE · 1–4 = SCENES</div>
 </div>
 <script>
 (function(){
-var cv=document.getElementById("c"),x=cv.getContext("2d"),W=0,H=0,dpr=1,px=.5,py=.5,tx=.5,ty=.5,scene="space",chaos=.25,trail=.12,bpm=120,frozen=false,black=false,parts=[],amp=0,analyser=null,micStream=null,micCtx=null,midi=null,lastBeat=0,audioCtx=null,master=null,filter=null,drone=null,droneGain=null,soundOn=false,volume=.28,learnTarget=null,midiMap=null,lastToggle={};
+var cv=document.getElementById("c"),x=cv.getContext("2d"),W=0,H=0,dpr=1,px=.5,py=.5,tx=.5,ty=.5,scene="space",chaos=.25,trail=.12,bpm=120,frozen=false,black=false,parts=[],amp=0,analyser=null,micStream=null,micCtx=null,midi=null,lastBeat=0,audioCtx=null,master=null,filter=null,drone=null,droneGain=null,soundOn=false,volume=.28,learnTarget=null,midiMap=null,lastToggle={},padDetect={last:null,time:0};
 var cols=["#8fd3ff","#5ea8d9","#8bcf7a","#d9f2ff","#6fb3a2","#ffffff"];
 function action(msg){document.getElementById("actionStat").textContent=msg;clearTimeout(action._t);action._t=setTimeout(function(){document.getElementById("actionStat").textContent="READY"},1200)}
-function defaultMap(){return {x:{type:"cc",num:1},y:{type:"cc",num:2},chaos:{type:"cc",num:3},trail:{type:"cc",num:4}}}
+function defaultMap(){return {x:{type:"cc",num:12},y:{type:"cc",num:13},chaos:{type:"cc",num:3},trail:{type:"cc",num:4}}}
 function loadMap(){try{return Object.assign(defaultMap(),JSON.parse(localStorage.getItem("kaoss-midi-map")||"{}"))}catch(e){return defaultMap()}}
 function saveMap(){localStorage.setItem("kaoss-midi-map",JSON.stringify(midiMap))}
 midiMap=loadMap();
@@ -93,6 +93,17 @@ function learnedMessage(type,num){
  midiMap[learnTarget]={type:type,num:num};saveMap();document.getElementById("midiInspect").textContent="MAPPED "+learnTarget.toUpperCase()+" ← "+type.toUpperCase()+" "+num;action(learnTarget.toUpperCase()+" MAPPED");learnTarget=null;return true
 }
 function matchMap(target,type,num){var m=midiMap[target];return m&&m.type===type&&m.num===num}
+function directPadCC(num,v){
+ // KAOSS-style factory pad mapping: X=CC12, Y=CC13. Learned mappings still work for custom setups.
+ if(num===12){tx=v;px=v;return true}
+ if(num===13){ty=1-v;py=1-v;return true}
+ return false
+}
+function redrawXY(){
+ var rr=cv.getBoundingClientRect(),cur=document.getElementById("xycursor");
+ cur.style.left=(rr.left+tx*rr.width)+"px";cur.style.top=(rr.top+ty*rr.height)+"px";
+ document.getElementById("xyStat").textContent="X "+Math.round(tx*100)+" · Y "+Math.round((1-ty)*100);updateDrone()
+}
 function toggleGuard(key,val){
  var now=performance.now();if(val<64)return false;if(lastToggle[key]&&now-lastToggle[key]<250)return false;lastToggle[key]=now;return true
 }
@@ -196,13 +207,11 @@ document.getElementById("midi").onclick=async function(){
    if((type==="cc"||type==="note")&&learnedMessage(type,n))return;
 if(cmd===144&&raw){burst(n,v);noteSound(n,v)}
    if(type==="cc"||type==="note"){
-    if(matchMap("x",type,n)){tx=v;px=v}
-    if(matchMap("y",type,n)){ty=1-v;py=1-v}
-    if(matchMap("x",type,n)||matchMap("y",type,n)){
-      var rr=cv.getBoundingClientRect(),cur=document.getElementById("xycursor");
-      cur.style.left=(rr.left+tx*rr.width)+"px";cur.style.top=(rr.top+ty*rr.height)+"px";
-      document.getElementById("xyStat").textContent="X "+Math.round(tx*100)+" · Y "+Math.round((1-ty)*100);updateDrone()
-    }
+    var padMoved=false;
+    if(type==="cc")padMoved=directPadCC(n,v);
+    if(matchMap("x",type,n)){tx=v;px=v;padMoved=true}
+    if(matchMap("y",type,n)){ty=1-v;py=1-v;padMoved=true}
+    if(padMoved)redrawXY()
     if(matchMap("chaos",type,n)){chaos=v;document.getElementById("chaos").value=v;document.getElementById("chaosR").textContent=Math.round(v*100)+"%"}
     if(matchMap("trail",type,n)){trail=.02+v*.38;document.getElementById("trail").value=trail;document.getElementById("trailR").textContent=Math.round(trail*100)+"%"}
     if(matchMap("volume",type,n)){volume=v*.8;document.getElementById("vol").value=volume;document.getElementById("volR").textContent=Math.round(volume*100)+"%";if(master)master.gain.value=volume}
