@@ -58,7 +58,7 @@ label{font:800 13px "Nunito",sans-serif;color:#275f7c}.control{display:grid;grid
  </div>
  <div class="row" style="margin-top:10px"><div class="control"><label>VOLUME</label><input id="vol" type="range" min="0" max=".8" step=".01" value=".28"><span class="read" id="volR">28%</span></div></div>
  <div class="row" style="margin-top:10px">
-  <button class="btn green" id="learnX">LEARN X</button><button class="btn green" id="learnY">LEARN Y</button>
+  <span class="read">KAOSS PAD: X=CC12 · Y=CC13 · TOUCH=CC92</span>
   <button class="btn" id="learnChaos">LEARN CHAOS</button><button class="btn" id="learnTrail">LEARN TRAIL</button>
   <button class="btn" id="learnVol">LEARN VOLUME</button><button class="btn" id="learnFreeze">LEARN FREEZE</button>
   <button class="btn" id="learnDrop">LEARN DROP</button><button class="btn" id="learnScene">LEARN SCENE</button>
@@ -75,8 +75,8 @@ label{font:800 13px "Nunito",sans-serif;color:#275f7c}.control{display:grid;grid
 var cv=document.getElementById("c"),x=cv.getContext("2d"),W=0,H=0,dpr=1,px=.5,py=.5,tx=.5,ty=.5,scene="space",chaos=.25,trail=.12,bpm=120,frozen=false,black=false,parts=[],amp=0,analyser=null,micStream=null,micCtx=null,midi=null,lastBeat=0,audioCtx=null,master=null,filter=null,drone=null,droneGain=null,soundOn=false,volume=.28,learnTarget=null,midiMap=null,lastToggle={},padDetect={last:null,time:0};
 var cols=["#8fd3ff","#5ea8d9","#8bcf7a","#d9f2ff","#6fb3a2","#ffffff"];
 function action(msg){document.getElementById("actionStat").textContent=msg;clearTimeout(action._t);action._t=setTimeout(function(){document.getElementById("actionStat").textContent="READY"},1200)}
-function defaultMap(){return {x:{type:"cc",num:12},y:{type:"cc",num:13},chaos:{type:"cc",num:3},trail:{type:"cc",num:4}}}
-function loadMap(){try{return Object.assign(defaultMap(),JSON.parse(localStorage.getItem("kaoss-midi-map")||"{}"))}catch(e){return defaultMap()}}
+function defaultMap(){return {chaos:{type:"cc",num:3},trail:{type:"cc",num:4}}}
+function loadMap(){try{var m=Object.assign(defaultMap(),JSON.parse(localStorage.getItem("kaoss-midi-map")||"{}"));delete m.x;delete m.y;return m}catch(e){return defaultMap()}}
 function saveMap(){localStorage.setItem("kaoss-midi-map",JSON.stringify(midiMap))}
 midiMap=loadMap();
 function midiDesc(type,num,val){return type.toUpperCase()+" "+num+" · "+val}
@@ -84,7 +84,7 @@ function setLearn(target,label){
  learnTarget=target;action("MOVE CONTROL FOR "+label);document.getElementById("midiInspect").textContent="MIDI INSPECTOR: learning "+label+"…"
 }
 function bindLearnButtons(){
- [["learnX","x","X"],["learnY","y","Y"],["learnChaos","chaos","CHAOS"],["learnTrail","trail","TRAIL"],["learnVol","volume","VOLUME"],["learnFreeze","freeze","FREEZE"],["learnDrop","drop","DROP"],["learnScene","scene","SCENE"]].forEach(function(a){
+ [["learnChaos","chaos","CHAOS"],["learnTrail","trail","TRAIL"],["learnVol","volume","VOLUME"],["learnFreeze","freeze","FREEZE"],["learnDrop","drop","DROP"],["learnScene","scene","SCENE"]].forEach(function(a){
   var b=document.getElementById(a[0]);if(b)b.onclick=function(){setLearn(a[1],a[2])}
  })
 }
@@ -207,10 +207,9 @@ document.getElementById("midi").onclick=async function(){
    if((type==="cc"||type==="note")&&learnedMessage(type,n))return;
 if(cmd===144&&raw){burst(n,v);noteSound(n,v)}
    if(type==="cc"||type==="note"){
+    if(type==="cc"&&n===92){document.getElementById("xycursor").style.opacity=raw>=64?"1":".35";action(raw>=64?"PAD TOUCH":"PAD RELEASE")}
     var padMoved=false;
-    if(type==="cc")padMoved=directPadCC(n,v);
-    if(matchMap("x",type,n)){tx=v;px=v;padMoved=true}
-    if(matchMap("y",type,n)){ty=1-v;py=1-v;padMoved=true}
+    if(type==="cc")padMoved=directPadCC(n,v)
     if(padMoved)redrawXY()
     if(matchMap("chaos",type,n)){chaos=v;document.getElementById("chaos").value=v;document.getElementById("chaosR").textContent=Math.round(v*100)+"%"}
     if(matchMap("trail",type,n)){trail=.02+v*.38;document.getElementById("trail").value=trail;document.getElementById("trailR").textContent=Math.round(trail*100)+"%"}
