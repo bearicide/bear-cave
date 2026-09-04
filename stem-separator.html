@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MATTBEAR Stem Separator</title>
+<style>
+:root{--bg:#111315;--panel:#1b1f23;--panel2:#242a2f;--line:#3a4148;--text:#f4f1e8;--muted:#aeb7bf;--gold:#f6c945;--hot:#ff6b6b;--ok:#69db7c}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 50% -20%,#3a3120 0,#17191b 38%,#0e1012 75%);color:var(--text);font-family:Georgia,"Times New Roman",serif;min-height:100vh}
+button,input{font:inherit}button{cursor:pointer}.top{position:sticky;top:0;z-index:20;background:#111315e8;border-bottom:1px solid var(--line);backdrop-filter:blur(10px)}
+.topin{max-width:1100px;margin:auto;padding:14px 18px;display:flex;gap:12px;align-items:center;justify-content:space-between}.brand{font-weight:800;letter-spacing:.08em}.brand b{color:var(--gold)}
+.nav{display:flex;gap:8px;flex-wrap:wrap}.pill,.btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:10px 14px;border-radius:999px;text-decoration:none}.pill:hover,.btn:hover{border-color:var(--gold)}
+.wrap{max-width:1100px;margin:auto;padding:28px 18px 70px}.hero{display:grid;grid-template-columns:1.5fr .8fr;gap:18px;align-items:stretch}.card{background:linear-gradient(180deg,#202428eb,#181b1ee8);border:1px solid var(--line);border-radius:22px;box-shadow:0 18px 50px #0008}
+.drop{padding:32px;min-height:280px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;position:relative;overflow:hidden}.drop.drag{outline:2px dashed var(--gold);outline-offset:-10px}.drop:before{content:"";position:absolute;width:190px;height:190px;border-radius:50%;right:-40px;top:-60px;background:#f6c94515;box-shadow:0 0 70px #f6c94524}
+.kicker{font:700 12px/1.2 Arial,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}h1{font-size:clamp(34px,7vw,70px);line-height:.92;margin:10px 0 14px}p{color:var(--muted);line-height:1.55}.choose{display:inline-flex;align-items:center;gap:9px;background:var(--gold);color:#17140b;border:0;border-radius:14px;padding:12px 16px;font-weight:800;margin-top:8px}
+.note{padding:24px}.note h2{margin:0 0 10px;font-size:22px}.tiny{font:12px/1.5 Arial,sans-serif;color:var(--muted)}.status{margin-top:18px;padding:13px 15px;border-radius:12px;background:#0d0f11;border:1px solid #2d3339;font:13px/1.45 Arial,sans-serif;color:#d7dde2}.status.ok{border-color:#355c3b;color:#c8f7ce}.status.err{border-color:#673838;color:#ffd1d1}
+.progress{height:9px;background:#0c0e10;border:1px solid #292e33;border-radius:99px;overflow:hidden;margin-top:10px}.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,#f6c945,#f09f38);transition:width .2s}
+.workspace{display:none;margin-top:20px}.workspace.on{display:block}.transport{padding:16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}.transport .wide{flex:1;min-width:220px}
+#timeline{width:100%}.time{font:12px Arial,sans-serif;color:var(--muted);min-width:92px;text-align:center}.primary{background:var(--gold);color:#17140b;border-color:var(--gold);font-weight:800}.danger{border-color:#6d3b3b}
+.wave{height:120px;width:100%;display:block;background:#0d0f11;border-top:1px solid #292e33;border-bottom:1px solid #292e33}
+.stems{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:14px}.stem{padding:17px}.stemhead{display:flex;align-items:center;justify-content:space-between;gap:8px}.stem h3{margin:0;text-transform:uppercase;letter-spacing:.08em;font-size:16px}.meter{height:8px;background:#0c0e10;border-radius:10px;overflow:hidden;margin:14px 0}.meter i{display:block;height:100%;width:0;background:var(--gold)}
+.controls{display:grid;grid-template-columns:auto auto 1fr auto;gap:8px;align-items:center}.mini{padding:7px 9px;border-radius:9px;border:1px solid var(--line);background:#262c31;color:var(--text);font:700 11px Arial,sans-serif}.mini.on{background:var(--gold);color:#17140b;border-color:var(--gold)}.vol{width:100%}.download{color:var(--gold);text-decoration:none;font:700 11px Arial,sans-serif}.download:hover{text-decoration:underline}
+.filemeta{font:12px Arial,sans-serif;color:var(--muted);margin-top:4px}.footer{text-align:center;margin-top:28px;color:#737d85;font:11px Arial,sans-serif}
+@media(max-width:760px){.hero{grid-template-columns:1fr}.stems{grid-template-columns:1fr}.topin{align-items:flex-start}.drop{padding:24px}.controls{grid-template-columns:auto auto 1fr}.download{grid-column:1/-1}.nav{justify-content:flex-end}}
+</style>
+</head>
+<body>
+<header class="top"><div class="topin"><div class="brand"><b>MATTBEAR</b> / STEM SEPARATOR</div><nav class="nav"><a class="pill" href="index.html">← basement</a><a class="pill" href="guitar-tuner.html">guitar tuner</a></nav></div></header>
+<main class="wrap">
+<section class="hero">
+<div id="drop" class="card drop">
+<div class="kicker">import audio • local processing</div>
+<h1>split the<br>damn mix.</h1>
+<p>Drop an MP3, WAV, M4A, OGG, or other browser-readable audio file. Nothing uploads anywhere. The fast separator creates four usable approximation stems right in your browser.</p>
+<input id="file" type="file" accept="audio/*" hidden>
+<button id="choose" class="choose">＋ IMPORT AUDIO</button>
+<div id="status" class="status">Waiting for a track. Your CPU is enjoying its final moments of peace.</div>
+<div class="progress"><i id="prog"></i></div>
+</div>
+<aside class="card note">
+<div class="kicker">two engines</div><h2>Fast local + HQ AI</h2>
+<p class="tiny"><b>FAST LOCAL</b> uses stereo center/side extraction and frequency filtering. It is immediate, private, and works on GitHub Pages. Results are useful for rehearsal, remix sketches, sampling, and rough isolation, but it is not magic.</p>
+<p class="tiny"><b>HQ DEMUCS</b> uses a real 4-stem neural model for vocals, drums, bass, and other. The browser Demucs project runs locally with ONNX/WebGPU, but its model is far too large to stuff into this tiny repo like a raccoon into a mailbox.</p>
+<a class="pill" href="https://bakkot.github.io/demucs-js/" target="_blank" rel="noopener">OPEN HQ DEMUCS ↗</a>
+</aside>
+</section>
+
+<section id="workspace" class="workspace">
+<div class="card">
+<div class="transport">
+<button id="play" class="btn primary">▶ PLAY</button>
+<button id="stop" class="btn">■ STOP</button>
+<div class="wide"><input id="timeline" type="range" min="0" max="1000" value="0"></div>
+<div id="time" class="time">0:00 / 0:00</div>
+<button id="reset" class="btn danger">NEW TRACK</button>
+</div>
+<canvas id="wave" class="wave" width="1200" height="120"></canvas>
+</div>
+<div id="stems" class="stems"></div>
+</section>
+<div class="footer">MATTBEAR / BEAR CAVE • client-side audio tools • exported stems are 16-bit WAV</div>
+</main>
+<script>
+(function(){
+const $=s=>document.querySelector(s);
+const fileEl=$("#file"),drop=$("#drop"),statusEl=$("#status"),prog=$("#prog"),work=$("#workspace"),stemBox=$("#stems");
+const playBtn=$("#play"),stopBtn=$("#stop"),timeline=$("#timeline"),timeEl=$("#time"),wave=$("#wave"),ctx2d=wave.getContext("2d");
+let ac=null,original=null,stems={},sources=[],gains={},startedAt=0,offset=0,playing=false,raf=0,fileBase="track",soloName=null;
+const names=["vocals","drums","bass","other"];
+const labels={vocals:"Vocals / Center",drums:"Drums / High & Side",bass:"Bass / Low",other:"Other / Residual"};
+const fmt=s=>{if(!isFinite(s))s=0;let m=Math.floor(s/60),q=Math.floor(s%60);return m+":"+String(q).padStart(2,"0")};
+function setStatus(t,c){statusEl.textContent=t;statusEl.className="status"+(c?" "+c:"")}
+function setProg(n){prog.style.width=Math.max(0,Math.min(100,n))+"%"}
+function onePoleLP(input,cut,sr){const out=new Float32Array(input.length),a=1-Math.exp(-2*Math.PI*cut/sr);let y=0;for(let i=0;i<input.length;i++){y+=a*(input[i]-y);out[i]=y}return out}
+function highPass(input,cut,sr){const lp=onePoleLP(input,cut,sr),o=new Float32Array(input.length);for(let i=0;i<input.length;i++)o[i]=input[i]-lp[i];return o}
+function makeBuffer(chans,sr){const b=new AudioBuffer({length:chans[0].length,numberOfChannels:2,sampleRate:sr});b.copyToChannel(chans[0],0);b.copyToChannel(chans[1],1);return b}
+function separate(buf){
+ const sr=buf.sampleRate,n=buf.length,L=buf.getChannelData(0),R=buf.numberOfChannels>1?buf.getChannelData(1):L;
+ const mid=new Float32Array(n),side=new Float32Array(n);for(let i=0;i<n;i++){mid[i]=(L[i]+R[i])*.5;side[i]=(L[i]-R[i])*.5}
+ setProg(32);
+ const bassMid=onePoleLP(mid,220,sr),bassSide=onePoleLP(side,170,sr);
+ setProg(48);
+ let vocalMid=highPass(mid,120,sr);vocalMid=onePoleLP(vocalMid,9000,sr);
+ const drumMid=highPass(mid,1600,sr),drumSide=highPass(side,900,sr);
+ setProg(68);
+ const vL=new Float32Array(n),vR=new Float32Array(n),bL=new Float32Array(n),bR=new Float32Array(n),dL=new Float32Array(n),dR=new Float32Array(n),oL=new Float32Array(n),oR=new Float32Array(n);
+ for(let i=0;i<n;i++){
+   const v=vocalMid[i]*.88, bl=bassMid[i]+bassSide[i]*.55, br=bassMid[i]-bassSide[i]*.55;
+   const dl=drumMid[i]*.36+drumSide[i]*.78, dr=drumMid[i]*.36-drumSide[i]*.78;
+   vL[i]=v;vR[i]=v;bL[i]=bl;bR[i]=br;dL[i]=dl;dR[i]=dr;
+   oL[i]=Math.max(-1,Math.min(1,L[i]-v*.70-bl*.78-dl*.35));oR[i]=Math.max(-1,Math.min(1,R[i]-v*.70-br*.78-dr*.35));
+ }
+ setProg(86);
+ return {vocals:makeBuffer([vL,vR],sr),drums:makeBuffer([dL,dR],sr),bass:makeBuffer([bL,bR],sr),other:makeBuffer([oL,oR],sr)}
+}
+function drawWave(buf){
+ const w=wave.width,h=wave.height,d=buf.getChannelData(0),step=Math.max(1,Math.floor(d.length/w));
+ ctx2d.clearRect(0,0,w,h);ctx2d.fillStyle="#0d0f11";ctx2d.fillRect(0,0,w,h);ctx2d.strokeStyle="#f6c945";ctx2d.lineWidth=1;ctx2d.beginPath();
+ for(let x=0;x<w;x++){let min=1,max=-1,start=x*step;for(let i=0;i<step&&start+i<d.length;i++){let v=d[start+i];if(v<min)min=v;if(v>max)max=v}ctx2d.moveTo(x,(1+min)*h/2);ctx2d.lineTo(x,(1+max)*h/2)}ctx2d.stroke()
+}
+function wavBlob(buf){
+ const ch=2,sr=buf.sampleRate,len=buf.length,ab=new ArrayBuffer(44+len*ch*2),v=new DataView(ab);let p=0;
+ const s=x=>{for(let i=0;i<x.length;i++)v.setUint8(p++,x.charCodeAt(i))},u16=x=>{v.setUint16(p,x,true);p+=2},u32=x=>{v.setUint32(p,x,true);p+=4};
+ s("RIFF");u32(36+len*ch*2);s("WAVEfmt ");u32(16);u16(1);u16(ch);u32(sr);u32(sr*ch*2);u16(ch*2);u16(16);s("data");u32(len*ch*2);
+ const L=buf.getChannelData(0),R=buf.getChannelData(1);for(let i=0;i<len;i++){for(const x of [L[i],R[i]]){let q=Math.max(-1,Math.min(1,x));v.setInt16(p,q<0?q*32768:q*32767,true);p+=2}}
+ return new Blob([ab],{type:"audio/wav"})
+}
+function buildUI(){
+ stemBox.innerHTML="";gains={};
+ names.forEach(name=>{const card=document.createElement("div");card.className="card stem";card.innerHTML='<div class="stemhead"><div><h3>'+name+'</h3><div class="filemeta">'+labels[name]+'</div></div><a class="download" data-dl="'+name+'">DOWNLOAD WAV</a></div><div class="meter"><i id="meter-'+name+'"></i></div><div class="controls"><button class="mini" data-mute="'+name+'">MUTE</button><button class="mini" data-solo="'+name+'">SOLO</button><input class="vol" data-vol="'+name+'" type="range" min="0" max="1.5" step=".01" value="1"><span class="filemeta" data-db="'+name+'">0 dB</span></div>';stemBox.appendChild(card)});
+ stemBox.querySelectorAll("[data-dl]").forEach(a=>a.onclick=()=>{const n=a.dataset.dl,b=wavBlob(stems[n]),u=URL.createObjectURL(b);a.href=u;a.download=fileBase+"-"+n+".wav";setTimeout(()=>URL.revokeObjectURL(u),60000)});
+ stemBox.querySelectorAll("[data-vol]").forEach(r=>r.oninput=()=>{const n=r.dataset.vol,val=+r.value;if(gains[n])gains[n].gain.value=val;stemBox.querySelector('[data-db="'+n+'"]').textContent=val===0?"-∞ dB":(20*Math.log10(val)).toFixed(1)+" dB"});
+ stemBox.querySelectorAll("[data-mute]").forEach(b=>b.onclick=()=>{b.classList.toggle("on");applyMix()});
+ stemBox.querySelectorAll("[data-solo]").forEach(b=>b.onclick=()=>{soloName=soloName===b.dataset.solo?null:b.dataset.solo;stemBox.querySelectorAll("[data-solo]").forEach(x=>x.classList.toggle("on",x.dataset.solo===soloName));applyMix()})
+}
+function applyMix(){
+ names.forEach(n=>{if(!gains[n])return;const muted=stemBox.querySelector('[data-mute="'+n+'"]').classList.contains("on"),base=+stemBox.querySelector('[data-vol="'+n+'"]').value;gains[n].gain.value=(muted||(soloName&&soloName!==n))?0:base})
+}
+function stop(keep=true){sources.forEach(s=>{try{s.stop()}catch(e){}});sources=[];if(playing&&keep)offset=Math.min(original.duration,ac.currentTime-startedAt);playing=false;playBtn.textContent="▶ PLAY";cancelAnimationFrame(raf)}
+function start(){
+ if(!original)return;if(!ac)ac=new (window.AudioContext||window.webkitAudioContext)();stop(false);if(offset>=original.duration)offset=0;sources=[];gains={};
+ names.forEach(n=>{const s=ac.createBufferSource(),g=ac.createGain();s.buffer=stems[n];s.connect(g).connect(ac.destination);gains[n]=g;sources.push(s);s.start(0,offset)});
+ applyMix();startedAt=ac.currentTime-offset;playing=true;playBtn.textContent="❚❚ PAUSE";tick()
+}
+function tick(){if(!playing)return;offset=ac.currentTime-startedAt;if(offset>=original.duration){stop(false);offset=0;timeline.value=0;timeEl.textContent="0:00 / "+fmt(original.duration);return}timeline.value=Math.round(offset/original.duration*1000);timeEl.textContent=fmt(offset)+" / "+fmt(original.duration);raf=requestAnimationFrame(tick)}
+async function load(file){
+ if(!file)return;try{
+ stop(false);work.classList.remove("on");setProg(8);setStatus("Decoding "+file.name+"…");
+ fileBase=file.name.replace(/\.[^.]+$/,"").replace(/[^a-z0-9-_]+/gi,"-");
+ const arr=await file.arrayBuffer();ac=ac||new (window.AudioContext||window.webkitAudioContext)();original=await ac.decodeAudioData(arr.slice(0));setProg(20);
+ setStatus("Separating locally. Vocals, drums, bass, other…");
+ await new Promise(r=>setTimeout(r,40));stems=separate(original);setProg(100);drawWave(original);buildUI();offset=0;timeline.value=0;timeEl.textContent="0:00 / "+fmt(original.duration);work.classList.add("on");
+ setStatus("Ready: "+file.name+" • "+fmt(original.duration)+" • "+Math.round(original.sampleRate/100)/10+" kHz. Fast local separation complete.","ok")
+ }catch(e){console.error(e);setProg(0);setStatus("Could not decode that file in this browser. Try WAV, MP3, M4A, or OGG. "+e.message,"err")}
+}
+$("#choose").onclick=()=>fileEl.click();fileEl.onchange=e=>load(e.target.files[0]);
+["dragenter","dragover"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add("drag")}));
+["dragleave","drop"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove("drag")}));
+drop.addEventListener("drop",e=>load([...e.dataTransfer.files].find(f=>f.type.startsWith("audio/"))||e.dataTransfer.files[0]));
+playBtn.onclick=()=>playing?stop(true):start();stopBtn.onclick=()=>{stop(false);offset=0;timeline.value=0;if(original)timeEl.textContent="0:00 / "+fmt(original.duration)};
+timeline.oninput=()=>{if(!original)return;const was=playing;stop(false);offset=(+timeline.value/1000)*original.duration;timeEl.textContent=fmt(offset)+" / "+fmt(original.duration);if(was)start()};
+$("#reset").onclick=()=>{stop(false);original=null;stems={};offset=0;work.classList.remove("on");fileEl.value="";setProg(0);setStatus("Waiting for a track. Your CPU is enjoying its final moments of peace.")};
+})();
+</script>
+</body>
+</html>
