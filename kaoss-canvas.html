@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MATTBEAR · KAOSS CANVAS</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=Space+Grotesk:wght@500;700&display=swap');
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden;background:#fff;color:#111;font-family:"Space Grotesk",sans-serif}
+canvas{position:fixed;inset:0;width:100%;height:100%;touch-action:none}
+#fx{position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at center,transparent 25%,rgba(0,0,0,.12));mix-blend-mode:multiply}
+.top{position:fixed;z-index:5;left:16px;right:16px;top:14px;display:flex;justify-content:space-between;gap:10px;align-items:flex-start;pointer-events:none}
+.brand{pointer-events:auto;background:#ffd600;border:4px solid #111;box-shadow:6px 6px #111;padding:9px 14px;transform:rotate(-1deg)}
+.brand b{font:38px/ .8 "Bebas Neue",Impact,sans-serif}.brand small{display:block;font-size:9px;font-weight:900;letter-spacing:.15em;margin-top:7px}
+.nav{pointer-events:auto;display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}.nav a,.btn{border:3px solid #111;background:#fff;color:#111;text-decoration:none;padding:9px 11px;font-weight:900;font-size:11px;box-shadow:3px 3px #111;cursor:pointer}
+.panel{position:fixed;z-index:6;left:16px;bottom:16px;width:min(610px,calc(100vw - 32px));background:#fffffff2;border:4px solid #111;box-shadow:8px 8px #111;padding:13px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.btn.red{background:#ff2b2b;color:#fff}.btn.blue{background:#1769ff;color:#fff}.btn.green{background:#00c853}.btn.yellow{background:#ffd600}.btn.on{outline:4px solid #00c853;outline-offset:2px}
+label{font:16px "Bebas Neue",Impact,sans-serif}.control{display:grid;grid-template-columns:60px 1fr 38px;gap:7px;align-items:center;flex:1;min-width:180px}input[type=range]{width:100%;accent-color:#ff2b2b}.read{font-size:10px;font-weight:900}
+.scenes{position:fixed;z-index:6;right:16px;bottom:16px;display:grid;grid-template-columns:1fr 1fr;gap:8px}.scene{min-width:94px;height:58px;font:24px "Bebas Neue",Impact,sans-serif;border:4px solid #111;box-shadow:5px 5px #111;cursor:pointer}.scene:nth-child(1){background:#1769ff;color:#fff}.scene:nth-child(2){background:#00d7ff}.scene:nth-child(3){background:#ff2b2b;color:#fff}.scene:nth-child(4){background:#ffd600}.scene.on{transform:translate(3px,3px);box-shadow:2px 2px #111}
+.hud{position:fixed;z-index:4;top:100px;left:18px;font:20px "Bebas Neue",Impact,sans-serif;pointer-events:none}.hud span{display:inline-block;background:#111;color:#fff;padding:5px 8px;margin-right:5px}
+.help{font-size:10px;font-weight:700;margin-top:10px;line-height:1.45}
+@media(max-width:780px){.scenes{right:16px;top:105px;bottom:auto}.scene{min-width:72px;height:44px;font-size:18px}.panel{padding:10px}.brand b{font-size:30px}.nav a{display:none}}
+</style></head>
+<body>
+<canvas id="c"></canvas><div id="fx"></div>
+<div class="top"><div class="brand"><b>KAOSS CANVAS</b><small>MATTBEAR LIVE VISUAL INSTRUMENT</small></div><div class="nav"><a href="index.html">← BEAR CAVE</a><a href="drum-machine.html">DRUM MACHINE</a></div></div>
+<div class="hud"><span id="midiStat">MIDI OFF</span><span id="audioStat">AUDIO OFF</span><span id="noteStat">NOTE —</span></div>
+<div class="scenes"><button class="scene on" data-scene="space">SPACE</button><button class="scene" data-scene="liquid">LIQUID</button><button class="scene" data-scene="glitch">GLITCH</button><button class="scene" data-scene="pulse">PULSE</button></div>
+<div class="panel">
+ <div class="row">
+  <button class="btn blue" id="midi">ENABLE MIDI</button><button class="btn red" id="mic">AUDIO REACTIVE</button>
+  <button class="btn yellow" id="freeze">FREEZE</button><button class="btn" id="blackout">BLACKOUT / DROP</button><button class="btn" id="clear">CLEAR</button>
+ </div>
+ <div class="row" style="margin-top:10px">
+  <div class="control"><label>CHAOS</label><input id="chaos" type="range" min="0" max="1" step=".01" value=".25"><span class="read" id="chaosR">25%</span></div>
+  <div class="control"><label>TRAIL</label><input id="trail" type="range" min=".02" max=".4" step=".01" value=".12"><span class="read" id="trailR">12</span></div>
+  <div class="control"><label>BPM</label><input id="bpm" type="range" min="60" max="200" step="1" value="120"><span class="read" id="bpmR">120</span></div>
+ </div>
+ <div class="help">DRAG THE CANVAS = XY CONTROL · MIDI NOTES = BURSTS · CC 1 = X · CC 2 = Y · CC 3 = CHAOS · CC 4 = TRAIL · SPACE = DROP · F = FREEZE · 1–4 = SCENES</div>
+</div>
+<script>
+(function(){
+var cv=document.getElementById("c"),x=cv.getContext("2d"),W=0,H=0,dpr=1,px=.5,py=.5,tx=.5,ty=.5,scene="space",chaos=.25,trail=.12,bpm=120,frozen=false,black=false,parts=[],amp=0,analyser=null,midi=null,lastBeat=0;
+var cols=["#ff2b2b","#1769ff","#ffd600","#00c853","#00d7ff","#111111"];
+function resize(){dpr=Math.min(2,devicePixelRatio||1);W=innerWidth;H=innerHeight;cv.width=W*dpr;cv.height=H*dpr;cv.style.width=W+"px";cv.style.height=H+"px";x.setTransform(dpr,0,0,dpr,0,0)}
+addEventListener("resize",resize);resize();
+function burst(n,vel){
+ var count=3+Math.floor((vel||.7)*8),i,a,s;
+ for(i=0;i<count;i++){a=Math.random()*Math.PI*2;s=1+Math.random()*5+(vel||.7)*5;parts.push({x:px*W,y:py*H,vx:Math.cos(a)*s,vy:Math.sin(a)*s,r:6+Math.random()*24,life:1,c:cols[(n+i)%cols.length],note:n||0})}
+ document.getElementById("noteStat").textContent="NOTE "+(n==null?"XY":n)
+}
+function pointer(e){var r=cv.getBoundingClientRect();tx=Math.max(0,Math.min(1,(e.clientX-r.left)/r.width));ty=Math.max(0,Math.min(1,(e.clientY-r.top)/r.height));burst(Math.floor(tx*12),.45)}
+cv.addEventListener("pointerdown",function(e){cv.setPointerCapture(e.pointerId);pointer(e)});cv.addEventListener("pointermove",function(e){if(e.buttons)pointer(e)});
+function drawBg(t){
+ if(scene==="space"){x.fillStyle="#fff";x.fillRect(0,0,W,H);for(var i=0;i<40;i++){x.fillStyle=cols[i%5];x.globalAlpha=.12;x.beginPath();x.arc((i*173+t*.02)%W,(i*97)%H,2+(i%3),0,7);x.fill()}x.globalAlpha=1}
+ if(scene==="liquid"){x.fillStyle="#00d7ff";x.fillRect(0,0,W,H);for(var j=0;j<8;j++){x.fillStyle=cols[j%4];x.beginPath();x.arc((Math.sin(t*.0005+j)*.4+.5)*W,(Math.cos(t*.0004+j)*.4+.5)*H,80+j*18,0,7);x.fill()}}
+ if(scene==="glitch"){x.fillStyle="#fff";x.fillRect(0,0,W,H);for(var k=0;k<16;k++){x.fillStyle=cols[k%4];x.fillRect(Math.random()*W,Math.random()*H,30+Math.random()*240,5+Math.random()*45)}}
+ if(scene==="pulse"){x.fillStyle="#ffd600";x.fillRect(0,0,W,H);var beat=(t%(60000/bpm))/(60000/bpm);for(var q=5;q>0;q--){x.strokeStyle=cols[q%4];x.lineWidth=12;x.beginPath();x.arc(px*W,py*H,(beat*400+q*70)%500,0,7);x.stroke()}}
+}
+function frame(t){
+ requestAnimationFrame(frame);if(frozen)return;
+ px+=(tx-px)*.12;py+=(ty-py)*.12;
+ if(analyser){var d=new Uint8Array(analyser.frequencyBinCount);analyser.getByteFrequencyData(d);var sum=0;for(var z=0;z<d.length;z++)sum+=d[z];amp=sum/d.length/255;if(amp>.18&&t-lastBeat>110){burst(Math.floor(amp*20),Math.min(1,amp*2));lastBeat=t}}
+ x.globalAlpha=1;drawBg(t);
+ if(black){x.fillStyle="#000";x.fillRect(0,0,W,H);return}
+ x.globalCompositeOperation=scene==="liquid"?"multiply":"source-over";
+ for(var i=parts.length-1;i>=0;i--){var p=parts[i];p.x+=p.vx*(1+chaos);p.y+=p.vy*(1+chaos);p.vx+=(Math.random()-.5)*chaos;p.vy+=(Math.random()-.5)*chaos;p.r*=.995;p.life-=.008+trail*.018;x.globalAlpha=Math.max(0,p.life);x.fillStyle=p.c;
+  if(scene==="glitch"){x.fillRect(p.x,p.y,p.r*3,p.r*.6)}else if(scene==="liquid"){x.beginPath();x.arc(p.x,p.y,p.r*(1+amp*3),0,7);x.fill()}else{x.save();x.translate(p.x,p.y);x.rotate(t*.001+p.note);x.fillRect(-p.r,-p.r,p.r*2,p.r*2);x.restore()}
+  if(p.life<=0)parts.splice(i,1)
+ }
+ x.globalAlpha=1;x.globalCompositeOperation="source-over";x.strokeStyle="#111";x.lineWidth=4;x.beginPath();x.arc(px*W,py*H,18+amp*50,0,7);x.stroke();
+}
+requestAnimationFrame(frame);
+document.querySelectorAll(".scene").forEach(function(b){b.onclick=function(){scene=this.dataset.scene;document.querySelectorAll(".scene").forEach(function(z){z.classList.remove("on")});this.classList.add("on");burst(7,.9)}});
+document.getElementById("chaos").oninput=function(){chaos=+this.value;document.getElementById("chaosR").textContent=Math.round(chaos*100)+"%"};
+document.getElementById("trail").oninput=function(){trail=+this.value;document.getElementById("trailR").textContent=Math.round(trail*100)};
+document.getElementById("bpm").oninput=function(){bpm=+this.value;document.getElementById("bpmR").textContent=bpm};
+document.getElementById("freeze").onclick=function(){frozen=!frozen;this.classList.toggle("on",frozen)};
+document.getElementById("blackout").onclick=function(){black=!black;this.classList.toggle("on",black)};
+document.getElementById("clear").onclick=function(){parts=[]};
+document.getElementById("midi").onclick=async function(){if(!navigator.requestMIDIAccess){document.getElementById("midiStat").textContent="MIDI N/A";return}try{midi=await navigator.requestMIDIAccess();midi.inputs.forEach(function(inp){inp.onmidimessage=function(e){var d=e.data,cmd=d[0]&240,n=d[1],v=d[2]/127;if(cmd===144&&d[2])burst(n,v);if(cmd===176){if(n===1)tx=v;if(n===2)ty=1-v;if(n===3){chaos=v;document.getElementById("chaos").value=v}if(n===4){trail=.02+v*.38;document.getElementById("trail").value=trail}}}});document.getElementById("midiStat").textContent=midi.inputs.size?"MIDI LIVE":"MIDI READY";this.classList.add("on")}catch(e){document.getElementById("midiStat").textContent="MIDI DENIED"}};
+document.getElementById("mic").onclick=async function(){try{var s=await navigator.mediaDevices.getUserMedia({audio:true}),ac=new (AudioContext||webkitAudioContext)(),src=ac.createMediaStreamSource(s);analyser=ac.createAnalyser();analyser.fftSize=256;src.connect(analyser);document.getElementById("audioStat").textContent="AUDIO LIVE";this.classList.add("on")}catch(e){document.getElementById("audioStat").textContent="AUDIO DENIED"}};
+addEventListener("keydown",function(e){if(e.code==="Space"){e.preventDefault();black=!black}if(e.key.toLowerCase()==="f")frozen=!frozen;if("1234".indexOf(e.key)>=0)document.querySelectorAll(".scene")[+e.key-1].click()});
+})();
+</script></body></html>
