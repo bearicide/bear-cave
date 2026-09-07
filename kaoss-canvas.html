@@ -118,10 +118,10 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-size:clamp(54px,9vw,96px);col
 </style></head><body><main class="wrap">
 <div class="glass top"><div><h1>MATTBEAR 3xOSC</h1><div class="status">THREE OSCILLATORS · PATCHES · ESSENTIAL FX · TOUCH + MIDI</div><div class="heroTag">PICK A PATCH. SHAPE THREE OSCILLATORS. PLAY.</div></div><div class="row"><a class="btn" href="index.html">← BEAR CAVE</a><button id="audio" class="btn">ENABLE AUDIO</button><button id="midi" class="btn">ENABLE MIDI</button><button id="panic" class="btn">PANIC</button></div></div>
 <div class="quickHelp"><div><b>1. START AUDIO</b>Tap Enable Audio once.</div><div><b>2. PICK A PATCH</b>Choose a bank and sound.</div><div><b>3. PLAY</b>Touch the keys or use MIDI.</div></div><div class="glass banks"><div class="bank"><label>PATCH BANK</label><select id="bank"></select></div><div class="bank"><label>PATCH</label><select id="patch"></select></div><button id="random" class="btn">RANDOMIZE</button><button id="save" class="btn">SAVE PATCH</button><span id="status" class="status">READY</span></div>
+<div class="glass"><h2>PLAY</h2><div class="keys" id="keys"></div><div class="status" style="margin-top:9px">TOUCH THE KEYS · COMPUTER KEYS: A W S E D F T G Y H U J K · MOD WHEEL CONTROLS FILTER</div></div>
 <div class="glass"><h2>OSCILLATORS</h2><div class="oscgrid" id="oscs"></div></div>
 <div class="glass"><h2>SHAPE THE SOUND</h2><div class="controls" id="global"></div></div>
 <div class="glass"><h2>ESSENTIAL FX</h2><div class="fxgrid" id="fx"></div></div>
-<div class="glass"><h2>PLAY</h2><div class="keys" id="keys"></div><div class="status" style="margin-top:9px">TOUCH THE KEYS · COMPUTER KEYS: A W S E D F T G Y H U J K · MOD WHEEL CONTROLS FILTER</div></div>
 </main><script>
 (function(){
 var AC=null,master=null,filter=null,comp=null,delay=null,delayFb=null,verb=null,verbGain=null,drive=null,chorus=null,chorusLfo=null,chorusGain=null,voices={},midi=null;
