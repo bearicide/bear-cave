@@ -1,12 +1,3 @@
-MATTBEAR – Drum Factory
-Original generated one-shot factory bank.
+MATTBEAR – THE DEN ASSET PACK
 
-6 kits x 8 voices = 48 WAV files:
-Deep 808, House 909, Digital, Live, Industrial, Minimal
-Kick, Snare, Clap, Closed Hat, Open Hat, Tom, Perc, Crash
-
-44.1 kHz / mono / 16-bit WAV.
-These sounds were synthesized/generated for this MATTBEAR package and do not contain third-party sample-library audio.
-
-Put the assets/drums folder beside drum-machine.html in bear-cave.
-manifest.json contains all relative paths.
+Cropped directly from the supplied Den reference. Includes major panels, 16 pad faces, 6 pedal faces, master details, signs, environmental pieces, and texture tiles. Keep controls as real HTML/CSS/JS and use these for skins/textures.
