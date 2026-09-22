@@ -1,5 +1,6 @@
 (function () {
   if (document.querySelector('[data-cave-shell]')) return;
+  const root = document.currentScript?.dataset.caveRoot || 'index.html';
 
   const style = document.createElement('style');
   style.textContent = `
@@ -17,7 +18,7 @@
   shell.className = 'cave-shell';
   shell.dataset.caveShell = '';
   shell.setAttribute('aria-label', 'Bear Cave navigation');
-  shell.innerHTML = '<a href="index.html" aria-label="Back to the Bear Cave">← <span class="cave-label">BEAR CAVE</span></a><button type="button" aria-expanded="false" aria-controls="caveQuickHelp">?</button><div class="cave-help" id="caveQuickHelp"><strong>QUICK START</strong><p>Start at low volume. Tap a main control to unlock browser audio. Allow microphone, camera, or MIDI only when the tool asks for it.</p></div>';
+  shell.innerHTML = '<a href="' + root + '" aria-label="Back to the Bear Cave">← <span class="cave-label">BEAR CAVE</span></a><button type="button" aria-expanded="false" aria-controls="caveQuickHelp">?</button><div class="cave-help" id="caveQuickHelp"><strong>QUICK START</strong><p>Start at low volume. Tap a main control to unlock browser audio. Allow microphone, camera, or MIDI only when the tool asks for it.</p></div>';
   document.body.appendChild(shell);
 
   const button = shell.querySelector('button');

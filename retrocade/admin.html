@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Retrocade Admin | MATTBEAR</title><script src="../cave-shell.js" data-cave-root="../" defer></script>
+<meta name="theme-color" content="#050507">
+<link rel="stylesheet" href="css/retrocade-theme.css">
+<style>
+:root{--bg:#050507;--panel:#11111c;--cyan:#00ffcc;--pink:#ff2bd6;--yellow:#ffe66d;--green:#7cff6b;--text:#f7f7ff;--muted:#cfd2ff}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 20% 10%,rgba(0,255,204,.16),transparent 30%),radial-gradient(circle at 80% 20%,rgba(255,43,214,.16),transparent 28%),#050507;color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.scan{position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(255,255,255,.035) 0 1px,transparent 1px 4px);mix-blend-mode:screen;opacity:.3}.wrap{max-width:1100px;margin:auto;padding:24px 24px 60px;position:relative;z-index:2}.top{display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-bottom:18px}.brand{font-size:clamp(28px,6vw,58px);font-weight:1000;letter-spacing:.02em;text-transform:uppercase;background:linear-gradient(90deg,#ff3b30,#ff9500,#ffe66d,#7cff6b,#00ffcc,#5ac8fa,#bf5af2);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 30px rgba(0,255,204,.25)}a,.btn,button{color:#00110e;background:linear-gradient(180deg,#ffe66d,#ffb300 55%,#ff2bd6);border:0;border-radius:999px;padding:12px 16px;font-weight:1000;text-decoration:none;cursor:pointer;box-shadow:0 6px 0 rgba(0,0,0,.55),0 0 24px rgba(255,43,214,.26)}button:hover,a:hover{filter:brightness(1.08)}input{width:100%;border:1px solid rgba(0,255,204,.45);border-radius:14px;background:rgba(0,0,0,.62);color:#fff;padding:12px}.panel{background:linear-gradient(145deg,rgba(17,17,28,.96),rgba(5,5,7,.96));border:1px solid rgba(0,255,204,.35);border-radius:24px;padding:18px;margin:16px 0;box-shadow:0 0 34px rgba(0,255,204,.1),inset 0 0 30px rgba(255,43,214,.04)}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}.stat{border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:16px;background:rgba(0,0,0,.38)}.stat strong{display:block;color:var(--yellow);font-size:13px;letter-spacing:.1em;text-transform:uppercase}.stat span{font-size:34px;font-weight:1000;color:var(--cyan)}.cabinet{display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid rgba(255,255,255,.1);padding:12px 0}.cabinet:last-child{border-bottom:0}.cabinet b{color:var(--yellow)}.cabinet small{color:var(--muted)}.ok{color:var(--green);font-weight:1000}.controls{display:flex;gap:10px;flex-wrap:wrap}.note{color:var(--muted);line-height:1.55}code{color:var(--cyan)}.player-frame{width:100%;height:96px;border:0;border-radius:14px;background:#050507}.admin-row{display:grid;grid-template-columns:1fr auto;gap:10px;margin-top:12px}@media(max-width:640px){.wrap{padding:14px 14px 54px}.top{display:grid}.controls{display:grid}.controls>*{width:100%;text-align:center}.cabinet{align-items:flex-start;flex-direction:column}.admin-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="scan"></div>
+<div class="wrap">
+  <header class="top">
+    <div><div class="brand">Retrocade Admin</div><p class="note">Local save controls, mini-player setup, cabinet QA, and quick launch panel.</p></div>
+    <nav class="controls"><a href="index.html">Arcade</a><a href="https://bearicide.github.io/MATTBEARCADE/">MATTBEARCADE</a><a href="https://github.com/bearicide/retrocade-">Source</a></nav>
+  </header>
+
+  <section class="panel">
+    <h2>Mini-Player Control</h2>
+    <iframe id="scPlayer" class="player-frame" title="Admin SoundCloud mini-player preview" allow="autoplay" src=""></iframe>
+    <div class="admin-row"><input id="trackUrl" placeholder="Paste SoundCloud track, playlist, or profile URL"><button type="button" onclick="saveTrack()">Save Track</button></div>
+    <p class="note">Sets the same <code>retrocadeMiniPlayerUrl</code> used by the public lobby mini-player on this browser/device. Backend upload can connect here later.</p>
+  </section>
+
+  <section class="panel">
+    <h2>Save Data</h2>
+    <div class="grid">
+      <div class="stat"><strong>Coins</strong><span id="coins">0</span></div>
+      <div class="stat"><strong>Tickets</strong><span id="tickets">0</span></div>
+      <div class="stat"><strong>Level</strong><span id="level">1</span></div>
+      <div class="stat"><strong>Plays</strong><span id="plays">0</span></div>
+    </div>
+    <p class="note">This uses the same <code>retrocadeState</code> browser save as the cabinets. It only affects this browser/device.</p>
+    <div class="controls">
+      <button type="button" onclick="grantCoins()">Grant 500 Coins</button>
+      <button type="button" onclick="grantTickets()">Grant 100 Tickets</button>
+      <button type="button" onclick="resetSave()">Reset Local Save</button>
+    </div>
+  </section>
+
+  <section class="panel"><h2>Cabinet Launch + QA</h2><div id="cabinetList"></div></section>
+
+  <section class="panel"><h2>Current Push Notes</h2><ul class="note"><li><b>Admin added:</b> mini-player setting, quick QA, save-data reset, and direct cabinet launch.</li><li><b>Control target:</b> keyboard, WASD, swipe, large touch buttons, and help overlay remain the default standard.</li><li><b>Next safe pass:</b> inspect each cabinet one by one, patch broken controls, then add cabinet preview assets.</li></ul></section>
+</div>
+<script>
+const DEFAULT_SC='https://soundcloud.com/mattbear86';
+const defaults={coins:500,tickets:0,xp:0,plays:0,wins:0,cabinets:{}};
+const cabinets=[['snake','Snake'],['breakout','Breakout'],['invaders','Invaders'],['asteroids','Asteroids'],['pong','Pong'],['claw','Claw Machine'],['bubble','Bubble Shooter'],['memory','Memory Match'],['racer','Mini Racer'],['rhythm','Rhythm Pads'],['blocks','Falling Blocks'],['frog','Frog Dash']];
+function scEmbed(url){return 'https://w.soundcloud.com/player/?url='+encodeURIComponent(url)+'&color=%2300ffcc&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false&visual=false'}
+function loadPlayer(){const saved=localStorage.getItem('retrocadeMiniPlayerUrl')||DEFAULT_SC;trackUrl.value=saved;scPlayer.src=scEmbed(saved)}
+function saveTrack(){const v=trackUrl.value.trim()||DEFAULT_SC;localStorage.setItem('retrocadeMiniPlayerUrl',v);scPlayer.src=scEmbed(v)}
+function load(){try{return {...defaults,...JSON.parse(localStorage.getItem('retrocadeState')||'{}')}}catch(e){return {...defaults}}}
+function save(s){localStorage.setItem('retrocadeState',JSON.stringify({...defaults,...s}));render()}
+function render(){const s=load();coins.textContent=s.coins||0;tickets.textContent=s.tickets||0;level.textContent=Math.max(1,Math.floor((s.xp||0)/100)+1);plays.textContent=s.plays||0;cabinetList.innerHTML=cabinets.map(([id,name])=>`<div class="cabinet"><div><b>${name}</b><br><small>Path: games/${id}.html · Plays saved: ${(s.cabinets&&s.cabinets[id])||0}</small></div><div class="controls"><a href="games/${id}.html">Launch</a><span class="ok">Ready to test</span></div></div>`).join('')}
+function grantCoins(){const s=load();s.coins=(s.coins||0)+500;save(s)}
+function grantTickets(){const s=load();s.tickets=(s.tickets||0)+100;s.xp=(s.xp||0)+50;save(s)}
+function resetSave(){if(confirm('Reset Retrocade local save on this browser?')){localStorage.setItem('retrocadeState',JSON.stringify(defaults));render()}}
+render();loadPlayer();
+</script>
+</body>
+</html>

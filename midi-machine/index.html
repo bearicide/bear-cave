@@ -1,0 +1,1233 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Matt's Magical MIDI Machine</title><script src="../cave-shell.js" data-cave-root="../" defer></script>
+  <style>
+    :root{
+      color-scheme: dark;
+
+      --bg0:#050611;
+      --bg1:#0b0f2a;
+
+      --stroke:rgba(140,185,255,.22);
+      --stroke2:rgba(255,255,255,.10);
+
+      --text:#eef1ff;
+      --muted:#b7bbdd;
+
+      /* kit theme (JS swaps these) */
+      --kitA:#00f5ff;
+      --kitB:#b56bff;
+      --kitC:#39ff14;
+      --kitD:#ff2bd6;
+
+      --shadow: 0 18px 60px rgba(0,0,0,.58);
+
+      --card: rgba(10,14,40,.62);
+      --card2: rgba(6,9,25,.65);
+
+      --kbdStartMidi: 48;
+      --kbdKeyCount: 25;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background:
+        radial-gradient(1200px 700px at 30% 15%, color-mix(in oklab, var(--kitA) 14%, transparent), transparent 60%),
+        radial-gradient(900px 600px at 70% 25%, color-mix(in oklab, var(--kitB) 12%, transparent), transparent 60%),
+        radial-gradient(900px 700px at 50% 90%, color-mix(in oklab, var(--kitD) 10%, transparent), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      color:var(--text);
+      overflow-x:hidden;
+    }
+
+    .wrap{max-width:920px;margin:0 auto;padding:18px 16px 40px}
+    .topbar{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      padding:14px;border:1px solid var(--stroke);border-radius:18px;
+      background:linear-gradient(180deg, rgba(15,18,48,.72), rgba(10,12,30,.62));
+      box-shadow: var(--shadow);
+    }
+
+    .brand{display:flex;align-items:center;gap:12px;user-select:none}
+    .logo{
+      width:42px;height:42px;border-radius:14px;
+      background:
+        radial-gradient(12px 12px at 30% 35%, color-mix(in oklab, var(--kitA) 95%, white 5%), transparent 70%),
+        radial-gradient(14px 14px at 70% 40%, color-mix(in oklab, var(--kitB) 95%, white 5%), transparent 70%),
+        radial-gradient(10px 10px at 55% 70%, color-mix(in oklab, var(--kitD) 95%, white 5%), transparent 70%),
+        rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      box-shadow:
+        0 0 26px color-mix(in oklab, var(--kitA) 30%, transparent),
+        0 0 28px color-mix(in oklab, var(--kitB) 25%, transparent);
+    }
+    .brand h1{margin:0;font-size:14px;letter-spacing:.4px}
+    .brand .sub{margin:0;color:var(--muted);font-size:12px}
+
+    .status{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end;font-size:12px;color:var(--muted)}
+    .pill{display:inline-flex;align-items:center;gap:8px;padding:8px 10px;border-radius:999px;border:1px solid var(--stroke2);background:rgba(255,255,255,.05);user-select:none}
+    .dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.20)}
+    .dot.on{background:var(--kitA);box-shadow:0 0 18px color-mix(in oklab, var(--kitA) 55%, transparent)}
+
+    select, button{
+      appearance:none;border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);color: var(--text);
+      border-radius:12px;padding:10px 12px;font-size:12px;outline:none;
+    }
+    select{
+      padding-right:34px;
+      background: rgba(170,170,170,.22); /* grey */
+      border-color: rgba(255,255,255,.14);
+    }
+    select option{background:#2b2c33;color:#eef1ff}
+    button{cursor:pointer;transition: transform .06s ease, filter .12s ease;user-select:none}
+    button:active{transform: translateY(1px)}
+    button.hot{border-color: color-mix(in oklab, var(--kitD) 45%, transparent);box-shadow: 0 0 22px color-mix(in oklab, var(--kitD) 22%, transparent)}
+    button.ghost{background: rgba(255,255,255,.03)}
+
+    .stack{margin-top:14px;display:flex;flex-direction:column;gap:14px}
+    .card{
+      border:1px solid var(--stroke);border-radius:18px;
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      box-shadow: var(--shadow);overflow:hidden;position:relative;
+    }
+    .card::before{
+      content:"";position:absolute;inset:-2px;
+      background:
+        radial-gradient(600px 240px at 20% 0%, color-mix(in oklab, var(--kitA) 14%, transparent), transparent 65%),
+        radial-gradient(520px 240px at 80% 0%, color-mix(in oklab, var(--kitB) 12%, transparent), transparent 65%),
+        radial-gradient(520px 260px at 50% 100%, color-mix(in oklab, var(--kitD) 10%, transparent), transparent 60%);
+      pointer-events:none;
+      filter:saturate(1.2);
+      opacity:.95;
+    }
+    .card > *{position:relative}
+
+    .cardHead{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 12px 10px;border-bottom:1px solid rgba(255,255,255,.07)}
+    .cardTitle{display:flex;flex-direction:column;gap:2px}
+    .cardTitle b{font-size:13px;letter-spacing:.35px}
+    .cardTitle span{font-size:12px;color:var(--muted)}
+    .controls{padding:12px}
+
+    .knobRowWrap{display:flex;justify-content:center;width:100%}
+    .knobRow{display:flex;justify-content:center;align-items:flex-start;gap:10px;flex-wrap:nowrap;overflow-x:auto;padding:2px 2px 6px;max-width:100%}
+    .knobRow::-webkit-scrollbar{height:8px}
+    .knobRow::-webkit-scrollbar-thumb{background: rgba(255,255,255,.10);border-radius:999px}
+    .knob{width:86px;border-radius:14px;border:1px solid rgba(255,255,255,.10);background: rgba(255,255,255,.05);padding:8px 8px 10px;flex:0 0 auto;user-select:none;touch-action:none}
+    .knobTop{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:6px;color: rgba(255,255,255,.88);font-size:10px;font-weight:800;letter-spacing:.2px;white-space:nowrap}
+    .knobTop span:first-child{overflow:hidden;text-overflow:ellipsis;max-width:56px}
+    .dial{
+      width:60px;height:60px;margin:0 auto;border-radius:16px;border:1px solid rgba(255,255,255,.10);
+      background:
+        radial-gradient(20px 20px at 35% 30%, color-mix(in oklab, var(--kitA) 16%, transparent), transparent 70%),
+        radial-gradient(20px 20px at 70% 55%, color-mix(in oklab, var(--kitB) 14%, transparent), transparent 70%),
+        rgba(0,0,0,.28);
+      display:grid;place-items:center;position:relative;box-shadow: inset 0 0 0 1px rgba(255,255,255,.04);
+      cursor:ns-resize;
+    }
+    .dial::after{
+      content:"";width:4px;height:42%;border-radius:999px;
+      background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,.20));
+      position:absolute;top:16%;left:50%;transform-origin: 50% 100%;
+      transform: translateX(-50%) rotate(var(--rot, -135deg));
+      box-shadow: 0 0 14px color-mix(in oklab, var(--kitA) 20%, transparent);opacity:.95;
+    }
+    .val{margin-top:7px;height:8px;border-radius:999px;background: rgba(255,255,255,.07);overflow:hidden;border:1px solid rgba(255,255,255,.08)}
+    .val > i{display:block;height:100%;width: calc(var(--p, 0) * 1%);background: linear-gradient(90deg, color-mix(in oklab, var(--kitA) 85%, transparent), color-mix(in oklab, var(--kitB) 78%, transparent));box-shadow: 0 0 18px color-mix(in oklab, var(--kitA) 14%, transparent)}
+    @media (max-width: 520px){ .knob{width:78px} .dial{width:54px;height:54px} }
+
+    .pads{display:grid;grid-template-columns: repeat(4, 1fr);gap:10px}
+    @media (max-width: 520px){ .pads{grid-template-columns: repeat(2, 1fr)} }
+    .pad{
+      min-height:62px;border-radius:14px;border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.04);
+      display:flex;align-items:center;justify-content:center;text-align:center;
+      padding:10px 8px;cursor:pointer;user-select:none;position:relative;overflow:hidden;
+      transition: transform .10s ease, filter .12s ease, box-shadow .12s ease;
+      font-size:12px;font-weight:800;letter-spacing:.25px;color: rgba(255,255,255,.92);
+      touch-action:none;
+    }
+    .pad::before{
+      content:"";position:absolute; inset:-2px;
+      background:
+        radial-gradient(140px 90px at 30% 30%, color-mix(in oklab, var(--kitC) 20%, transparent), transparent 60%),
+        radial-gradient(160px 100px at 70% 60%, color-mix(in oklab, var(--kitA) 16%, transparent), transparent 60%);
+      opacity:.75;pointer-events:none;
+    }
+    .pad::after{
+      content:"";position:absolute;width:8px;height:8px;border-radius:999px;
+      left:var(--rx,50%);top:var(--ry,50%);
+      transform: translate(-50%,-50%) scale(0.6);
+      background: radial-gradient(circle, rgba(255,255,255,.65), rgba(255,255,255,0) 60%);
+      opacity:0;pointer-events:none;
+    }
+    .pad.active{
+      box-shadow:
+        0 0 0 2px color-mix(in oklab, var(--kitC) 26%, transparent),
+        0 0 34px color-mix(in oklab, var(--kitC) 22%, transparent),
+        0 0 34px color-mix(in oklab, var(--kitA) 14%, transparent),
+        inset 0 0 0 1px rgba(255,255,255,.06);
+      filter: brightness(1.10);
+      animation: padThump .12s ease-out;
+    }
+    .pad.pulse::after{animation: padRipple .22s ease-out}
+    .pad small{display:block;font-size:10px;font-weight:700;opacity:.82;margin-top:4px;color: rgba(255,255,255,.84)}
+    .pad:active{transform: translateY(1px)}
+    @keyframes padThump{0%{transform: scale(1)}55%{transform: scale(0.96)}100%{transform: scale(1)}}
+    @keyframes padRipple{0%{opacity:.75; transform: translate(-50%,-50%) scale(0.6)}100%{opacity:0; transform: translate(-50%,-50%) scale(6.0)}}
+
+    .kbdWrap{padding:12px}
+    .kbd{
+      position:relative;height:190px;border:1px solid rgba(255,255,255,.10);
+      border-radius:16px;background: rgba(0,0,0,.26);
+      overflow:hidden;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.04), 0 0 28px color-mix(in oklab, var(--kitA) 10%, transparent);
+      user-select:none;touch-action:none;
+    }
+    .whiteKeys{position:absolute; inset:0;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:2px;padding:10px;align-items:stretch}
+    .wkey{
+      border-radius:10px;background: linear-gradient(180deg, rgba(243,244,255,.92), rgba(215,220,255,.92));
+      box-shadow: inset 0 -10px 18px rgba(0,0,0,.18);
+      border:1px solid rgba(0,0,0,.18);
+      display:flex;align-items:flex-end;justify-content:center;padding-bottom:10px;
+      color: rgba(10,12,24,.88);font-weight:800;font-size:11px;letter-spacing:.2px;
+      transition: filter .08s ease, transform .08s ease, box-shadow .12s ease;
+      position:relative;overflow:hidden;
+    }
+    .wkey::after{
+      content:"";position:absolute; inset:-2px;
+      background: radial-gradient(160px 110px at 50% 85%, color-mix(in oklab, var(--kitA) 44%, transparent), transparent 62%);
+      opacity:0;transition: opacity .06s ease;pointer-events:none;
+    }
+    .wkey.active{
+      transform: translateY(1px) scale(0.995);
+      box-shadow:
+        inset 0 -10px 18px rgba(0,0,0,.18),
+        0 0 0 2px color-mix(in oklab, var(--kitA) 70%, transparent),
+        0 0 76px color-mix(in oklab, var(--kitA) 62%, transparent),
+        0 0 128px color-mix(in oklab, var(--kitA) 24%, transparent);
+      filter: brightness(1.25) saturate(1.45);
+      animation: keyPulse .14s ease-out;
+    }
+    .wkey.active::after{opacity:1}
+
+    .blackKeys{position:absolute; inset:0; pointer-events:none}
+    .bkey{
+      position:absolute;top:10px;width:34px;height:110px;border-radius:10px;
+      background: linear-gradient(180deg, rgba(10,12,24,.96), rgba(0,0,0,.94));
+      border:1px solid rgba(255,255,255,.10);
+      box-shadow: 0 14px 24px rgba(0,0,0,.55);
+      pointer-events:auto;
+      display:flex;align-items:flex-end;justify-content:center;padding-bottom:10px;
+      color: rgba(240,242,255,.90);font-weight:800;font-size:10px;
+      transition: filter .08s ease, transform .08s ease, box-shadow .12s ease;
+      overflow:hidden;
+    }
+    .bkey::after{
+      content:"";position:absolute; inset:-2px;
+      background: radial-gradient(150px 100px at 50% 85%, color-mix(in oklab, var(--kitB) 46%, transparent), transparent 62%);
+      opacity:0;transition: opacity .06s ease;pointer-events:none;
+    }
+    .bkey.active{
+      transform: translateY(1px) scale(0.995);
+      box-shadow:
+        0 14px 24px rgba(0,0,0,.55),
+        0 0 0 2px color-mix(in oklab, var(--kitB) 70%, transparent),
+        0 0 76px color-mix(in oklab, var(--kitB) 56%, transparent),
+        0 0 128px color-mix(in oklab, var(--kitB) 22%, transparent);
+      filter: brightness(1.25) saturate(1.45);
+      animation: keyPulse .14s ease-out;
+    }
+    .bkey.active::after{opacity:1}
+    @keyframes keyPulse{0%{transform: translateY(0) scale(1)}55%{transform: translateY(1px) scale(0.985)}100%{transform: translateY(1px) scale(0.995)}}
+
+    .splash{
+      position:fixed; inset:0;display:grid; place-items:center;z-index:999;padding:20px;
+      background:
+        radial-gradient(1200px 700px at 30% 15%, color-mix(in oklab, var(--kitA) 18%, transparent), transparent 60%),
+        radial-gradient(900px 600px at 70% 25%, color-mix(in oklab, var(--kitB) 15%, transparent), transparent 60%),
+        radial-gradient(900px 700px at 50% 90%, color-mix(in oklab, var(--kitD) 12%, transparent), transparent 60%),
+        linear-gradient(180deg, #03040f, #080a1f);
+    }
+    .sCard{
+      width:min(740px, 96vw);
+      border-radius:22px;border:1px solid rgba(255,255,255,.14);
+      background: rgba(10,14,40,.70);
+      box-shadow: 0 24px 90px rgba(0,0,0,.65);
+      overflow:hidden;position:relative;
+    }
+    .sTop{padding:18px 18px 10px}
+    .sTop h2{margin:0 0 6px;font-size:16px;letter-spacing:.35px}
+    .sTop p{margin:0;color:var(--muted);font-size:12px;line-height:1.4}
+    .sBody{padding:12px 18px 18px; display:grid; gap:10px}
+    .sRow{display:flex; gap:10px; flex-wrap:wrap}
+    .sRow button{flex:1; min-width: 220px}
+    .sFoot{padding:0 18px 18px; color:rgba(255,255,255,.70); font-size:11px; line-height:1.4}
+    .kbdHint{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
+    .tag{padding:6px 10px; border-radius:999px;border:1px solid rgba(255,255,255,.10);background: rgba(255,255,255,.05);color: rgba(255,255,255,.78);font-size:11px;user-select:none}
+
+    .instructions{padding:16px;line-height:1.45;color: rgba(255,255,255,.88)}
+    .instructions h3{margin:0 0 10px;font-size:14px;letter-spacing:.3px}
+    .instructions ul{margin:8px 0 0 18px;padding:0;color: rgba(255,255,255,.82);font-size:12px}
+    .instructions li{margin:6px 0}
+    .footer{
+      margin-top:14px;padding:14px 16px;border-top:1px solid rgba(255,255,255,.08);
+      color: rgba(255,255,255,.64);font-size:12px;
+      display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap
+    }
+    .footer b{color: rgba(255,255,255,.82)}
+  </style>
+</head>
+<body>
+  <div id="splash" class="splash">
+    <div class="sCard">
+      <div class="sTop">
+        <h2>Matt’s Magical MIDI Machine</h2>
+        <p>MIDI or just audio + typing keyboard. Everything lights up to match what you press.</p>
+      </div>
+      <div class="sBody">
+        <div class="sRow">
+          <button id="startMidi">Start with MIDI</button>
+          <button id="startTyping" class="ghost">Start with Audio + Typing Keyboard</button>
+        </div>
+        <div class="kbdHint">
+          <span class="tag">Typing notes: A W S E D F T G Y H U J K</span>
+          <span class="tag">Typing pads: 1 2 3 4 / Q W E R / A S D F / Z X C V</span>
+          <span class="tag">Octave: [ ]</span>
+        </div>
+      </div>
+      <div class="sFoot">Chrome/Edge recommended for WebMIDI. Audio starts after a click.</div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <h1>Matt’s Magical MIDI Machine</h1>
+          <p class="sub">knobs → pads → keys · per-kit themes</p>
+        </div>
+      </div>
+
+      <div class="status">
+        <div class="pill"><span id="midiDot" class="dot"></span> MIDI</div>
+        <div class="pill"><span id="audioDot" class="dot"></span> Audio</div>
+
+        <div class="pill"><span>Input</span><select id="midiInSel" title="MIDI Input"></select></div>
+
+        <div class="pill"><span>Kit</span>
+          <select id="kitSel" title="Drum Kit">
+            <option value="808">808 / Trap</option>
+            <option value="boombap">Boom Bap</option>
+            <option value="industrial">Industrial</option>
+            <option value="house">House / Club</option>
+          </select>
+        </div>
+
+        <div class="pill">
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+            <input id="loudToggle" type="checkbox"/>
+            LOUD
+          </label>
+        </div>
+
+        <div class="pill"><button id="panic" class="hot">Panic</button></div>
+      </div>
+    </div>
+
+    <div class="stack">
+      <div class="card">
+        <div class="cardHead">
+          <div class="cardTitle"><b>Knobs</b><span>mouse drag up/down</span></div>
+        </div>
+        <div class="controls">
+          <div class="knobRowWrap"><div id="knobs" class="knobRow"></div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cardHead">
+          <div class="cardTitle"><b>Pads</b><span>drums only</span></div>
+        </div>
+        <div class="controls">
+          <div id="pads" class="pads"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cardHead">
+          <div class="cardTitle"><b>Keyboard</b><span>notes only</span></div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button id="octDown" class="ghost">Oct −</button>
+            <button id="octUp" class="ghost">Oct +</button>
+          </div>
+        </div>
+        <div class="kbdWrap">
+          <div id="kbd" class="kbd">
+            <div id="whiteKeys" class="whiteKeys"></div>
+            <div id="blackKeys" class="blackKeys"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="instructions">
+          <h3>How to Use It</h3>
+          <ul>
+            <li><b>Start</b>: choose MIDI or Audio + Typing.</li>
+            <li><b>MIDI Input</b>: pick your device in the Input dropdown.</li>
+            <li><b>Keys</b>: notes only. Bright neon lights on press.</li>
+            <li><b>Pads</b>: drums only. Animated hit + layered synth drums.</li>
+            <li><b>Kit</b>: changes pad labels, drum voicing, and color theme.</li>
+            <li><b>LOUD</b>: boosts drums/pads and adds gentle limiting.</li>
+            <li><b>Typing Notes</b>: A W S E D F T G Y H U J K</li>
+            <li><b>Typing Pads</b>: 1 2 3 4 / Q W E R / A S D F / Z X C V</li>
+            <li><b>Octave</b>: [ ] or Oct − / Oct +</li>
+            <li><b>Panic</b>: stops all sound (Esc works too).</li>
+          </ul>
+        </div>
+        <div class="footer">
+          <div><b>Matt’s Magical MIDI Machine</b> · single-file MIDI mirror</div>
+          <div>Tip: if MIDI doesn’t show, refresh after plugging the device in.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const NOTE_NAMES=["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+  const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
+  const noteName=(n)=>`${NOTE_NAMES[(n%12+12)%12]}${Math.floor(n/12)-1}`;
+  const isBlack=(n)=>[1,3,6,8,10].includes((n%12+12)%12);
+
+  const MAP = {
+    padNotes: Array.from({length:16}, (_,i)=>36+i),
+    knobCCs: [21,22,23,24,25,26,27,28]
+  };
+
+  const KNOB_LABELS = [
+    "Master","Drum Punch","Drum Tone","Drum Decay","Hat Tone","Snare Snap","Kick Click","Drive"
+  ];
+
+  const THEMES = {
+    "808":        {A:"#00f5ff", B:"#b56bff", C:"#39ff14", D:"#ff2bd6"},
+    "boombap":    {A:"#ffb703", B:"#fb8500", C:"#8ecae6", D:"#ff006e"},
+    "industrial": {A:"#ff2bd6", B:"#39ff14", C:"#00f5ff", D:"#ffd166"},
+    "house":      {A:"#00f5ff", B:"#39ff14", C:"#b56bff", D:"#ff2bd6"}
+  };
+
+  const KITS = {
+    "808": [
+      {name:"Kick",        type:"kick"},
+      {name:"Sub / 808",   type:"subdrop"},
+      {name:"Snare",       type:"snare"},
+      {name:"Clap",        type:"clap"},
+      {name:"Closed Hat",  type:"hatC"},
+      {name:"Open Hat",    type:"hatO"},
+      {name:"Rim / Click", type:"rim"},
+      {name:"808 Tom Low", type:"tomL"},
+      {name:"808 Tom Mid", type:"tomM"},
+      {name:"808 Tom High",type:"tomH"},
+      {name:"Perc",        type:"perc"},
+      {name:"Zap",         type:"zap"},
+      {name:"Vox Chop",    type:"vox"},
+      {name:"Crash",       type:"crash"},
+      {name:"Ride",        type:"ride"},
+      {name:"Laser",       type:"laser"}
+    ],
+    "boombap": [
+      {name:"Kick (Thud)",   type:"kick2"},
+      {name:"Kick (Alt)",    type:"kick"},
+      {name:"Snare (Dry)",   type:"snare2"},
+      {name:"Snare (Alt)",   type:"snare"},
+      {name:"Clap (Room)",   type:"clap2"},
+      {name:"Rim (Click)",   type:"rim2"},
+      {name:"Closed Hat",    type:"hatC2"},
+      {name:"Open Hat",      type:"hatO2"},
+      {name:"Shaker",        type:"shaker"},
+      {name:"Tamb",          type:"tamb"},
+      {name:"Cowbell",       type:"cow"},
+      {name:"Tom Low",       type:"tomL2"},
+      {name:"Tom High",      type:"tomH2"},
+      {name:"Snap",          type:"snap"},
+      {name:"Noise Hit",     type:"noise"},
+      {name:"Reverse",       type:"reverse"}
+    ],
+    "industrial": [
+      {name:"Stomp",        type:"stomp"},
+      {name:"Kick (Bit)",   type:"gkick"},
+      {name:"Snare (Bit)",  type:"gsnare"},
+      {name:"Clap (Hard)",  type:"clap"},
+      {name:"Closed Hat",   type:"ghat"},
+      {name:"Open Hat",     type:"ghat2"},
+      {name:"Metal Tick",   type:"tick"},
+      {name:"Click",        type:"click"},
+      {name:"Static",       type:"static"},
+      {name:"Noise Hit",    type:"noise"},
+      {name:"Glitch Hit",   type:"glitch"},
+      {name:"Burst",        type:"burst"},
+      {name:"Zap",          type:"zap"},
+      {name:"Laser",        type:"laser"},
+      {name:"Drop",         type:"drop"},
+      {name:"Reverse",      type:"reverse"}
+    ],
+    "house": [
+      {name:"Kick (Punch)",   type:"kick"},
+      {name:"Kick (Sub)",     type:"kick2"},
+      {name:"Clap",           type:"clap"},
+      {name:"Snare (Tight)",  type:"snare"},
+      {name:"Closed Hat",     type:"hatC"},
+      {name:"Open Hat",       type:"hatO"},
+      {name:"Ride",           type:"ride"},
+      {name:"Crash",          type:"crash"},
+      {name:"Rim",            type:"rim"},
+      {name:"Shaker",         type:"shaker"},
+      {name:"Tamb",           type:"tamb"},
+      {name:"Tom Low",        type:"tomL"},
+      {name:"Tom High",       type:"tomH"},
+      {name:"Perc",           type:"perc"},
+      {name:"Noise Sweep",    type:"reverse"},
+      {name:"FX Hit",         type:"zap"}
+    ]
+  };
+
+  let currentKitKey="808";
+  let loudMode=false;
+
+  let midiAccess=null, midiIn=null;
+  let audioCtx=null, master=null;
+  let isAudioOn=false;
+
+  let octaveOffset=0;
+  const pressedNotes=new Set();
+  const pressedPads=new Set();
+
+  const splash=document.getElementById('splash');
+  const startMidiBtn=document.getElementById('startMidi');
+  const startTypingBtn=document.getElementById('startTyping');
+
+  const midiDot=document.getElementById('midiDot');
+  const audioDot=document.getElementById('audioDot');
+  const midiInSel=document.getElementById('midiInSel');
+  const kitSel=document.getElementById('kitSel');
+  const loudToggle=document.getElementById('loudToggle');
+  const panicBtn=document.getElementById('panic');
+
+  const whiteKeysEl=document.getElementById('whiteKeys');
+  const blackKeysEl=document.getElementById('blackKeys');
+  const kbdEl=document.getElementById('kbd');
+
+  const padsEl=document.getElementById('pads');
+  const knobsEl=document.getElementById('knobs');
+
+  const octDown=document.getElementById('octDown');
+  const octUp=document.getElementById('octUp');
+
+  const CSS_START=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--kbdStartMidi'))||48;
+  const CSS_COUNT=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--kbdKeyCount'))||25;
+  const KEY_RANGE={start:CSS_START,count:CSS_COUNT};
+
+  const keyElsByNote=new Map();
+  const whiteOrderNotes=[];
+  const blackNotes=[];
+  const padElsByNote=new Map();
+  const knobElsByCC=new Map();
+  const knobVals=new Map();
+
+  const midiToFreq=(n)=>440*Math.pow(2,(n-69)/12);
+
+  function applyTheme(key){
+    const t=THEMES[key]||THEMES["808"];
+    const r=document.documentElement.style;
+    r.setProperty("--kitA", t.A);
+    r.setProperty("--kitB", t.B);
+    r.setProperty("--kitC", t.C);
+    r.setProperty("--kitD", t.D);
+  }
+
+  function ensureAudio(){
+    if(audioCtx) return;
+    audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+    master=audioCtx.createGain();
+    master.gain.value=0.75;
+    master.connect(audioCtx.destination);
+  }
+  function setAudioOn(on){
+    ensureAudio();
+    isAudioOn=on;
+    audioDot.classList.toggle('on',on);
+    if(on && audioCtx.state!=='running') audioCtx.resume().catch(()=>{});
+    applyFromKnobs();
+  }
+
+  function applyFromKnobs(){
+    if(!isAudioOn) return;
+    const masterN=(knobVals.get(MAP.knobCCs[0])||90)/127;
+    master.gain.value = 0.08 + masterN*0.92;
+  }
+
+  function buildKnobs(){
+    knobsEl.innerHTML='';
+    knobElsByCC.clear();
+    knobVals.clear();
+
+    MAP.knobCCs.forEach((cc,i)=>{
+      knobVals.set(cc, cc===MAP.knobCCs[0] ? 90 : 0);
+      const name = KNOB_LABELS[i] || `Knob ${i+1}`;
+      const box=document.createElement('div');
+      box.className='knob';
+      box.innerHTML=`
+        <div class="knobTop"><span>${name}</span><span id="kLabel${cc}">0</span></div>
+        <div class="dial" data-cc="${cc}" style="--rot:-135deg"></div>
+        <div class="val" style="--p:0"><i></i></div>
+      `;
+      const dial=box.querySelector('.dial');
+      const meter=box.querySelector('.val');
+      const label=box.querySelector(`#kLabel${cc}`);
+      let drag=null;
+
+      dial.addEventListener('pointerdown',(e)=>{
+        e.preventDefault();
+        dial.setPointerCapture(e.pointerId);
+        drag={id:e.pointerId,y:e.clientY,start:knobVals.get(cc)||0};
+      });
+      dial.addEventListener('pointermove',(e)=>{
+        if(!drag||drag.id!==e.pointerId) return;
+        const dy=drag.y-e.clientY;
+        const delta=Math.round(dy*0.4);
+        setKnob(cc, clamp(drag.start+delta,0,127));
+      });
+      dial.addEventListener('pointerup',()=>{drag=null;});
+
+      knobElsByCC.set(cc,{dial,meter,label});
+      knobsEl.appendChild(box);
+    });
+
+    MAP.knobCCs.forEach(cc=>setKnob(cc, knobVals.get(cc)||0));
+  }
+
+  function setKnob(cc,value){
+    knobVals.set(cc,value);
+    const ui=knobElsByCC.get(cc);
+    if(ui){
+      const p=(value/127)*100;
+      const rot=-135+(270*(value/127));
+      ui.dial.style.setProperty('--rot',`${rot}deg`);
+      ui.meter.style.setProperty('--p',p.toFixed(2));
+      ui.label.textContent=String(value);
+    }
+    applyFromKnobs();
+  }
+
+  function buildPads(){
+    padsEl.innerHTML='';
+    padElsByNote.clear();
+    const kit=KITS[currentKitKey];
+    MAP.padNotes.forEach((note,i)=>{
+      const data=kit[i]||{name:`Pad ${i+1}`,type:"perc"};
+      const el=document.createElement('div');
+      el.className='pad';
+      el.dataset.note=String(note);
+      el.dataset.type=data.type;
+      el.innerHTML=`<div>${data.name}<small>${noteName(note)}</small></div>`;
+      el.addEventListener('pointerdown',(e)=>{e.preventDefault();padDown(note,1.0,e);el.setPointerCapture(e.pointerId);});
+      el.addEventListener('pointerup',(e)=>{e.preventDefault();padUp(note);});
+      el.addEventListener('pointerleave',(e)=>{if(e.buttons) padUp(note);});
+      padsEl.appendChild(el);
+      padElsByNote.set(note,el);
+    });
+  }
+
+  function buildKeyboard(){
+    whiteKeysEl.innerHTML='';
+    blackKeysEl.innerHTML='';
+    keyElsByNote.clear();
+    whiteOrderNotes.length=0;
+    blackNotes.length=0;
+
+    for(let n=KEY_RANGE.start;n<KEY_RANGE.start+KEY_RANGE.count;n++){
+      if(!isBlack(n)) whiteOrderNotes.push(n);
+      else blackNotes.push(n);
+    }
+
+    for(const n of whiteOrderNotes){
+      const el=document.createElement('div');
+      el.className='wkey';
+      el.dataset.note=String(n);
+      el.textContent=noteName(n);
+      el.addEventListener('pointerdown',(e)=>{e.preventDefault();keyDown(n,0.9);el.setPointerCapture(e.pointerId);});
+      el.addEventListener('pointerup',(e)=>{e.preventDefault();keyUp(n);});
+      el.addEventListener('pointerleave',(e)=>{if(e.buttons) keyUp(n);});
+      whiteKeysEl.appendChild(el);
+      keyElsByNote.set(n,el);
+    }
+
+    for(const n of blackNotes){
+      const el=document.createElement('div');
+      el.className='bkey';
+      el.dataset.note=String(n);
+      el.textContent=noteName(n);
+      el.addEventListener('pointerdown',(e)=>{e.preventDefault();keyDown(n,0.9);el.setPointerCapture(e.pointerId);});
+      el.addEventListener('pointerup',(e)=>{e.preventDefault();keyUp(n);});
+      el.addEventListener('pointerleave',(e)=>{if(e.buttons) keyUp(n);});
+      blackKeysEl.appendChild(el);
+      keyElsByNote.set(n,el);
+    }
+    positionBlackKeys();
+  }
+
+  function positionBlackKeys(){
+    const rect=kbdEl.getBoundingClientRect();
+    const pad=10;
+    const innerW=rect.width-pad*2;
+    const whiteW=innerW/whiteOrderNotes.length;
+    const whiteIndex=new Map();
+    whiteOrderNotes.forEach((n,i)=>whiteIndex.set(n,i));
+
+    for(const el of blackKeysEl.children){
+      const n=parseInt(el.dataset.note,10);
+      let prev=n-1; while(prev>=KEY_RANGE.start && isBlack(prev)) prev--;
+      let next=n+1; while(next<KEY_RANGE.start+KEY_RANGE.count && isBlack(next)) next++;
+      const pi=whiteIndex.get(prev);
+      const ni=whiteIndex.get(next);
+
+      let x;
+      if(pi!=null && ni!=null) x=pad+(pi+1)*whiteW-(el.offsetWidth/2);
+      else if(pi!=null) x=pad+(pi+0.85)*whiteW;
+      else if(ni!=null) x=pad+(ni-0.15)*whiteW-(el.offsetWidth/2);
+      else x=pad;
+
+      el.style.left=`${x}px`;
+    }
+  }
+  window.addEventListener('resize', positionBlackKeys);
+
+  function neonOn(el){
+    if(!el) return;
+    el.classList.add('active');
+    el.style.animation='none'; el.offsetHeight; el.style.animation='';
+  }
+  function neonOff(el){ el?.classList.remove('active'); }
+
+  const activeVoices=new Map();
+  function keyDown(note,vel=0.9){
+    pressedNotes.add(note);
+    neonOn(keyElsByNote.get(note));
+    if(!isAudioOn) return;
+    if(activeVoices.has(note)) return;
+
+    const now=audioCtx.currentTime;
+    const f=midiToFreq(note + octaveOffset*12);
+
+    const filter=audioCtx.createBiquadFilter();
+    filter.type='lowpass';
+    filter.frequency.value=9000;
+    filter.Q.value=0.8;
+
+    const amp=audioCtx.createGain();
+    amp.gain.setValueAtTime(0.0001,now);
+    amp.gain.exponentialRampToValueAtTime(Math.max(0.0002, 0.7*vel), now+0.008);
+    amp.gain.exponentialRampToValueAtTime(Math.max(0.0002, 0.12*vel), now+0.12);
+
+    const osc=audioCtx.createOscillator();
+    osc.type='sawtooth';
+    osc.frequency.value=f;
+    osc.connect(filter);
+    filter.connect(amp);
+    amp.connect(master);
+    osc.start(now);
+
+    activeVoices.set(note,{osc,amp});
+  }
+  function keyUp(note){
+    pressedNotes.delete(note);
+    neonOff(keyElsByNote.get(note));
+    if(!isAudioOn) return;
+    const v=activeVoices.get(note);
+    if(!v) return;
+    const now=audioCtx.currentTime;
+    v.amp.gain.cancelScheduledValues(now);
+    v.amp.gain.setValueAtTime(Math.max(0.0002, v.amp.gain.value), now);
+    v.amp.gain.exponentialRampToValueAtTime(0.0001, now+0.18);
+    try{ v.osc.stop(now+0.22); }catch(_){}
+    activeVoices.delete(note);
+  }
+
+  function padDown(note,vel=1.0,evt=null){
+    pressedPads.add(note);
+    const el=padElsByNote.get(note);
+    if(el){
+      el.classList.add('active');
+      if(evt && evt.clientX!=null){
+        const r=el.getBoundingClientRect();
+        el.style.setProperty('--rx', (((evt.clientX-r.left)/r.width)*100).toFixed(2)+'%');
+        el.style.setProperty('--ry', (((evt.clientY-r.top)/r.height)*100).toFixed(2)+'%');
+      } else {
+        el.style.setProperty('--rx','50%'); el.style.setProperty('--ry','50%');
+      }
+      el.classList.remove('pulse'); void el.offsetWidth; el.classList.add('pulse');
+      setTimeout(()=>el.classList.remove('pulse'),250);
+    }
+    if(isAudioOn) playDrum(el?.dataset.type||"perc", vel);
+  }
+  function padUp(note){
+    pressedPads.delete(note);
+    padElsByNote.get(note)?.classList.remove('active');
+  }
+
+  let NOISE_BUF=null;
+  function noiseBuffer(){
+    if(NOISE_BUF) return NOISE_BUF;
+    const len=audioCtx.sampleRate*1.0;
+    const buf=audioCtx.createBuffer(1,len,audioCtx.sampleRate);
+    const data=buf.getChannelData(0);
+    for(let i=0;i<len;i++) data[i]=(Math.random()*2-1);
+    NOISE_BUF=buf;
+    return buf;
+  }
+
+  function makeShaperCurve(amount){
+    const n=2048;
+    const curve=new Float32Array(n);
+    const k=Math.max(1,amount);
+    for(let i=0;i<n;i++){
+      const x=(i*2/n)-1;
+      curve[i]=Math.tanh(k*x);
+    }
+    return curve;
+  }
+
+  function drumChain(vel){
+    const out=audioCtx.createGain();
+
+    const punchN=(knobVals.get(MAP.knobCCs[1])||64)/127;
+    const driveN=(knobVals.get(MAP.knobCCs[7])||30)/127;
+
+    const pre=audioCtx.createGain();
+    pre.gain.value = 0.9 + punchN*0.9;
+
+    const shaper=audioCtx.createWaveShaper();
+    shaper.curve = makeShaperCurve(2 + driveN*12);
+    shaper.oversample = "4x";
+
+    const comp=audioCtx.createDynamicsCompressor();
+    comp.threshold.value = -20 + (-10*punchN);
+    comp.knee.value = 12;
+    comp.ratio.value = 4 + (6*punchN);
+    comp.attack.value = 0.003;
+    comp.release.value = 0.08;
+
+    pre.connect(shaper);
+    shaper.connect(comp);
+    comp.connect(out);
+
+    out.gain.value = (loudMode ? 1.25 : 1.0) * (0.85 + vel*0.55);
+
+    if(loudMode){
+      const lim=audioCtx.createDynamicsCompressor();
+      lim.threshold.value = -6;
+      lim.knee.value = 10;
+      lim.ratio.value = 10;
+      lim.attack.value = 0.002;
+      lim.release.value = 0.08;
+      out.connect(lim);
+      lim.connect(master);
+    } else {
+      out.connect(master);
+    }
+
+    return {in:pre};
+  }
+
+  function envGain(g, t, a, d, peak=1){
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(Math.max(0.0002, peak), t+a);
+    g.gain.exponentialRampToValueAtTime(0.0001, t+a+d);
+  }
+
+  function noiseHit({hp=2000, bp=6000, q=0.9, t, dur, gain, dest, stereo=0}){
+    const src=audioCtx.createBufferSource();
+    src.buffer=noiseBuffer();
+    const h=audioCtx.createBiquadFilter(); h.type="highpass"; h.frequency.value=hp;
+    const b=audioCtx.createBiquadFilter(); b.type="bandpass"; b.frequency.value=bp; b.Q.value=q;
+
+    const g=audioCtx.createGain();
+    g.gain.value=0.0001;
+
+    let p=null;
+    if(stereo){
+      p=audioCtx.createStereoPanner();
+      p.pan.value = stereo;
+    }
+
+    src.connect(h); h.connect(b); b.connect(g);
+    if(p){ g.connect(p); p.connect(dest); }
+    else g.connect(dest);
+
+    envGain(g, t, 0.001, dur, gain);
+    src.start(t);
+    src.stop(t + dur + 0.05);
+  }
+
+  function oscHit({type="sine", f0=200, f1=60, sweep=0.05, t, dur, gain, dest, q=0}){
+    const o=audioCtx.createOscillator();
+    o.type=type;
+    const g=audioCtx.createGain();
+    g.gain.value=0.0001;
+
+    if(sweep>0){
+      o.frequency.setValueAtTime(Math.max(1,f0), t);
+      o.frequency.exponentialRampToValueAtTime(Math.max(1,f1), t+sweep);
+    } else {
+      o.frequency.setValueAtTime(Math.max(1,f0), t);
+    }
+
+    let node=o;
+    if(q>0){
+      const f=audioCtx.createBiquadFilter();
+      f.type="lowpass";
+      f.frequency.value = Math.max(80, f0*6);
+      f.Q.value = q;
+      o.connect(f);
+      node=f;
+    }
+
+    node.connect(g);
+    g.connect(dest);
+    envGain(g, t, 0.001, dur, gain);
+    o.start(t);
+    o.stop(t + dur + 0.10);
+  }
+
+  function multiClap({t, dest, gain=0.9, tone=2200, dur=0.08}){
+    const src=audioCtx.createBufferSource();
+    src.buffer=noiseBuffer();
+    const bp=audioCtx.createBiquadFilter();
+    bp.type="bandpass"; bp.frequency.value=tone; bp.Q.value=0.9;
+    const g=audioCtx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+
+    src.connect(bp); bp.connect(g); g.connect(dest);
+
+    const hits=[0,0.018,0.036,0.058];
+    hits.forEach((dt,i)=>{
+      const pk = gain/(1+i*0.35);
+      g.gain.exponentialRampToValueAtTime(Math.max(0.0002, pk), t+dt+0.001);
+      g.gain.exponentialRampToValueAtTime(0.0001, t+dt+dur);
+    });
+
+    src.start(t);
+    src.stop(t+0.35);
+  }
+
+  function playDrum(type,vel){
+    const t=audioCtx.currentTime;
+    const toneN=(knobVals.get(MAP.knobCCs[2])||64)/127;
+    const decayN=(knobVals.get(MAP.knobCCs[3])||50)/127;
+    const hatN=(knobVals.get(MAP.knobCCs[4])||64)/127;
+    const snSnapN=(knobVals.get(MAP.knobCCs[5])||64)/127;
+    const kickClickN=(knobVals.get(MAP.knobCCs[6])||48)/127;
+
+    const kit=currentKitKey;
+    const kitBright = kit==="808" ? 1.08 : kit==="industrial" ? 1.02 : kit==="house" ? 1.10 : 0.95;
+    const kitDry    = kit==="boombap" ? 1.08 : kit==="industrial" ? 0.92 : 0.98;
+
+    const chain = drumChain(vel);
+    const dest = chain.in;
+
+    const baseDecay = 0.05 + decayN*0.22;
+    const longDecay = 0.18 + decayN*0.45;
+
+    const kickF0 = (type.includes("2") ? 135 : 160) * (0.92 + toneN*0.22);
+    const kickF1 = (type.startsWith("g") ? 42 : 52);
+    const kickDur = (0.09 + decayN*0.16) * kitDry;
+
+    const snTone = (type.includes("2") ? 170 : 190) * kitBright;
+    const snDur  = (0.12 + decayN*0.20) * kitDry;
+    const snNoise = (2600 + snSnapN*2400) * kitBright;
+
+    const hatTone = (5200 + hatN*5200) * kitBright;
+    const hatDurC = (0.04 + decayN*0.10) * kitDry;
+    const hatDurO = (0.16 + decayN*0.22) * kitDry;
+
+    if(type.startsWith("kick")){
+      noiseHit({t, dur: 0.02 + kickClickN*0.03, gain: 0.55 + kickClickN*0.55, hp: 2500, bp: 8500*kitBright, q: 0.7, dest});
+      oscHit({t, type:"sine", f0:kickF0, f1:kickF1, sweep:0.05, dur:kickDur, gain: 1.0, dest});
+      oscHit({t, type:"sine", f0: kickF1*0.9, f1: kickF1*0.88, sweep:0.0, dur: (0.18 + decayN*0.24)*kitDry, gain: 0.55, dest});
+      if(type==="gkick") noiseHit({t, dur: 0.05, gain: 0.35, hp: 900, bp: 1600, q: 1.2, dest});
+      return;
+    }
+
+    if(type.includes("snare")){
+      oscHit({t, type:"triangle", f0:snTone, f1:snTone*0.98, sweep:0.0, dur: snDur, gain: 0.55, dest, q:0.7});
+      noiseHit({t, dur: snDur + 0.03, gain: 0.95, hp: 900, bp: snNoise, q: 0.8, dest});
+      noiseHit({t: t+0.008, dur: 0.04, gain: 0.25, hp: 3000, bp: 9200, q: 0.9, dest});
+      if(type==="gsnare") noiseHit({t, dur: 0.08, gain: 0.30, hp: 200, bp: 1200, q: 1.0, dest});
+      return;
+    }
+
+    if(type.includes("clap")){
+      multiClap({t, dest, gain: 0.95, tone: (type==="clap2" ? 1900 : 2400)*kitBright, dur: 0.03 + decayN*0.06});
+      noiseHit({t: t+0.012, dur: 0.08 + decayN*0.14, gain: 0.35, hp: 1200, bp: 3200*kitBright, q: 0.9, dest});
+      return;
+    }
+
+    if(type.includes("hat")){
+      const open = type.includes("O");
+      const dur = open ? hatDurO : hatDurC;
+      noiseHit({t, dur, gain: open ? 0.95 : 0.80, hp: 3500, bp: hatTone, q: 0.55, dest, stereo: open ? 0.15 : -0.08});
+      noiseHit({t: t+0.003, dur: 0.02, gain: 0.18, hp: 8000, bp: 11000, q: 0.6, dest});
+      return;
+    }
+
+    if(type.includes("tom")){
+      let f=140;
+      if(type.includes("L")) f=112;
+      if(type.includes("M")) f=165;
+      if(type.includes("H")) f=230;
+      if(type.endsWith("2")) f*=0.95;
+      f*= (0.95 + toneN*0.25) * kitBright;
+
+      oscHit({t, type:"sine", f0:f*1.15, f1:f*0.98, sweep:0.03, dur: (0.16 + decayN*0.34)*kitDry, gain: 0.85, dest});
+      noiseHit({t: t+0.002, dur: 0.03, gain: 0.20, hp: 1800, bp: 3400*kitBright, q: 0.9, dest});
+      return;
+    }
+
+    if(type.startsWith("crash") || type.startsWith("ride")){
+      const dur = type.includes("ride") ? (0.45 + decayN*0.30) : (0.75 + decayN*0.45);
+      noiseHit({t, dur, gain: 0.95, hp: 2500, bp: (type.includes("ride")?5200:4300)*kitBright, q: 0.55, dest, stereo: 0.12});
+      noiseHit({t: t+0.008, dur: dur*0.7, gain: 0.30, hp: 7000, bp: 11000, q: 0.7, dest});
+      return;
+    }
+
+    if(type==="rim" || type==="rim2" || type==="tick" || type==="click" || type==="snap"){
+      const f = (type==="rim2" ? 1500 : type==="tick" ? 3200 : type==="snap" ? 2600 : 1800) * kitBright;
+      oscHit({t, type:"square", f0:f, f1:f*0.98, sweep:0.0, dur: baseDecay*0.6, gain: 0.55, dest});
+      noiseHit({t, dur: baseDecay*0.7, gain: 0.22, hp: 3000, bp: 9000, q: 0.8, dest});
+      return;
+    }
+
+    if(type==="cow" || type==="tamb" || type==="shaker"){
+      const base = type==="cow" ? 650 : type==="tamb" ? 2100 : 8200;
+      const dur = type==="shaker" ? (0.10 + decayN*0.22) : (0.12 + decayN*0.18);
+      if(type==="cow"){
+        oscHit({t, type:"square", f0:base*kitBright, f1:base*kitBright, sweep:0.0, dur: dur, gain: 0.55, dest});
+        oscHit({t, type:"square", f0:(base*1.49)*kitBright, f1:(base*1.49)*kitBright, sweep:0.0, dur: dur*0.9, gain: 0.35, dest});
+      } else {
+        noiseHit({t, dur, gain: 0.75, hp: 2500, bp: base*kitBright, q: 0.6, dest});
+      }
+      return;
+    }
+
+    if(type==="stomp"){
+      oscHit({t, type:"sine", f0:92, f1:52, sweep:0.06, dur: (0.18 + decayN*0.20), gain: 1.05, dest});
+      noiseHit({t, dur: 0.06, gain: 0.25, hp: 900, bp: 1800, q: 0.9, dest});
+      return;
+    }
+
+    if(type==="vox" || type==="zap" || type==="laser" || type==="subdrop" || type==="reverse" || type==="glitch" || type==="static" || type==="noise" || type==="burst" || type==="drop"){
+      const fxDur = (0.10 + decayN*0.30) * kitDry;
+      const base = 220 + toneN*520;
+      if(type==="subdrop" || type==="drop"){
+        oscHit({t, type:"sine", f0:base*2.2, f1:45, sweep:0.12, dur: (0.22+decayN*0.35), gain: 0.95, dest});
+        noiseHit({t: t+0.01, dur: 0.08, gain: 0.18, hp: 1200, bp: 2400, q: 0.9, dest});
+      } else if(type==="laser"){
+        oscHit({t, type:"sawtooth", f0:base*8, f1:base*1.2, sweep:0.10, dur: fxDur, gain: 0.55, dest, q:0.9});
+        noiseHit({t, dur: fxDur*0.6, gain: 0.20, hp: 4000, bp: 9000, q: 0.7, dest});
+      } else if(type==="static" || type==="noise"){
+        noiseHit({t, dur: fxDur, gain: 0.85, hp: 600, bp: 2600*kitBright, q: 0.8, dest});
+        noiseHit({t: t+0.01, dur: fxDur*0.7, gain: 0.35, hp: 5000, bp: 10000, q: 0.6, dest});
+      } else if(type==="reverse"){
+        noiseHit({t, dur: fxDur*0.95, gain: 0.70, hp: 900, bp: 3200, q: 0.7, dest});
+      } else {
+        oscHit({t, type:"triangle", f0:base*4, f1:base*1.2, sweep:0.06, dur: fxDur, gain: 0.35, dest});
+        noiseHit({t, dur: fxDur*0.6, gain: 0.35, hp: 1800, bp: 5200*kitBright, q: 0.8, dest});
+      }
+      return;
+    }
+
+    noiseHit({t, dur: longDecay*0.6, gain: 0.65, hp: 1200, bp: 2600*kitBright, q: 1.0, dest});
+    oscHit({t, type:"triangle", f0: 420*kitBright, f1: 260*kitBright, sweep:0.05, dur: baseDecay*1.2, gain: 0.22, dest});
+  }
+
+  function panic(){
+    pressedNotes.forEach(n=>keyElsByNote.get(n)?.classList.remove('active'));
+    pressedPads.forEach(n=>padElsByNote.get(n)?.classList.remove('active'));
+    pressedNotes.clear(); pressedPads.clear();
+    if(isAudioOn){
+      const now=audioCtx.currentTime;
+      for(const [note,v] of activeVoices.entries()){
+        try{
+          v.amp.gain.cancelScheduledValues(now);
+          v.amp.gain.setValueAtTime(0.0001,now);
+          v.osc.stop(now+0.02);
+        }catch(_){}
+      }
+      activeVoices.clear();
+    }
+  }
+
+  async function initMIDI(){
+    if(!navigator.requestMIDIAccess) throw new Error("WebMIDI not supported");
+    midiAccess=await navigator.requestMIDIAccess({sysex:false});
+    midiAccess.onstatechange=refreshMidiInputs;
+    refreshMidiInputs();
+    midiDot.classList.add('on');
+  }
+
+  function refreshMidiInputs(){
+    const inputs=midiAccess ? Array.from(midiAccess.inputs.values()) : [];
+    midiInSel.innerHTML='';
+    const opt0=document.createElement('option');
+    opt0.value='';
+    opt0.textContent=inputs.length?'Select…':'No MIDI devices';
+    midiInSel.appendChild(opt0);
+    for(const input of inputs){
+      const opt=document.createElement('option');
+      opt.value=input.id;
+      opt.textContent=input.name||`MIDI In ${input.id}`;
+      midiInSel.appendChild(opt);
+    }
+    if(inputs.length && !midiIn){
+      midiInSel.value=inputs[0].id;
+      attachMidiIn(inputs[0].id);
+    }
+  }
+
+  function attachMidiIn(id){
+    if(midiIn) midiIn.onmidimessage=null;
+    midiIn=midiAccess?.inputs.get(id)||null;
+    if(!midiIn) return;
+    midiIn.onmidimessage=onMidiMsg;
+  }
+
+  function onMidiMsg(e){
+    const [status,d1,d2]=e.data;
+    const type=status & 0xF0;
+
+    if(type===0x90){
+      const note=d1, vel=d2;
+      if(vel===0) handleNoteOff(note);
+      else handleNoteOn(note, vel/127);
+      return;
+    }
+    if(type===0x80){ handleNoteOff(d1); return; }
+
+    if(type===0xB0){
+      const cc=d1, val=d2;
+      if(MAP.knobCCs.includes(cc)){ setKnob(cc,val); return; }
+      return;
+    }
+  }
+
+  function handleNoteOn(note,vel){
+    if(MAP.padNotes.includes(note)) padDown(note,vel,null);
+    else keyDown(note,vel);
+  }
+  function handleNoteOff(note){
+    if(MAP.padNotes.includes(note)) padUp(note);
+    else keyUp(note);
+  }
+
+  const typingNoteMap=new Map([
+    ["KeyA",0],["KeyW",1],["KeyS",2],["KeyE",3],["KeyD",4],["KeyF",5],["KeyT",6],
+    ["KeyG",7],["KeyY",8],["KeyH",9],["KeyU",10],["KeyJ",11],["KeyK",12]
+  ]);
+  const typingPadMap=new Map([
+    ["Digit1",0],["Digit2",1],["Digit3",2],["Digit4",3],
+    ["KeyQ",4],["KeyW",5],["KeyE",6],["KeyR",7],
+    ["KeyA",8],["KeyS",9],["KeyD",10],["KeyF",11],
+    ["KeyZ",12],["KeyX",13],["KeyC",14],["KeyV",15]
+  ]);
+  const typingHeld=new Set();
+  const typingBaseNote=()=>KEY_RANGE.start+(octaveOffset*12);
+
+  function onKeyDown(e){
+    if(e.repeat) return;
+    if(e.code==="BracketLeft"){ octaveOffset=clamp(octaveOffset-1,-3,3); return; }
+    if(e.code==="BracketRight"){ octaveOffset=clamp(octaveOffset+1,-3,3); return; }
+    if(e.code==="Escape"){ panic(); return; }
+
+    if(typingPadMap.has(e.code)){
+      const idx=typingPadMap.get(e.code);
+      const note=MAP.padNotes[idx];
+      if(note!=null && !typingHeld.has("P"+e.code)){
+        typingHeld.add("P"+e.code);
+        padDown(note,1.0,null);
+      }
+      return;
+    }
+
+    if(typingNoteMap.has(e.code)){
+      const semis=typingNoteMap.get(e.code);
+      const note=typingBaseNote()+semis;
+      if(!typingHeld.has(e.code)){
+        typingHeld.add(e.code);
+        keyDown(note,0.85);
+      }
+    }
+  }
+  function onKeyUp(e){
+    if(typingPadMap.has(e.code)){
+      const idx=typingPadMap.get(e.code);
+      const note=MAP.padNotes[idx];
+      typingHeld.delete("P"+e.code);
+      if(note!=null) padUp(note);
+      return;
+    }
+    if(typingNoteMap.has(e.code)){
+      const semis=typingNoteMap.get(e.code);
+      const note=typingBaseNote()+semis;
+      typingHeld.delete(e.code);
+      keyUp(note);
+    }
+  }
+
+  function setKit(key){
+    currentKitKey = key;
+    applyTheme(key);
+    buildPads();
+  }
+
+  startMidiBtn.addEventListener('click', async ()=>{
+    try{
+      setAudioOn(true);
+      await initMIDI();
+      splash.style.display='none';
+    } catch(_){
+      setAudioOn(true);
+      splash.style.display='none';
+    }
+  });
+  startTypingBtn.addEventListener('click', ()=>{ setAudioOn(true); splash.style.display='none'; });
+
+  midiInSel.addEventListener('change',(e)=>attachMidiIn(e.target.value));
+  kitSel.addEventListener('change',()=>setKit(kitSel.value));
+  loudToggle.addEventListener('change', e => { loudMode = e.target.checked; });
+
+  octDown.addEventListener('click',()=>{ octaveOffset=clamp(octaveOffset-1,-3,3); });
+  octUp.addEventListener('click',()=>{ octaveOffset=clamp(octaveOffset+1,-3,3); });
+
+  panicBtn.addEventListener('click', panic);
+  window.addEventListener('keydown', onKeyDown);
+  window.addEventListener('keyup', onKeyUp);
+
+  applyTheme(currentKitKey);
+  kitSel.value=currentKitKey;
+
+  buildKnobs();
+  buildPads();
+  buildKeyboard();
+})();
+</script>
+</body>
+</html>

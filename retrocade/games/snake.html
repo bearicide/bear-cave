@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1020">
+<title>Snake | RETROCADE</title><script src="../../cave-shell.js" data-cave-root="../../" defer></script>
+<style>
+:root{--bg:#090d18;--panel:rgba(18,25,45,.72);--ink:#f7f8ff;--muted:#aeb8d2;--line:rgba(255,255,255,.12);--accent:#7c5cff;--accent2:#21d4fd;--good:#6ee7b7;--danger:#fb7185;--shadow:0 24px 80px rgba(0,0,0,.42)}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:radial-gradient(circle at 12% 10%,rgba(124,92,255,.24),transparent 34rem),radial-gradient(circle at 88% 8%,rgba(33,212,253,.18),transparent 30rem),linear-gradient(180deg,#0d1222,#090d18 60%,#05070d);color:var(--ink)}
+body{padding:18px;overflow-x:hidden;touch-action:manipulation}.app{width:min(1120px,100%);margin:0 auto}.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}.back{color:var(--ink);text-decoration:none;font-weight:800;letter-spacing:.04em}.pill{padding:9px 13px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.06);color:var(--muted);font-size:.85rem;font-weight:750}
+.hero{display:grid;grid-template-columns:1.2fr .8fr;gap:18px;align-items:stretch;margin-bottom:18px}.hero-copy,.stats{border:1px solid var(--line);border-radius:28px;background:var(--panel);backdrop-filter:blur(18px);box-shadow:var(--shadow)}.hero-copy{padding:28px}.eyebrow{display:inline-flex;align-items:center;gap:8px;color:var(--accent2);font-size:.78rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase}.hero h1{margin:10px 0 8px;font-size:clamp(2.8rem,9vw,6.2rem);line-height:.9;letter-spacing:-.06em}.hero p{margin:0;color:var(--muted);font-size:1rem;line-height:1.55;max-width:42rem}.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:14px}.stat{min-height:112px;border:1px solid var(--line);border-radius:20px;background:rgba(255,255,255,.045);padding:16px;display:flex;flex-direction:column;justify-content:space-between}.stat span{color:var(--muted);font-size:.78rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em}.stat strong{font-size:clamp(1.7rem,5vw,2.8rem);letter-spacing:-.04em}
+.game-shell{position:relative;border:1px solid var(--line);border-radius:30px;background:rgba(11,16,32,.78);box-shadow:var(--shadow);padding:18px;overflow:hidden}.toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}.toolbar-copy strong{display:block;font-size:1rem}.toolbar-copy span{display:block;color:var(--muted);font-size:.88rem;margin-top:3px}.buttons{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--line);border-radius:14px;padding:11px 15px;background:rgba(255,255,255,.07);color:var(--ink);font-weight:850;cursor:pointer;transition:.18s ease}.btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.11)}.btn.primary{background:linear-gradient(135deg,var(--accent),#5a7cff);border-color:transparent;box-shadow:0 12px 28px rgba(124,92,255,.28)}
+.stage{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:16px;align-items:start}.canvas-wrap{position:relative;border:1px solid var(--line);border-radius:24px;overflow:hidden;background:#07101a;aspect-ratio:1/1}.canvas-wrap canvas{width:100%;height:100%;display:block;touch-action:none}.side{display:grid;gap:12px}.panel{border:1px solid var(--line);border-radius:20px;background:rgba(255,255,255,.045);padding:15px}.panel strong{display:block;margin-bottom:7px}.panel p{margin:0;color:var(--muted);font-size:.9rem;line-height:1.45}.status{font-weight:900;color:var(--good)}
+.dpad{display:grid;grid-template-columns:repeat(3,62px);grid-template-rows:repeat(3,56px);gap:8px;justify-content:center;margin-top:4px}.dpad button{border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.08);color:var(--ink);font-size:1.35rem;font-weight:900;cursor:pointer;box-shadow:0 8px 18px rgba(0,0,0,.2)}.dpad button:active{transform:translateY(2px)}.up{grid-column:2}.left{grid-column:1;grid-row:2}.right{grid-column:3;grid-row:2}.down{grid-column:2;grid-row:3}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);opacity:0;pointer-events:none;padding:12px 16px;border:1px solid rgba(251,191,36,.35);border-radius:999px;background:rgba(12,18,34,.94);backdrop-filter:blur(16px);font-weight:900;box-shadow:var(--shadow);transition:.22s ease;z-index:20;color:#fde68a}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:820px){body{padding:10px}.hero{grid-template-columns:1fr}.stats{grid-template-columns:repeat(4,1fr)}.stat{min-height:82px;padding:12px}.stat strong{font-size:1.55rem}.stage{grid-template-columns:1fr}.side{grid-template-columns:1fr 1fr}.game-shell{padding:12px;border-radius:22px}.toolbar{align-items:flex-start;flex-direction:column}.pill{display:none}}
+@media(max-width:560px){.stats{grid-template-columns:repeat(2,1fr)}.side{grid-template-columns:1fr}.hero-copy{padding:22px}.hero h1{font-size:3.5rem}.dpad{grid-template-columns:repeat(3,58px);grid-template-rows:repeat(3,52px)}}
+</style>
+</head>
+<body>
+<main class="app">
+<header class="topbar"><a class="back" href="../index.html">← RETROCADE</a><span class="pill">MATTBEAR / SNAKE</span></header>
+<section class="hero">
+<div class="hero-copy"><span class="eyebrow">Quick Play • Modern Snake</span><h1>Snake</h1><p>Eat the glowing fruit, grow longer, and stay off the walls. Use arrows, WASD, swipe, or the directional pad.</p></div>
+<div class="stats" aria-label="Game statistics"><div class="stat"><span>Score</span><strong id="score">0</strong></div><div class="stat"><span>Length</span><strong id="length">3</strong></div><div class="stat"><span>Best</span><strong id="best">0</strong></div><div class="stat"><span>Tickets</span><strong id="tickets">0</strong></div></div>
+</section>
+<section class="game-shell">
+<div class="toolbar"><div class="toolbar-copy"><strong id="status">Ready</strong><span>Move once to start. No splash screens. No fake cabinet.</span></div><div class="buttons"><button class="btn" id="pauseBtn" type="button">Pause</button><button class="btn primary" id="newBtn" type="button">New Game</button></div></div>
+<div class="stage">
+<div class="canvas-wrap"><canvas id="game" width="720" height="720" aria-label="Snake game board"></canvas></div>
+<aside class="side">
+<div class="panel"><strong>How to play</strong><p>Guide the snake toward the fruit. You lose by hitting the wall or your own body.</p></div>
+<div class="panel"><strong>Status</strong><p class="status" id="statusSide">Waiting for input</p></div>
+<div class="panel"><strong>Controls</strong><div class="dpad"><button class="up" data-dir="up" aria-label="Move up">▲</button><button class="left" data-dir="left" aria-label="Move left">◀</button><button class="right" data-dir="right" aria-label="Move right">▶</button><button class="down" data-dir="down" aria-label="Move down">▼</button></div></div>
+</aside>
+</div>
+</section>
+</main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+(()=>{
+const canvas=document.getElementById('game'),ctx=canvas.getContext('2d');
+const scoreEl=document.getElementById('score'),lengthEl=document.getElementById('length'),bestEl=document.getElementById('best'),ticketsEl=document.getElementById('tickets'),statusEl=document.getElementById('status'),statusSide=document.getElementById('statusSide'),toast=document.getElementById('toast');
+const size=24,cells=30;let snake,food,dir,nextDir,running,paused,over,lastStep,score,tickets;
+let best=Number(localStorage.getItem('retrocade-snake-best')||0);bestEl.textContent=best;
+function notifyTickets(amount){toast.textContent='+'+amount+' tickets';toast.classList.add('show');clearTimeout(window.__ticketToast);window.__ticketToast=setTimeout(()=>toast.classList.remove('show'),1100)}
+function saveTickets(amount){tickets+=amount;ticketsEl.textContent=tickets;const key='retrocadeState';try{const state=JSON.parse(localStorage.getItem(key)||'{}');state.tickets=(state.tickets||0)+amount;localStorage.setItem(key,JSON.stringify(state))}catch(e){}notifyTickets(amount)}
+function spawnFood(){do{food={x:Math.floor(Math.random()*cells),y:Math.floor(Math.random()*cells)}}while(snake.some(p=>p.x===food.x&&p.y===food.y))}
+function reset(){snake=[{x:14,y:15},{x:13,y:15},{x:12,y:15}];food={x:20,y:15};dir={x:1,y:0};nextDir={x:1,y:0};running=false;paused=false;over=false;lastStep=0;score=0;tickets=0;statusEl.textContent='Ready';statusSide.textContent='Waiting for input';updateStats();draw()}
+function updateStats(){scoreEl.textContent=score;lengthEl.textContent=snake.length;ticketsEl.textContent=tickets;if(score>best){best=score;localStorage.setItem('retrocade-snake-best',best);bestEl.textContent=best}}
+function setDirection(name){const map={up:{x:0,y:-1},down:{x:0,y:1},left:{x:-1,y:0},right:{x:1,y:0}},next=map[name];if(!next)return;if(next.x+dir.x===0&&next.y+dir.y===0)return;nextDir=next;if(!running&&!over){running=true;statusEl.textContent='Playing';statusSide.textContent='In motion'}}
+function step(){dir=nextDir;const head={x:snake[0].x+dir.x,y:snake[0].y+dir.y};if(head.x<0||head.y<0||head.x>=cells||head.y>=cells||snake.some(p=>p.x===head.x&&p.y===head.y)){running=false;over=true;statusEl.textContent='Run ended';statusSide.textContent='Tap New Game to try again';return}snake.unshift(head);if(head.x===food.x&&head.y===food.y){score+=10;saveTickets(2);spawnFood()}else snake.pop();updateStats()}
+function roundedRect(x,y,w,h,r){ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill()}
+function draw(){ctx.clearRect(0,0,720,720);const bg=ctx.createLinearGradient(0,0,720,720);bg.addColorStop(0,'#091827');bg.addColorStop(1,'#07101a');ctx.fillStyle=bg;ctx.fillRect(0,0,720,720);ctx.strokeStyle='rgba(255,255,255,.045)';ctx.lineWidth=1;for(let i=1;i<cells;i++){ctx.beginPath();ctx.moveTo(i*size,0);ctx.lineTo(i*size,720);ctx.stroke();ctx.beginPath();ctx.moveTo(0,i*size);ctx.lineTo(720,i*size);ctx.stroke()}ctx.fillStyle='#fb7185';roundedRect(food.x*size+4,food.y*size+4,size-8,size-8,8);ctx.shadowColor='rgba(251,113,133,.75)';ctx.shadowBlur=18;ctx.fillStyle='#fb7185';ctx.fillRect(food.x*size+9,food.y*size+9,size-18,size-18);ctx.shadowBlur=0;snake.forEach((p,i)=>{ctx.fillStyle=i===0?'#21d4fd':'#7c5cff';roundedRect(p.x*size+2,p.y*size+2,size-4,size-4,i===0?9:7)});if(paused){ctx.fillStyle='rgba(5,8,15,.68)';ctx.fillRect(0,0,720,720);ctx.fillStyle='#f7f8ff';ctx.textAlign='center';ctx.font='800 42px system-ui';ctx.fillText('Paused',360,370)}}
+function loop(t){if(running&&!paused&&!over&&t-lastStep>105){step();lastStep=t}draw();requestAnimationFrame(loop)}
+document.addEventListener('keydown',e=>{const k=e.key.toLowerCase();if(['arrowup','w'].includes(k))setDirection('up');if(['arrowdown','s'].includes(k))setDirection('down');if(['arrowleft','a'].includes(k))setDirection('left');if(['arrowright','d'].includes(k))setDirection('right');if(k==='p')togglePause();if(k==='r')reset();if(k.startsWith('arrow'))e.preventDefault()},{passive:false});
+document.querySelectorAll('[data-dir]').forEach(btn=>btn.addEventListener('pointerdown',()=>setDirection(btn.dataset.dir)));
+let sx=0,sy=0;canvas.addEventListener('pointerdown',e=>{sx=e.clientX;sy=e.clientY});canvas.addEventListener('pointerup',e=>{const dx=e.clientX-sx,dy=e.clientY-sy;if(Math.max(Math.abs(dx),Math.abs(dy))<22)return;setDirection(Math.abs(dx)>Math.abs(dy)?(dx>0?'right':'left'):(dy>0?'down':'up'))});
+function togglePause(){if(over||!running)return;paused=!paused;statusEl.textContent=paused?'Paused':'Playing';statusSide.textContent=paused?'Game paused':'In motion';document.getElementById('pauseBtn').textContent=paused?'Resume':'Pause'}
+document.getElementById('pauseBtn').addEventListener('click',togglePause);document.getElementById('newBtn').addEventListener('click',reset);
+reset();requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

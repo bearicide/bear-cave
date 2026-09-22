@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MATTBEAR - Noise Generator</title><script src="../cave-shell.js" data-cave-root="../" defer></script>
+<meta name="description" content="Expanded industrial browser synth with incremental controls, 7 waveforms, glitch FX, DLC packs, generated sample banks, and hold-to-modulate controls.">
+<meta name="theme-color" content="#74ff39">
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+:root{--green:#74ff39;--red:#ff284d;--yellow:#ffd43b;--panel:#071008;--line:rgba(116,255,57,.28)}*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:linear-gradient(rgba(0,0,0,.78),rgba(0,0,0,.88)),radial-gradient(circle at top,#173118,#030503 60%);color:#e7ffe2;font-family:Arial,sans-serif;overflow-x:hidden;-webkit-tap-highlight-color:transparent;touch-action:manipulation}body:before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.03) 0 1px,transparent 1px 4px);pointer-events:none;mix-blend-mode:overlay}.wrap{max-width:1400px;margin:auto;padding:12px}.brand{font-size:clamp(38px,7vw,82px);font-weight:1000;color:var(--green);text-shadow:0 0 18px var(--green)}.panel{background:rgba(5,10,5,.92);border:2px solid var(--line);border-radius:18px;padding:12px;margin:12px 0;box-shadow:0 0 20px rgba(116,255,57,.12)}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}.btn{background:#091109;color:var(--green);border:2px solid var(--green);border-radius:12px;padding:10px;font-weight:1000;cursor:pointer;text-transform:uppercase;min-height:48px}.btn:hover,.btn:active{background:var(--green);color:black}.btn.red{border-color:var(--red);color:var(--red)}.btn.yellow{border-color:var(--yellow);color:var(--yellow)}.controls{display:grid;grid-template-columns:1fr 1fr;gap:6px}.readout{display:flex;justify-content:space-between;padding:7px;border-radius:8px;background:#020402;border:1px solid rgba(116,255,57,.18);margin:6px 0}.fxgrid,.samplegrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}.pad{min-height:76px;border-radius:14px;background:linear-gradient(135deg,#121,#040);display:flex;align-items:center;justify-content:center;text-align:center;border:2px solid rgba(116,255,57,.45);font-weight:1000;cursor:pointer;user-select:none}.splash{position:fixed;inset:0;z-index:99;background:radial-gradient(circle,#163116,#010301 70%);display:grid;place-items:center;text-align:center;padding:20px}.splashbox{border:3px solid var(--green);padding:26px;border-radius:24px;background:rgba(0,0,0,.65)}canvas{width:100%;height:180px;background:#010201;border:2px solid rgba(116,255,57,.2);border-radius:14px}.footer{text-align:center;opacity:.7;padding:22px 0}.hidden{display:none}@media(max-width:700px){.controls{grid-template-columns:1fr}.btn{width:100%}}
+</style>
+</head>
+<body>
+<div id='splash' class='splash'><div class='splashbox'><div class='brand'>NOISEGENERATOR</div><p>7 waveforms · hold controls · expanded FX rack · industrial browser chaos</p><button class='btn' id='enterBtn'>ENTER THE NOISE</button></div></div>
+<div class='wrap'>
+<div class='brand'>NOISEGENERATOR</div>
+<div class='panel'><canvas id='scope' width='1200' height='240'></canvas></div>
+<section class='grid' id='oscGrid'></section>
+<section class='panel'><h2>FX RACK</h2><div class='fxgrid' id='fxGrid'></div></section>
+<section class='panel'><h2>SAMPLES</h2><div class='samplegrid' id='sampleGrid'></div></section>
+<div class='footer'>bearicide.github.io · MATTBEAR</div>
+</div>
+<script>
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(console.error))}
+const waveforms=['sine','square','sawtooth','triangle','pulse','noise','metal'];
+let ctx,master,analyser,oscData=[],delay,feedback,filter,panner,waveShaper,ringGain,started=false;
+const samples=['NOISE','DRONE','GLITCH','SUBDROP','METAL HIT','STATIC BURST'];
+const $=q=>document.querySelector(q);
+function hold(btn,fn){let t;const s=e=>{e.preventDefault();fn();t=setInterval(fn,55)};const e=()=>clearInterval(t);['mousedown','touchstart'].forEach(v=>btn.addEventListener(v,s,{passive:false}));['mouseup','mouseleave','touchend','touchcancel'].forEach(v=>btn.addEventListener(v,e))}
+async function init(){if(started)return;ctx=new(window.AudioContext||window.webkitAudioContext)();master=ctx.createGain();master.gain.value=.7;analyser=ctx.createAnalyser();delay=ctx.createDelay(2);feedback=ctx.createGain();filter=ctx.createBiquadFilter();panner=ctx.createStereoPanner();waveShaper=ctx.createWaveShaper();ringGain=ctx.createGain();feedback.gain.value=.3;delay.delayTime.value=.2;filter.frequency.value=9000;delay.connect(feedback);feedback.connect(delay);master.connect(filter);filter.connect(delay);filter.connect(panner);delay.connect(panner);panner.connect(analyser);analyser.connect(ctx.destination);for(let i=0;i<4;i++)makeOsc(i);renderOsc();renderFX();renderSamples();draw();started=true}
+function makeOsc(i){const osc=ctx.createOscillator(),gain=ctx.createGain(),lfo=ctx.createOscillator(),lfoGain=ctx.createGain();osc.type=['sine','square','sawtooth','triangle'][i%4];osc.frequency.value=80+(i*80);gain.gain.value=.05;lfo.frequency.value=1+i;lfoGain.gain.value=8;lfo.connect(lfoGain);lfoGain.connect(osc.frequency);osc.connect(gain);gain.connect(master);osc.start();lfo.start();oscData.push({osc,gain,lfo,lfoGain})}
+function setWave(o,type){if(type==='pulse'){o.osc.type='square'}else if(type==='noise'){o.osc.type='sawtooth';o.osc.detune.value=Math.random()*2400}else if(type==='metal'){o.osc.type='triangle';o.osc.detune.value=1800}else{o.osc.type=type}}
+function renderOsc(){const g=$('#oscGrid');g.innerHTML='';oscData.forEach((o,i)=>{const d=document.createElement('section');d.className='panel';d.innerHTML=`<h3>OSC ${i+1}</h3><div class='readout'><span>${o.osc.type}</span><b>${o.osc.frequency.value.toFixed(0)}hz</b></div><div class='controls'><button class='btn'>FREQ +</button><button class='btn'>FREQ -</button></div><div class='controls'><button class='btn'>AMP +</button><button class='btn'>AMP -</button></div><div class='controls'><button class='btn yellow'>WAVEFORM</button><button class='btn red'>STUTTER</button></div>`;const b=d.querySelectorAll('button');hold(b[0],()=>o.osc.frequency.value=Math.min(3000,o.osc.frequency.value+5));hold(b[1],()=>o.osc.frequency.value=Math.max(20,o.osc.frequency.value-5));hold(b[2],()=>o.gain.gain.value=Math.min(1,o.gain.gain.value+.01));hold(b[3],()=>o.gain.gain.value=Math.max(0,o.gain.gain.value-.01));b[4].onclick=()=>{const current=waveforms.indexOf(o.osc.type);const next=waveforms[(current+1)%waveforms.length];setWave(o,next)};b[5].onclick=()=>{let n=0;const old=o.gain.gain.value;const t=setInterval(()=>{o.gain.gain.value=n++%2?old:0;if(n>16){clearInterval(t);o.gain.gain.value=old}},40)};g.appendChild(d)})}
+function renderFX(){const g=$('#fxGrid');const fx=[['FILTER SWEEP',()=>filter.frequency.value=400+Math.random()*12000],['RESONATOR',()=>filter.Q.value=Math.random()*28],['PHASER',()=>panner.pan.value=(Math.random()*2)-1],['DELAYER',()=>delay.delayTime.value=Math.random()],['REVERBER',()=>feedback.gain.value=Math.random()*.92],['BIT CRUSHER',()=>master.gain.value=.4+Math.random()*.4]];fx.forEach(v=>{const b=document.createElement('button');b.className='btn';b.textContent=v[0];b.onclick=v[1];g.appendChild(b)})}
+function renderSamples(){const g=$('#sampleGrid');samples.forEach(s=>{const p=document.createElement('div');p.className='pad';p.textContent=s;p.onclick=()=>playNoise();g.appendChild(p)})}
+function playNoise(){const b=ctx.createBuffer(1,ctx.sampleRate*.7,ctx.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*.45;const s=ctx.createBufferSource();s.buffer=b;s.connect(master);s.start()}
+function draw(){const c=$('#scope'),x=c.getContext('2d'),data=new Uint8Array(2048);function loop(){requestAnimationFrame(loop);analyser.getByteTimeDomainData(data);x.fillStyle='#010201';x.fillRect(0,0,c.width,c.height);x.strokeStyle='#74ff39';x.lineWidth=2;x.beginPath();for(let i=0;i<data.length;i++){const xx=i/data.length*c.width,yy=data[i]/255*c.height;if(i===0)x.moveTo(xx,yy);else x.lineTo(xx,yy)}x.stroke()}loop()}
+$('#enterBtn').onclick=async()=>{$('#splash').classList.add('hidden');await init()}
+</script>
+</body>
+</html>
