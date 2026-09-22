@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#07100d">
+  <title>MATTBEAR – VERQUINOX</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="fx.css">
+  <style>.topbar nav .cave-link{display:inline-flex;align-items:center;border:1px solid #42574c;color:#c8d5ce;background:#111d17;padding:10px 13px;text-decoration:none;font-size:11px;text-transform:uppercase}.topbar nav .cave-link:hover,.topbar nav .cave-link:focus-visible{border-color:var(--cyan);color:#fff}@media(max-width:620px){.topbar nav .cave-link{padding:10px}}</style>
+</head>
+<body>
+  <div class="scene scene-left" aria-hidden="true"></div><div class="scene scene-right" aria-hidden="true"></div>
+  <header class="topbar">
+    <div class="brand"><img src="assets/logo_main.png" alt="MATTBEAR Sampler"><div><b>VERQUINOX</b><span>sample-matching workstation</span></div></div>
+    <nav><a href="../" class="cave-link">← Bear Cave</a><button data-jump="library">Samples</button><button data-jump="lanes">Mix</button><button id="advancedToggle" aria-pressed="false">Advanced: Off</button></nav>
+  </header>
+
+  <main>
+    <section class="hero panel paw-panel">
+      <div><p class="kicker">FOREST AUDIO ENGINE</p><h1>Find the mix hidden<br>in your sample library.</h1><p>Load a folder. VERQUINOX analyzes it locally, chooses compatible layers, and renders a loop you can export.</p></div>
+      <div class="quick-steps"><b>01 / LOAD</b><span>Choose your sample folder</span><b>02 / MATCH</b><span>Generate a six-layer mix</span><b>03 / SHAPE</b><span>Lock, reroll, play and export</span></div>
+    </section>
+
+    <section class="workbench panel" id="library">
+      <div class="load-zone">
+        <label class="asset-button load-button"><input id="folderInput" type="file" webkitdirectory multiple accept="audio/*,.wav,.mp3,.ogg,.m4a,.aac,.flac"><span>LOAD SAMPLE FOLDER</span></label>
+        <button id="demoButton" class="text-button">Try built-in demo sounds</button>
+        <div class="libraryStat"><strong id="fileCount">0</strong><span>samples ready</span></div>
+      </div>
+      <div class="match-settings">
+        <label>Target BPM <input id="tempo" type="number" min="50" max="200" value="110"></label>
+        <label>Target key <select id="key"><option>Auto</option><option>C</option><option>C♯</option><option>D</option><option>D♯</option><option>E</option><option>F</option><option>F♯</option><option>G</option><option>G♯</option><option>A</option><option>A♯</option><option>B</option></select></label>
+        <button id="generateButton" class="generate" disabled><img src="assets/utility_reroll.png" alt=""><span>GENERATE MIX</span></button>
+      </div>
+    </section>
+
+    <section class="status panel" aria-live="polite"><div class="lamp"></div><div><strong id="statusTitle">Ready for a sample folder</strong><small id="statusDetail">Your audio stays on this computer.</small></div><div class="meter"><i id="progress"></i></div></section>
+
+    <section id="advancedPanel" class="advanced panel" hidden>
+      <div><b>ADVANCED MATCHING</b><small>Raise a priority to make VERQUINOX favor it more strongly.</small></div>
+      <label>Tempo <input id="tempoWeight" type="range" min="0" max="100" value="80"></label>
+      <label>Harmony <input id="harmonyWeight" type="range" min="0" max="100" value="70"></label>
+      <label>Variety <input id="varietyWeight" type="range" min="0" max="100" value="45"></label>
+      <label>Bars <select id="bars"><option>2</option><option selected>4</option><option>8</option></select></label>
+      <label class="check"><input id="normalize" type="checkbox" checked> Normalize export</label>
+    </section>
+
+    <section class="sound-design panel">
+      <div class="fx-title"><div><p class="kicker">MIX PERSONALITY</p><h2>Presets + master effects</h2></div><button id="randomPreset" class="random-preset">⚄ RANDOM WILD</button></div>
+      <div class="presets" id="presets">
+        <button data-preset="clean" class="active">Clean Clearing</button><button data-preset="roots">Deep Roots</button><button data-preset="mist">Neon Mist</button><button data-preset="broken">Broken Moon</button><button data-preset="cave">Cave Rattle</button><button data-preset="cosmic">Cosmic Bloom</button>
+      </div>
+      <div class="fx-grid">
+        <label><span>FILTER <output id="filterOut">20k</output></span><input id="fxFilter" type="range" min="180" max="20000" value="20000" step="10"></label>
+        <label><span>DRIVE <output id="driveOut">0</output></span><input id="fxDrive" type="range" min="0" max="100" value="0"></label>
+        <label><span>CRUSH <output id="crushOut">0</output></span><input id="fxCrush" type="range" min="0" max="100" value="0"></label>
+        <label><span>DELAY <output id="delayOut">0</output></span><input id="fxDelay" type="range" min="0" max="100" value="0"></label>
+        <label><span>REVERB <output id="reverbOut">0</output></span><input id="fxReverb" type="range" min="0" max="100" value="0"></label>
+        <label><span>TREMOLO <output id="tremoloOut">0</output></span><input id="fxTremolo" type="range" min="0" max="100" value="0"></label>
+        <label><span>COMPRESS <output id="compressOut">20</output></span><input id="fxCompress" type="range" min="0" max="100" value="20"></label>
+      </div>
+    </section>
+
+    <section class="transport panel">
+      <div class="transport-buttons"><button id="playButton" class="image-control play" disabled aria-label="Play"></button><button id="stopButton" class="image-control stop" disabled aria-label="Stop"></button><button id="panicButton" class="image-control panic" aria-label="Stop all sound"></button></div>
+      <div class="clock"><strong id="position">1.1</strong><span id="transportText">STOPPED</span></div>
+      <div class="timeline"><i id="playhead"></i></div>
+      <label class="master">MASTER <input id="master" type="range" min="0" max="1" value="0.82" step="0.01"></label>
+      <button id="exportButton" class="export" disabled>EXPORT MIX WAV</button>
+    </section>
+
+    <section class="mix-head"><div><p class="kicker">THE CLEARING</p><h2>Mix lanes</h2></div><p>Lock a keeper. Reroll the uncertain ones. Solo or mute to inspect the stack.</p></section>
+    <section id="lanes" class="lanes" aria-label="Mix lanes"></section>
+  </main>
+  <footer><img src="assets/background_elements.png" alt=""><span>VERQUINOX · BY MATTBEAR · LOCAL AUDIO WORKSPACE</span></footer>
+  <script src="app.js"></script>
+</body>
+</html>
