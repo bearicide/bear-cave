@@ -4,7 +4,8 @@ self.addEventListener('activate',event=>event.waitUntil(self.clients.claim()));
 self.addEventListener('fetch',event=>{
   const req=event.request;
   const url=new URL(req.url);
-  if(req.mode!=='navigate'||url.origin!==self.location.origin||!url.pathname.startsWith('/the-choppa-2/'))return;
+  const scopePath=new URL('./',self.location.href).pathname;
+  if(req.mode!=='navigate'||url.origin!==self.location.origin||!url.pathname.startsWith(scopePath))return;
   event.respondWith((async()=>{
     const res=await fetch(req,{cache:'no-store'});
     const type=res.headers.get('content-type')||'';

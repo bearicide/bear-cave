@@ -6,14 +6,14 @@ export class Achievements{
     this.queue=[];
     this.showing=false;
     this.defs=new Map([
-      ["goodmorning",["You Arrived","Nobody asked why. That was the first mercy.",25]],
-      ["walk100",["A Hundred Meters Of Proof","The world stayed mostly empty. You continued anyway.",50]],
-      ["walk1k",["Distance As Character Development","One kilometer of lunar vacancy. Heroic, technically.",100]],
-      ["walk3k",["The Map Gave Up","At this distance, empty space stops being setting and becomes accusation.",180]],
-      ["jump",["Briefly Less Grounded","Jumping solved nothing, but it did create a measurable event.",75]],
-      ["still20",["Standing Around","The moon watched you do nothing. It was almost respectful.",150]],
-      ["look45",["Looked At The Problem","You stared long enough for the lack of story to blink first.",200]],
-      ["saved",["Filed Paperwork On The Moon","Progress preserved. Bureaucracy has breached orbit.",75]]
+      ["goodmorning",["You Arrived","The first step into a very large silence.",25]],
+      ["walk100",["A Hundred Meters","The landscape opens as you move through it.",50]],
+      ["walk1k",["Lunar Traveler","One kilometer beneath the giant moon.",100]],
+      ["walk3k",["Beyond The Map","You crossed far enough for the silence to feel designed.",180]],
+      ["jump",["Briefly Less Grounded","A small leap in a place built at enormous scale.",75]],
+      ["still20",["Quiet Observer","The moon changes when you stop rushing beneath it.",150]],
+      ["look45",["Wide Horizon","You looked long enough to notice the world looking back.",200]],
+      ["saved",["Journey Preserved","Your progress through the landscape is safely stored.",75]]
     ]);
     this.renderList();
   }
