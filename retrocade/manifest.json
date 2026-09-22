@@ -1,0 +1,18 @@
+{
+  "name": "RETROCADE",
+  "short_name": "RETROCADE",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#050507",
+  "theme_color": "#00ffcc",
+  "description": "MATTBEAR neon arcade shell and HTML5 game hub.",
+  "icons": [
+    {
+      "src": "assets/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
