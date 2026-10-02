@@ -18,7 +18,7 @@ async function validCode(code){if(!/^\d{4}$/.test(code))return false;const bytes
 function unlocked(){return !$('app').hidden;}
 function showView(id){if(!unlocked())return;if(id==='admin-panel'&&!admin)return;if(rush.active&&id!=='game')finishRush('Left Pizza Rush');active=id;document.querySelectorAll('.view').forEach(v=>v.hidden=v.id!==id);document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.tab===id));}
 function setFeedback(text,bad=false){$('wizard-feedback').textContent=text;$('wizard-feedback').className=bad?'bad':completed?'success':'';$('game-feedback').textContent=text;$('game-feedback').className=bad?'bad':completed?'success':'';}
-function artStyle(name){const a=ingredientArt[name];return a?`background-image:url('assets/${a.atlas}.webp');background-position:${(a.index%4)*100/3}% ${Math.floor(a.index/4)*100/3}%;`:'';}
+function artStyle(name,onPizza=false){const a=ingredientArt[name];return a?`background-image:${onPizza&&a.atlas==='toppings'?'var(--pizza-pieces)':"url('assets/"+a.atlas+".webp')"};background-position:${(a.index%4)*100/3}% ${Math.floor(a.index/4)*100/3}%;`:'';}
 function sprite(name){const s=document.createElement('span');s.className='sprite';s.setAttribute('aria-hidden','true');s.style.cssText=artStyle(name);if(!ingredientArt[name]){s.textContent='+';s.style.cssText='display:grid;place-items:center;font-size:38px;color:#f7bbb8';}return s;}
 function recipePool(){return data.items.filter(i=>i.sequence.length&&i.ingredients.length&&(settings.reference||i.source==='flushing'||i.source==='custom'));}
 function fillRecipes(keep){const pool=recipePool();$('recipe').replaceChildren();for(const r of pool){const o=document.createElement('option');o.value=r.id;o.textContent=r.name+(r.source==='official'?' · website':'');$('recipe').append(o);}if(!pool.length){recipe=null;setFeedback('No active builds. Enable reference builds or add a recipe in admin.');return;}$('recipe').value=pool.some(r=>r.id===keep)?keep:pool[0].id;newTicket($('recipe').value);}
@@ -37,11 +37,11 @@ function toppingLayout(name){
  if(/drizzle|honey|glaze|aioli|mayo|fat ranch/i.test(name))return {kind:'drizzle',count:65,size:9};
  if(/sauce|gravy|dip/i.test(name))return {kind:'spread',count:90,size:24};
  if(/fresh mozzarella/i.test(name))return {kind:'pieces',count:16,size:12};
- if(/cheese|mozzarella|cheddar/i.test(name))return {kind:'shreds',count:130,size:9};
+ if(/cheese|mozzarella|cheddar/i.test(name))return {kind:'shreds',count:65,size:12};
  if(/herbs|basil|dill|chili powder|scallions/i.test(name))return {kind:'garnish',count:45,size:5};
- if(/pepperoni|tomato|pickles|jalape|banana pepper|olive/i.test(name))return {kind:'pieces',count:28,size:10};
+ if(/pepperoni|tomato|pickles|jalape|banana pepper|olive/i.test(name))return {kind:'pieces',count:28,size:14};
  if(/lettuce/i.test(name))return {kind:'shreds',count:80,size:8};
- return {kind:'pieces',count:48,size:8};
+ return {kind:'pieces',count:38,size:11};
 }
 function paintPizza(){
  $('layers').replaceChildren();
@@ -49,7 +49,7 @@ function paintPizza(){
   if(!ingredientArt[name])return;
   const spec=toppingLayout(name);
   for(let i=0;i<spec.count;i++){
-   const s=document.createElement('span');s.className='placed on-pie '+spec.kind;s.style.cssText=artStyle(name);s.style.zIndex=layer+1;
+   const s=document.createElement('span');s.className='placed on-pie '+spec.kind;s.style.cssText=artStyle(name,true);s.style.zIndex=layer+1;
    let x,y;
    if(spec.kind==='drizzle'){
     const row=Math.floor(i/13),col=i%13;
