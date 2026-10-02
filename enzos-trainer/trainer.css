@@ -4,3 +4,5 @@
 .topping span:last-child{font-size:14px}.topping{min-height:122px}.rail .muted,.order-note{font-size:13px}
 
 .topping,.pizza{user-select:none;-webkit-user-select:none}.topping .sprite{-webkit-user-drag:none}
+
+.menu-categories{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}.menu-categories button{font-size:13px;padding:8px 12px}.menu-categories button[aria-pressed=true]{background:var(--red);border-color:var(--red)}.menu-section-title{grid-column:1/-1;margin:22px 0 0;padding-bottom:12px;border-bottom:2px solid var(--red);font-size:26px}#menu-reset{margin-bottom:14px}
