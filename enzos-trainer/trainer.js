@@ -157,8 +157,16 @@ $('reset-progress').onclick=()=>{if(!admin)return;if(!resetArmed){resetArmed=tru
 $('admin-open').onclick=()=>{if(admin){showView('admin-panel');updateStats();return;}$('admin-code').value='';$('admin-message').textContent='';$('admin-dialog').showModal();};
 $('admin-form').onsubmit=async e=>{e.preventDefault();try{if(await validCode($('admin-code').value)){admin=true;$('admin-dialog').close();$('admin-code').value='';fillEditor(recipe?.id);for(const [id,key]of [['setting-guided','guided'],['setting-reference','reference']])$(id).checked=settings[key];updateStats();showView('admin-panel');}else $('admin-message').textContent='Incorrect four-digit code.';}catch{$('admin-message').textContent='Code check unavailable. Use the hosted HTTPS page.';}};
 $('admin-cancel').onclick=()=>$('admin-dialog').close();$('admin-close').onclick=()=>showView('game');
-$('unlock-form').onsubmit=async e=>{e.preventDefault();if(!data){$('unlock-message').textContent='Menu is still loading. Try again in a moment.';return;}try{if(await validCode($('unlock-code').value)){$('splash').hidden=true;$('app').hidden=false;$('unlock-code').value='';showView('game');}else $('unlock-message').textContent='Incorrect code. Enter four digits.';}catch{$('unlock-message').textContent='Code check unavailable. Open this trainer through HTTPS.';}};
-$('lock').onclick=()=>{if(rush.active)finishRush('Trainer locked');admin=false;$('app').hidden=true;$('splash').hidden=false;$('unlock-message').textContent='';$('unlock-code').value='';$('unlock-code').focus();prepared=false;if(recipe)newTicket(recipe.id);};
+function enterTrainer(code=''){
+ if(!data){$('unlock-message').textContent='Menu is still loading. Try again in a moment.';return;}
+ if(code&&!/^\d{4}$/.test(code)){$('unlock-message').textContent='Use four digits, or continue as a guest.';return;}
+ $('session-user').textContent=code?'Employee '+code:'Guest';
+ $('splash').hidden=true;$('app').hidden=false;$('unlock-code').value='';$('unlock-message').textContent='';
+ showView('game');
+}
+$('unlock-form').onsubmit=e=>{e.preventDefault();enterTrainer($('unlock-code').value.trim());};
+$('guest-enter').onclick=()=>enterTrainer();
+$('lock').onclick=()=>{if(rush.active)finishRush('Session ended');admin=false;$('app').hidden=true;$('splash').hidden=false;$('unlock-message').textContent='';$('unlock-code').value='';$('unlock-code').focus();prepared=false;if(recipe)newTicket(recipe.id);};
 for(const b of document.querySelectorAll('.tabs button'))b.onclick=()=>showView(b.dataset.tab);
 $('source-open').onclick=()=>$('sources').showModal();$('sources-close').onclick=()=>$('sources').close();
 function setupWizard(){
