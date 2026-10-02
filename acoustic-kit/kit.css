@@ -5,3 +5,36 @@
 .expand-kit{grid-column:1/-1;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:18px}.expand-kit h2{margin-bottom:12px}.expand-kit button,#remove-piece{width:100%;margin-top:8px}.expand-kit .hint{margin:8px 0}#remove-piece:disabled{cursor:default}.drum span:not(.bell-zone){max-width:90%;overflow-wrap:anywhere}
 
 .groove-panel,.visual-panel{padding:18px;border:1px solid var(--line);background:#161c22;margin:16px 0}.groove-heading{display:flex;align-items:center;justify-content:space-between;gap:16px}.groove-heading h2,.visual-panel h2{margin:0 0 12px}.groove-heading strong{color:var(--cyan);font-variant-numeric:tabular-nums}.groove-settings,.visual-controls{display:flex;flex-wrap:wrap;gap:14px;align-items:end}.groove-settings label,.visual-controls label{display:flex;flex-direction:column;align-items:start;gap:5px;font-size:14px}.groove-settings label.inline,.visual-controls label.inline{flex-direction:row;align-items:center;min-height:44px}input[type=number],input[type=color]{background:#242c34;color:#f4f6f8;border:1px solid #65717c;border-radius:3px;min-height:44px;font:inherit;padding:8px;width:95px}input[type=color]{padding:3px;width:65px}.groove-buttons{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0;align-items:center}#record-loop{border-color:#ef6c88;color:#ffc0d0}#record-loop.recording{background:#963149;color:white}#take-count{font-size:14px;color:var(--gold);margin-left:auto}#transport-status{font-size:14px;color:#ccd5dd;margin-bottom:12px;min-height:24px}.beat-lights{display:flex;gap:8px;margin-bottom:12px}.beat-lights i{height:8px;flex:1;background:#343e47;border-radius:2px}.beat-lights i.active{background:var(--cyan);box-shadow:0 0 12px var(--cyan)}#take-map{width:100%;height:110px;background:#0e1419;border:1px solid #3a454f;display:block}.groove-panel .hint{margin-bottom:0}.visual-panel{margin-top:12px}.visual-panel .hint{margin-bottom:0}#kit-fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:8}.drum.hit{filter:brightness(var(--hit-brightness,1.35)) drop-shadow(0 0 12px var(--fx-color,#80edf2))}#stage.clock-pulse{box-shadow:inset 0 0 45px var(--fx-color,#80edf2)}@media(max-width:600px){.groove-heading{display:block}.groove-settings label{flex:1;min-width:120px}.groove-settings select{width:100%}.groove-buttons button{flex:1;min-width:125px}#take-count{width:100%;margin:0}.visual-controls label{flex:1;min-width:120px}.groove-panel,.visual-panel{padding:12px}.groove-heading strong{display:block;margin-bottom:12px}}
+
+.kit-picker{display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px;padding:16px 18px;border:1px solid var(--line);background:#191f25;margin-top:16px}.kit-picker label{font-weight:700}.kit-picker p{flex:1;min-width:240px;margin:0;color:var(--gold)}.kit-picker>.hint{width:100%}.kit-picker select{min-width:210px}
+#stage[data-kit="maple"] .drum{background-image:url("assets/maple-drum.svg");background-size:100% 100%;background-position:center;background-color:transparent;border:0;box-shadow:none;filter:drop-shadow(0 8px 7px #0009)}
+#stage[data-kit="maple"] .drum.sound-snare{background-image:url("assets/maple-snare.svg")}
+#stage[data-kit="maple"] .drum.kick{background-image:url("assets/maple-kick.svg")}
+#stage[data-kit="maple"] .drum.cymbal{background-image:url("assets/maple-cymbal.svg")}
+#stage[data-kit="maple"] .drum.cowbell{background-image:url("assets/maple-cowbell.svg")}
+#stage[data-kit="maple"] .drum.hit{filter:brightness(var(--hit-brightness,1.35)) drop-shadow(0 0 12px var(--fx-color,#80edf2))}
+#stage[data-kit="jazz"] .drum{background-image:url("assets/jazz-drum.svg");background-size:100% 100%;background-position:center;background-color:transparent;border:0;box-shadow:none;filter:drop-shadow(0 8px 7px #0009)}
+#stage[data-kit="jazz"] .drum.sound-snare{background-image:url("assets/jazz-snare.svg")}
+#stage[data-kit="jazz"] .drum.kick{background-image:url("assets/jazz-kick.svg")}
+#stage[data-kit="jazz"] .drum.cymbal{background-image:url("assets/jazz-cymbal.svg")}
+#stage[data-kit="jazz"] .drum.cowbell{background-image:url("assets/jazz-cowbell.svg")}
+#stage[data-kit="jazz"] .drum.hit{filter:brightness(var(--hit-brightness,1.35)) drop-shadow(0 0 12px var(--fx-color,#80edf2))}
+#stage[data-kit="arena"] .drum{background-image:url("assets/arena-drum.svg");background-size:100% 100%;background-position:center;background-color:transparent;border:0;box-shadow:none;filter:drop-shadow(0 8px 7px #0009)}
+#stage[data-kit="arena"] .drum.sound-snare{background-image:url("assets/arena-snare.svg")}
+#stage[data-kit="arena"] .drum.kick{background-image:url("assets/arena-kick.svg")}
+#stage[data-kit="arena"] .drum.cymbal{background-image:url("assets/arena-cymbal.svg")}
+#stage[data-kit="arena"] .drum.cowbell{background-image:url("assets/arena-cowbell.svg")}
+#stage[data-kit="arena"] .drum.hit{filter:brightness(var(--hit-brightness,1.35)) drop-shadow(0 0 12px var(--fx-color,#80edf2))}
+#stage[data-kit="funk"] .drum{background-image:url("assets/funk-drum.svg");background-size:100% 100%;background-position:center;background-color:transparent;border:0;box-shadow:none;filter:drop-shadow(0 8px 7px #0009)}
+#stage[data-kit="funk"] .drum.sound-snare{background-image:url("assets/funk-snare.svg")}
+#stage[data-kit="funk"] .drum.kick{background-image:url("assets/funk-kick.svg")}
+#stage[data-kit="funk"] .drum.cymbal{background-image:url("assets/funk-cymbal.svg")}
+#stage[data-kit="funk"] .drum.cowbell{background-image:url("assets/funk-cowbell.svg")}
+#stage[data-kit="funk"] .drum.hit{filter:brightness(var(--hit-brightness,1.35)) drop-shadow(0 0 12px var(--fx-color,#80edf2))}
+#stage[data-kit="industrial"] .drum{background-image:url("assets/industrial-drum.svg");background-size:100% 100%;background-position:center;background-color:transparent;border:0;box-shadow:none;filter:drop-shadow(0 8px 7px #0009)}
+#stage[data-kit="industrial"] .drum.sound-snare{background-image:url("assets/industrial-snare.svg")}
+#stage[data-kit="industrial"] .drum.kick{background-image:url("assets/industrial-kick.svg")}
+#stage[data-kit="industrial"] .drum.cymbal{background-image:url("assets/industrial-cymbal.svg")}
+#stage[data-kit="industrial"] .drum.cowbell{background-image:url("assets/industrial-cowbell.svg")}
+#stage[data-kit="industrial"] .drum.hit{filter:brightness(var(--hit-brightness,1.35)) drop-shadow(0 0 12px var(--fx-color,#80edf2))}
+@media(max-width:600px){.kit-picker{padding:12px}.kit-picker label{width:100%;flex-wrap:wrap}.kit-picker select{flex:1}.kit-picker p{min-width:0}}
