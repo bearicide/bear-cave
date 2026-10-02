@@ -5,7 +5,7 @@
     "researched": "2026-10-01",
     "buildVersion": 3,
     "coverage": "Only Enzo’s Michigan website menu and Enzo’s Flushing HungerRush ordering page. The website identifies itself as a redesign preview; complete current Flushing availability is not verified. No delivery-marketplace or Slice menu facts are used.",
-    "orderNote": "Menu ingredients are restaurant-published. Base sauce and cheese omitted by the menu are explicit placeholders. Every saved build sequence is enforced exactly, but is not a verified kitchen order until confirmed in admin.",
+    "orderNote": "Menu ingredients are restaurant-published. Unspecified base cheese remains a placeholder. Sauce is required only when explicitly included in a saved recipe. Build sequences require kitchen confirmation.",
     "sources": [
       {
         "id": "official-menu",
@@ -100,7 +100,6 @@
         "Special sauce"
       ],
       "ingredients": [
-        "Base sauce (confirm with kitchen)",
         "Base cheese (confirm with kitchen)",
         "Beef",
         "Onion",
@@ -109,7 +108,6 @@
         "Special sauce"
       ],
       "sequence": [
-        "Base sauce (confirm with kitchen)",
         "Base cheese (confirm with kitchen)",
         "Beef",
         "Onion",
@@ -136,14 +134,12 @@
         "Honey"
       ],
       "ingredients": [
-        "Base sauce (confirm with kitchen)",
         "Base cheese (confirm with kitchen)",
         "Cup & crisp pepperoni",
         "Jalapeño",
         "Honey"
       ],
       "sequence": [
-        "Base sauce (confirm with kitchen)",
         "Base cheese (confirm with kitchen)",
         "Cup & crisp pepperoni",
         "Jalapeño",
@@ -296,7 +292,6 @@
         "Extra cheese"
       ],
       "ingredients": [
-        "Base sauce (confirm with kitchen)",
         "Base cheese (confirm with kitchen)",
         "Ham",
         "Bacon",
@@ -304,7 +299,6 @@
         "Extra cheese"
       ],
       "sequence": [
-        "Base sauce (confirm with kitchen)",
         "Base cheese (confirm with kitchen)",
         "Ham",
         "Bacon",
@@ -331,14 +325,12 @@
         "Basil"
       ],
       "ingredients": [
-        "Base sauce (confirm with kitchen)",
         "Fresh mozzarella",
         "Tomato",
         "Balsamic glaze",
         "Basil"
       ],
       "sequence": [
-        "Base sauce (confirm with kitchen)",
         "Fresh mozzarella",
         "Tomato",
         "Balsamic glaze",
@@ -364,7 +356,6 @@
         "Cotija cheese"
       ],
       "ingredients": [
-        "Base sauce (confirm with kitchen)",
         "Base cheese (confirm with kitchen)",
         "Sweet corn",
         "Chili powder blend",
@@ -372,7 +363,6 @@
         "Cotija cheese"
       ],
       "sequence": [
-        "Base sauce (confirm with kitchen)",
         "Base cheese (confirm with kitchen)",
         "Sweet corn",
         "Chili powder blend",
@@ -401,7 +391,6 @@
         "Tomato"
       ],
       "ingredients": [
-        "Base sauce (confirm with kitchen)",
         "Base cheese (confirm with kitchen)",
         "Mushroom",
         "Onion",
@@ -411,7 +400,6 @@
         "Tomato"
       ],
       "sequence": [
-        "Base sauce (confirm with kitchen)",
         "Base cheese (confirm with kitchen)",
         "Mushroom",
         "Onion",
@@ -501,7 +489,6 @@
         "Ranch drizzle"
       ],
       "ingredients": [
-        "Base sauce (confirm with kitchen)",
         "Base cheese (confirm with kitchen)",
         "Shaved ribeye",
         "Mushroom",
@@ -510,7 +497,6 @@
         "Ranch drizzle"
       ],
       "sequence": [
-        "Base sauce (confirm with kitchen)",
         "Base cheese (confirm with kitchen)",
         "Shaved ribeye",
         "Mushroom",
@@ -661,7 +647,6 @@
         "Mayo"
       ],
       "ingredients": [
-        "Base sauce (confirm with kitchen)",
         "Base cheese (confirm with kitchen)",
         "Bacon",
         "Lettuce",
@@ -669,7 +654,6 @@
         "Mayo"
       ],
       "sequence": [
-        "Base sauce (confirm with kitchen)",
         "Base cheese (confirm with kitchen)",
         "Bacon",
         "Lettuce",
@@ -697,7 +681,6 @@
         "Bacon"
       ],
       "ingredients": [
-        "Base sauce (confirm with kitchen)",
         "Base cheese (confirm with kitchen)",
         "Pepperoni",
         "Ham",
@@ -706,7 +689,6 @@
         "Bacon"
       ],
       "sequence": [
-        "Base sauce (confirm with kitchen)",
         "Base cheese (confirm with kitchen)",
         "Pepperoni",
         "Ham",
@@ -771,7 +753,6 @@
         "Ranch drizzle"
       ],
       "ingredients": [
-        "Base sauce (confirm with kitchen)",
         "Base cheese (confirm with kitchen)",
         "Grilled chicken",
         "Bacon",
@@ -780,7 +761,6 @@
         "Ranch drizzle"
       ],
       "sequence": [
-        "Base sauce (confirm with kitchen)",
         "Base cheese (confirm with kitchen)",
         "Grilled chicken",
         "Bacon",
@@ -812,7 +792,6 @@
         "Green olive"
       ],
       "ingredients": [
-        "Base sauce (confirm with kitchen)",
         "Base cheese (confirm with kitchen)",
         "Pepperoni",
         "Ham",
@@ -824,7 +803,6 @@
         "Green olive"
       ],
       "sequence": [
-        "Base sauce (confirm with kitchen)",
         "Base cheese (confirm with kitchen)",
         "Pepperoni",
         "Ham",
