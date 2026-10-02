@@ -75,3 +75,8 @@ em,.brand em,.unlock-card em{font-family:inherit;font-style:normal;font-weight:8
 .unlock-card .entry-help{font-size:.9375rem;line-height:1.5;color:#cbbac1;margin:8px 0 14px;max-width:350px}.unlock-card input{font-family:var(--body-font);font-size:1.5rem;letter-spacing:.22em;max-width:100%;width:100%;margin-bottom:18px}.unlock-card form{max-width:380px}.unlock-card form>button{display:block;width:100%;margin-bottom:12px}.unlock-card #guest-enter{background:transparent;border-color:#8f6171;font-size:.9375rem}.unlock-card form>p#unlock-message{min-height:24px;margin-bottom:8px}
 .session-user{font-weight:700;font-size:.8125rem;padding:5px 10px;border:1px solid #ffb3bf;border-radius:20px;white-space:nowrap}.header-actions{flex-wrap:wrap}.header-actions #mastery{font-size:.8125rem}
 @media(max-width:700px){.brand h1{font-size:1.85rem}.unlock-card h1{font-size:3.3rem}.wizard-screen h2{font-size:1.95rem}.header-actions{max-width:165px}.session-user{font-size:.75rem;padding:4px 8px}.header-actions>span{width:auto}.unlock-card form{max-width:none}}
+
+/* Sharp, discrete topping pieces instead of blurred clipped piles. */
+.pizza,.official-photo img{filter:none}.placed.on-pie{filter:none!important;clip-path:none!important;image-rendering:auto;backface-visibility:hidden}.placed.on-pie.spread{opacity:.95}.placed.on-pie.shreds,.placed.on-pie.pieces,.placed.on-pie.garnish{opacity:1}.placed.on-pie.drizzle{clip-path:ellipse(46% 14% at 50% 50%)!important}
+#wizard-pizza .pizza{max-width:480px}#wizard-finish-pizza .pizza{max-width:420px}.official-photo img{max-width:200px;max-height:200px}.splash-art:before{background-size:min(60%,250px)}
+@media(max-width:700px){#wizard-pizza .pizza{max-width:300px}#wizard-finish-pizza .pizza{max-width:300px}}
