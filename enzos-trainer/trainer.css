@@ -80,3 +80,20 @@ em,.brand em,.unlock-card em{font-family:inherit;font-style:normal;font-weight:8
 .pizza,.official-photo img{filter:none}.placed.on-pie{filter:none!important;clip-path:none!important;image-rendering:auto;backface-visibility:hidden}.placed.on-pie.spread{opacity:.95}.placed.on-pie.shreds,.placed.on-pie.pieces,.placed.on-pie.garnish{opacity:1}.placed.on-pie.drizzle{clip-path:ellipse(46% 14% at 50% 50%)!important}
 #wizard-pizza .pizza{max-width:480px}#wizard-finish-pizza .pizza{max-width:420px}.official-photo img{max-width:200px;max-height:200px}.splash-art:before{background-size:min(60%,250px)}
 @media(max-width:700px){#wizard-pizza .pizza{max-width:300px}#wizard-finish-pizza .pizza{max-width:300px}}
+
+/* Keep the current task visually dominant. */
+.sauce-layer{position:absolute;inset:9%;border-radius:50%;pointer-events:none}
+.sauce-layer.spread{background:radial-gradient(ellipse at 38% 35%,#ffffff20,transparent 55%),var(--sauce-color);box-shadow:inset 0 0 18px #703a202c;opacity:.9}
+.sauce-layer.drizzle{inset:4%;overflow:hidden}.sauce-layer svg{width:100%;height:100%;filter:drop-shadow(0 1px 1px #0003)}
+.pizza.finished .dough{filter:sepia(.35) saturate(1.45) brightness(.92)}
+.pizza.finished{outline:2px solid #bd8555;outline-offset:-8px}
+.station-head{margin-bottom:16px}.station-head h2{font-size:1.5rem;margin:5px 0}.station-head .eyebrow{font-size:.65rem}
+header{padding-top:14px;padding-bottom:14px}.brand-caption{display:none}
+.wizard{padding:22px}.wizard-route{margin-bottom:20px}.wizard-screen{min-height:0}
+#wizard-order{display:grid;grid-template-columns:1fr 200px;gap:12px 24px;align-items:center}
+#wizard-order[hidden]{display:none}#wizard-order>.eyebrow,#wizard-order>h2,#wizard-order-details,#begin-order{grid-column:1}
+#wizard-order-photo{grid-column:2;grid-row:1/5}#begin-order{justify-self:start;margin-top:8px}
+#wizard-feedback:empty{display:none}.wizard-tools{margin-top:12px}.wizard-tools button{font-size:.8rem;padding:8px 12px;background:transparent}
+#wizard-choices .topping{min-height:140px}#wizard-choices .sprite{width:85px}
+#wizard-build .wizard-build-layout{align-items:center}.wizard-nav{margin-bottom:12px}
+@media(max-width:700px){#wizard-order{grid-template-columns:1fr;gap:10px}#wizard-order-photo{grid-column:1;grid-row:auto}#wizard-order .official-photo{justify-content:start}#wizard-order .official-photo img{width:120px;height:120px}.wizard{padding:16px}#wizard-choices .topping{min-height:110px}#wizard-choices .sprite{width:65px}.station-head{gap:10px}.station-head h2{font-size:1.25rem}}
