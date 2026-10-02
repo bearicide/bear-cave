@@ -5,7 +5,7 @@
     "researched": "2026-10-01",
     "buildVersion": 3,
     "coverage": "Only Enzo’s Michigan website menu and Enzo’s Flushing HungerRush ordering page. The website identifies itself as a redesign preview; complete current Flushing availability is not verified. No delivery-marketplace or Slice menu facts are used.",
-    "orderNote": "Menu ingredients are restaurant-published. Unspecified base cheese remains a placeholder. Sauce is required only when explicitly included in a saved recipe. Build sequences require kitchen confirmation.",
+    "orderNote": "Training uses listed ingredients in a saved practice sequence. Admin can edit recipe order.",
     "sources": [
       {
         "id": "official-menu",
@@ -100,7 +100,6 @@
         "Special sauce"
       ],
       "ingredients": [
-        "Base cheese (confirm with kitchen)",
         "Beef",
         "Onion",
         "Pickles",
@@ -108,7 +107,6 @@
         "Special sauce"
       ],
       "sequence": [
-        "Base cheese (confirm with kitchen)",
         "Beef",
         "Onion",
         "Pickles",
@@ -121,7 +119,7 @@
       "status": "Enzo’s website menu · preview",
       "buildVersion": 3,
       "orderConfirmed": false,
-      "note": "Menu facts checked against Enzo’s Michigan website. Added base layers and exact build order require kitchen confirmation."
+      "note": "Listed menu ingredients; saved practice order."
     },
     {
       "id": "sweet-heat-pizza",
@@ -134,13 +132,11 @@
         "Honey"
       ],
       "ingredients": [
-        "Base cheese (confirm with kitchen)",
         "Cup & crisp pepperoni",
         "Jalapeño",
         "Honey"
       ],
       "sequence": [
-        "Base cheese (confirm with kitchen)",
         "Cup & crisp pepperoni",
         "Jalapeño",
         "Honey"
@@ -151,7 +147,7 @@
       "status": "Enzo’s website menu · preview",
       "buildVersion": 3,
       "orderConfirmed": false,
-      "note": "Menu facts checked against Enzo’s Michigan website. Added base layers and exact build order require kitchen confirmation."
+      "note": "Listed menu ingredients; saved practice order."
     },
     {
       "id": "breakfast-pizza",
@@ -182,7 +178,7 @@
       "status": "Enzo’s website menu · preview",
       "buildVersion": 3,
       "orderConfirmed": false,
-      "note": "Menu facts checked against Enzo’s Michigan website. Added base layers and exact build order require kitchen confirmation."
+      "note": "Listed menu ingredients; saved practice order."
     },
     {
       "id": "korean-pepper-steak-pizza",
@@ -197,14 +193,12 @@
       ],
       "ingredients": [
         "Korean BBQ sauce",
-        "Base cheese (confirm with kitchen)",
         "Shaved ribeye",
         "Onion",
         "Green pepper"
       ],
       "sequence": [
         "Korean BBQ sauce",
-        "Base cheese (confirm with kitchen)",
         "Shaved ribeye",
         "Onion",
         "Green pepper"
@@ -215,7 +209,7 @@
       "status": "Enzo’s website menu · preview",
       "buildVersion": 3,
       "orderConfirmed": false,
-      "note": "Menu facts checked against Enzo’s Michigan website. Added base layers and exact build order require kitchen confirmation."
+      "note": "Listed menu ingredients; saved practice order."
     },
     {
       "id": "chicken-alfredo-pizza",
@@ -229,13 +223,11 @@
       ],
       "ingredients": [
         "Alfredo sauce",
-        "Base cheese (confirm with kitchen)",
         "Grilled chicken",
         "Herbs"
       ],
       "sequence": [
         "Alfredo sauce",
-        "Base cheese (confirm with kitchen)",
         "Grilled chicken",
         "Herbs"
       ],
@@ -245,7 +237,7 @@
       "status": "Enzo’s website menu · preview",
       "buildVersion": 3,
       "orderConfirmed": false,
-      "note": "Menu facts checked against Enzo’s Michigan website. Added base layers and exact build order require kitchen confirmation."
+      "note": "Listed menu ingredients; saved practice order."
     },
     {
       "id": "buff-chicken-ranch-pizza",
@@ -260,14 +252,12 @@
       ],
       "ingredients": [
         "Buffalo sauce",
-        "Base cheese (confirm with kitchen)",
         "Grilled chicken",
         "Ranch drizzle",
         "Scallions"
       ],
       "sequence": [
         "Buffalo sauce",
-        "Base cheese (confirm with kitchen)",
         "Grilled chicken",
         "Ranch drizzle",
         "Scallions"
@@ -278,7 +268,7 @@
       "status": "Enzo’s website menu · preview",
       "buildVersion": 3,
       "orderConfirmed": false,
-      "note": "Menu facts checked against Enzo’s Michigan website. Added base layers and exact build order require kitchen confirmation."
+      "note": "Listed menu ingredients; saved practice order."
     },
     {
       "id": "hawaiian-pizza",
@@ -292,14 +282,12 @@
         "Extra cheese"
       ],
       "ingredients": [
-        "Base cheese (confirm with kitchen)",
         "Ham",
         "Bacon",
         "Pineapple",
         "Extra cheese"
       ],
       "sequence": [
-        "Base cheese (confirm with kitchen)",
         "Ham",
         "Bacon",
         "Pineapple",
@@ -311,7 +299,7 @@
       "status": "Enzo’s website menu · preview",
       "buildVersion": 3,
       "orderConfirmed": false,
-      "note": "Menu facts checked against Enzo’s Michigan website. Added base layers and exact build order require kitchen confirmation."
+      "note": "Listed menu ingredients; saved practice order."
     },
     {
       "id": "margherita-pizza",
@@ -342,7 +330,7 @@
       "status": "Enzo’s website menu · preview",
       "buildVersion": 3,
       "orderConfirmed": false,
-      "note": "Menu facts checked against Enzo’s Michigan website. Added base layers and exact build order require kitchen confirmation."
+      "note": "Listed menu ingredients; saved practice order."
     },
     {
       "id": "mexican-street-corn-pizza",
@@ -356,14 +344,12 @@
         "Cotija cheese"
       ],
       "ingredients": [
-        "Base cheese (confirm with kitchen)",
         "Sweet corn",
         "Chili powder blend",
         "Lemon aioli",
         "Cotija cheese"
       ],
       "sequence": [
-        "Base cheese (confirm with kitchen)",
         "Sweet corn",
         "Chili powder blend",
         "Lemon aioli",
@@ -375,7 +361,7 @@
       "status": "Enzo’s website menu · preview",
       "buildVersion": 3,
       "orderConfirmed": false,
-      "note": "Menu facts checked against Enzo’s Michigan website. Added base layers and exact build order require kitchen confirmation."
+      "note": "Listed menu ingredients; saved practice order."
     },
     {
       "id": "veggie-pizza",
@@ -391,7 +377,6 @@
         "Tomato"
       ],
       "ingredients": [
-        "Base cheese (confirm with kitchen)",
         "Mushroom",
         "Onion",
         "Green pepper",
@@ -400,7 +385,6 @@
         "Tomato"
       ],
       "sequence": [
-        "Base cheese (confirm with kitchen)",
         "Mushroom",
         "Onion",
         "Green pepper",
@@ -414,7 +398,7 @@
       "status": "Enzo’s website menu · preview",
       "buildVersion": 3,
       "orderConfirmed": false,
-      "note": "Menu facts checked against Enzo’s Michigan website. Added base layers and exact build order require kitchen confirmation."
+      "note": "Listed menu ingredients; saved practice order."
     },
     {
       "id": "the-intimidator-pizza",
@@ -438,7 +422,6 @@
       ],
       "ingredients": [
         "Buffalo sauce",
-        "Base cheese (confirm with kitchen)",
         "Pepperoni",
         "Ham",
         "Sausage",
@@ -454,7 +437,6 @@
       ],
       "sequence": [
         "Buffalo sauce",
-        "Base cheese (confirm with kitchen)",
         "Pepperoni",
         "Ham",
         "Sausage",
@@ -474,7 +456,7 @@
       "status": "Enzo’s website menu · preview",
       "buildVersion": 3,
       "orderConfirmed": false,
-      "note": "Menu facts checked against Enzo’s Michigan website. Added base layers and exact build order require kitchen confirmation."
+      "note": "Listed menu ingredients; saved practice order."
     },
     {
       "id": "philly-cheese-steak-pizza",
@@ -489,7 +471,6 @@
         "Ranch drizzle"
       ],
       "ingredients": [
-        "Base cheese (confirm with kitchen)",
         "Shaved ribeye",
         "Mushroom",
         "Onion",
@@ -497,7 +478,6 @@
         "Ranch drizzle"
       ],
       "sequence": [
-        "Base cheese (confirm with kitchen)",
         "Shaved ribeye",
         "Mushroom",
         "Onion",
@@ -510,7 +490,7 @@
       "status": "Enzo’s website menu · preview",
       "buildVersion": 3,
       "orderConfirmed": false,
-      "note": "Menu facts checked against Enzo’s Michigan website. Added base layers and exact build order require kitchen confirmation."
+      "note": "Listed menu ingredients; saved practice order."
     },
     {
       "id": "pickle-pizza",
@@ -524,13 +504,11 @@
       ],
       "ingredients": [
         "Super secret sauce",
-        "Base cheese (confirm with kitchen)",
         "Pickles",
         "Dill"
       ],
       "sequence": [
         "Super secret sauce",
-        "Base cheese (confirm with kitchen)",
         "Pickles",
         "Dill"
       ],
@@ -540,7 +518,7 @@
       "status": "Enzo’s website menu · preview",
       "buildVersion": 3,
       "orderConfirmed": false,
-      "note": "Menu facts checked against Enzo’s Michigan website. Added base layers and exact build order require kitchen confirmation."
+      "note": "Listed menu ingredients; saved practice order."
     },
     {
       "id": "jalapeno-popper-pizza",
@@ -554,13 +532,11 @@
       ],
       "ingredients": [
         "Garlic cream cheese dip",
-        "Base cheese (confirm with kitchen)",
         "Bacon",
         "Jalapeño"
       ],
       "sequence": [
         "Garlic cream cheese dip",
-        "Base cheese (confirm with kitchen)",
         "Bacon",
         "Jalapeño"
       ],
@@ -570,7 +546,7 @@
       "status": "Enzo’s website menu · preview",
       "buildVersion": 3,
       "orderConfirmed": false,
-      "note": "Menu facts checked against Enzo’s Michigan website. Added base layers and exact build order require kitchen confirmation."
+      "note": "Listed menu ingredients; saved practice order."
     },
     {
       "id": "crab-rangoon-pizza",
@@ -584,13 +560,11 @@
       ],
       "ingredients": [
         "Garlic cream cheese dip",
-        "Base cheese (confirm with kitchen)",
         "Crab",
         "Crispy wontons"
       ],
       "sequence": [
         "Garlic cream cheese dip",
-        "Base cheese (confirm with kitchen)",
         "Crab",
         "Crispy wontons"
       ],
@@ -600,7 +574,7 @@
       "status": "Enzo’s website menu · preview",
       "buildVersion": 3,
       "orderConfirmed": false,
-      "note": "Menu facts checked against Enzo’s Michigan website. Added base layers and exact build order require kitchen confirmation."
+      "note": "Listed menu ingredients; saved practice order."
     },
     {
       "id": "oinker-pizza",
@@ -615,14 +589,12 @@
       ],
       "ingredients": [
         "Vodka sauce",
-        "Base cheese (confirm with kitchen)",
         "Extra cheese",
         "Cup & crisp pepperoni",
         "Fat ranch"
       ],
       "sequence": [
         "Vodka sauce",
-        "Base cheese (confirm with kitchen)",
         "Extra cheese",
         "Cup & crisp pepperoni",
         "Fat ranch"
@@ -633,7 +605,7 @@
       "status": "Enzo’s website menu · preview",
       "buildVersion": 3,
       "orderConfirmed": false,
-      "note": "Menu facts checked against Enzo’s Michigan website. Added base layers and exact build order require kitchen confirmation."
+      "note": "Listed menu ingredients; saved practice order."
     },
     {
       "id": "blt-pizza",
@@ -647,14 +619,12 @@
         "Mayo"
       ],
       "ingredients": [
-        "Base cheese (confirm with kitchen)",
         "Bacon",
         "Lettuce",
         "Tomato",
         "Mayo"
       ],
       "sequence": [
-        "Base cheese (confirm with kitchen)",
         "Bacon",
         "Lettuce",
         "Tomato",
@@ -666,7 +636,7 @@
       "status": "Enzo’s website menu · preview",
       "buildVersion": 3,
       "orderConfirmed": false,
-      "note": "Menu facts checked against Enzo’s Michigan website. Added base layers and exact build order require kitchen confirmation."
+      "note": "Listed menu ingredients; saved practice order."
     },
     {
       "id": "meat-lovers-pizza",
@@ -681,7 +651,6 @@
         "Bacon"
       ],
       "ingredients": [
-        "Base cheese (confirm with kitchen)",
         "Pepperoni",
         "Ham",
         "Sausage",
@@ -689,7 +658,6 @@
         "Bacon"
       ],
       "sequence": [
-        "Base cheese (confirm with kitchen)",
         "Pepperoni",
         "Ham",
         "Sausage",
@@ -702,7 +670,7 @@
       "status": "Enzo’s website menu · preview",
       "buildVersion": 3,
       "orderConfirmed": false,
-      "note": "Menu facts checked against Enzo’s Michigan website. Added base layers and exact build order require kitchen confirmation."
+      "note": "Listed menu ingredients; saved practice order."
     },
     {
       "id": "bbq-chicken-pizza",
@@ -718,7 +686,6 @@
       ],
       "ingredients": [
         "BBQ sauce",
-        "Base cheese (confirm with kitchen)",
         "Grilled chicken",
         "Bacon",
         "Red onion",
@@ -726,7 +693,6 @@
       ],
       "sequence": [
         "BBQ sauce",
-        "Base cheese (confirm with kitchen)",
         "Grilled chicken",
         "Bacon",
         "Red onion",
@@ -738,7 +704,7 @@
       "status": "Enzo’s website menu · preview",
       "buildVersion": 3,
       "orderConfirmed": false,
-      "note": "Menu facts checked against Enzo’s Michigan website. Added base layers and exact build order require kitchen confirmation."
+      "note": "Listed menu ingredients; saved practice order."
     },
     {
       "id": "chicken-bacon-ranch-pizza",
@@ -753,7 +719,6 @@
         "Ranch drizzle"
       ],
       "ingredients": [
-        "Base cheese (confirm with kitchen)",
         "Grilled chicken",
         "Bacon",
         "Onion",
@@ -761,7 +726,6 @@
         "Ranch drizzle"
       ],
       "sequence": [
-        "Base cheese (confirm with kitchen)",
         "Grilled chicken",
         "Bacon",
         "Onion",
@@ -774,7 +738,7 @@
       "status": "Enzo’s website menu · preview",
       "buildVersion": 3,
       "orderConfirmed": false,
-      "note": "Menu facts checked against Enzo’s Michigan website. Added base layers and exact build order require kitchen confirmation."
+      "note": "Listed menu ingredients; saved practice order."
     },
     {
       "id": "huckleberry-pizza",
@@ -792,7 +756,6 @@
         "Green olive"
       ],
       "ingredients": [
-        "Base cheese (confirm with kitchen)",
         "Pepperoni",
         "Ham",
         "Sausage",
@@ -803,7 +766,6 @@
         "Green olive"
       ],
       "sequence": [
-        "Base cheese (confirm with kitchen)",
         "Pepperoni",
         "Ham",
         "Sausage",
@@ -819,7 +781,7 @@
       "status": "Enzo’s website menu · preview",
       "buildVersion": 3,
       "orderConfirmed": false,
-      "note": "Menu facts checked against Enzo’s Michigan website. Added base layers and exact build order require kitchen confirmation."
+      "note": "Listed menu ingredients; saved practice order."
     },
     {
       "id": "official-breadstix",
