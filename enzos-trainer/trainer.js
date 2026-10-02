@@ -33,7 +33,39 @@ function renderRail(){
 function renderProgress(){renderProcedure();renderBuildStrip();$('game-progress').textContent=`${applied.length} / ${recipe.sequence.length} ingredients`;$('game-bar').style.width=(applied.length/recipe.sequence.length*100)+'%';$('next-step').textContent=rush.finished?'Shift finished':completed?'Ticket complete':!prepared?'Prepare your dough first':!rush.active&&(settings.guided||hintShown)?'Next: '+recipe.sequence[applied.length]:'Recall the next ingredient from memory.';$('station-badge').textContent=rush.finished?'Shift finished':completed?'Ready to serve':prepared?'Add toppings in '+'the exact saved order':'Choose crust to begin';$('applied-list').replaceChildren();for(const name of applied){const li=document.createElement('li');li.textContent=name;$('applied-list').append(li);}$('undo').disabled=!applied.length||counted;$('hint').disabled=rush.active||!prepared||completed;}
 $('prep').onclick=()=>{if(!recipe||prepared)return;if($('crust-choice').value!==recipe.crust){mistakes++;rushMiss();setFeedback('Check the crust on the ticket. '+(recipe.crust==='Not specified'?'This menu does not specify a crust flavor.':'Choose '+recipe.crust+'.'),true);return;}prepared=true;wizardStage='build';startTime=Date.now();$('pizza').classList.add('prepared');$('prep').disabled=true;$('crust-choice').disabled=true;renderProgress();setFeedback('Dough ready. Select an ingredient for the current step, then confirm.');};
 function addIngredient(name){if(!unlocked()||active!=='game')return;if(rush.active&&rushTime()===0){finishRush('Time is up');return;}if(!prepared){setFeedback('Prepare the dough before adding toppings.',true);return;}if(completed||awaitingAdvance||applied.length>=recipe.sequence.length)return;attempts++;stats.buildAttempts++;const expected=recipe.sequence[applied.length];const correct=name===expected;if(!correct){mistakes++;rushMiss();save();setFeedback(recipe.ingredients.includes(name)?'That belongs on this pizza, but it is not the next practice step.':'That ingredient is not listed for this pizza.',true);return;}applied.push(name);stats.buildCorrect++;hintShown=false;awaitingAdvance=false;paintPizza();setFeedback(name+' added.');renderProgress();save();}
-function paintPizza(){$('layers').replaceChildren();applied.forEach((name,layer)=>{if(!ingredientArt[name])return;const sauce=/sauce|gravy|dip/i.test(name)&&!/(drizzle|ranch)/i.test(name),cheese=/cheese|mozzarella|cheddar/i.test(name);const n=sauce?1:cheese?8:9;for(let i=0;i<n;i++){const s=document.createElement('span');s.className='placed'+(sauce?' sauce':cheese?' cheese':'');s.style.cssText=artStyle(name);s.style.zIndex=layer+1;if(!sauce){const angle=(i*2.399963+layer*.7),radius=10+Math.sqrt((i+1)/n)*28;s.style.left=(50+Math.cos(angle)*radius)+'%';s.style.top=(50+Math.sin(angle)*radius)+'%';s.style.width=(cheese?38:20)+'%';s.style.transform=`translate(-50%,-50%) rotate(${(i*41+layer*13)%360}deg)`;}$('layers').append(s);}});}
+function toppingLayout(name){
+ if(/drizzle|honey|glaze|aioli|mayo|fat ranch/i.test(name))return {kind:'drizzle',count:65,size:9};
+ if(/sauce|gravy|dip/i.test(name))return {kind:'spread',count:90,size:24};
+ if(/fresh mozzarella/i.test(name))return {kind:'pieces',count:16,size:12};
+ if(/cheese|mozzarella|cheddar/i.test(name))return {kind:'shreds',count:130,size:9};
+ if(/herbs|basil|dill|chili powder|scallions/i.test(name))return {kind:'garnish',count:45,size:5};
+ if(/pepperoni|tomato|pickles|jalape|banana pepper|olive/i.test(name))return {kind:'pieces',count:28,size:10};
+ if(/lettuce/i.test(name))return {kind:'shreds',count:80,size:8};
+ return {kind:'pieces',count:48,size:8};
+}
+function paintPizza(){
+ $('layers').replaceChildren();
+ applied.forEach((name,layer)=>{
+  if(!ingredientArt[name])return;
+  const spec=toppingLayout(name);
+  for(let i=0;i<spec.count;i++){
+   const s=document.createElement('span');s.className='placed on-pie '+spec.kind;s.style.cssText=artStyle(name);s.style.zIndex=layer+1;
+   let x,y;
+   if(spec.kind==='drizzle'){
+    const row=Math.floor(i/13),col=i%13;
+    x=15+col*5.8;y=22+row*13+Math.sin(col*.8)*2.5;
+    if(Math.hypot(x-50,y-50)>40)continue;
+   }else{
+    const angle=i*2.399963+layer*.83,radius=Math.sqrt((i+.5)/spec.count)*43;
+    x=50+Math.cos(angle)*radius;y=50+Math.sin(angle)*radius;
+   }
+   const variation=.8+((i*17+layer*7)%11)/25;
+   s.style.left=x+'%';s.style.top=y+'%';s.style.width=(spec.size*variation)+'%';
+   s.style.transform='translate(-50%,-50%) rotate('+((i*67+layer*23)%360)+'deg)';
+   s.setAttribute('aria-hidden','true');$('layers').append(s);
+  }
+ });
+}
 function attachDrag(button,name){let drag=null,skipClick=false;button.draggable=true;button.addEventListener('dragstart',e=>{drag?.ghost?.remove();drag=null;skipClick=true;e.dataTransfer.setData('text/plain',name);e.dataTransfer.effectAllowed='copy';});button.addEventListener('dragend',()=>{$('pizza').classList.remove('over');setTimeout(()=>skipClick=false,0);});button.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse')return;drag={id:e.pointerId,x:e.clientX,y:e.clientY,moved:false,ghost:null};button.setPointerCapture(e.pointerId);});button.addEventListener('pointermove',e=>{if(!drag||e.pointerId!==drag.id)return;if(Math.hypot(e.clientX-drag.x,e.clientY-drag.y)>8&&!drag.moved){drag.moved=true;drag.ghost=document.createElement('div');drag.ghost.className='drag-ghost';drag.ghost.append(sprite(name));document.body.append(drag.ghost);}if(drag.moved){drag.ghost.style.left=(e.clientX-50)+'px';drag.ghost.style.top=(e.clientY-50)+'px';$('pizza').classList.toggle('over',overPizza(e.clientX,e.clientY));if(e.clientY<65)window.scrollBy(0,-12);if(e.clientY>innerHeight-65)window.scrollBy(0,12);}});button.addEventListener('pointerup',e=>{if(!drag)return;skipClick=drag.moved;if(drag.moved){if(overPizza(e.clientX,e.clientY))addIngredient(name);else setFeedback('Drop the ingredient onto the pizza, or tap its bin.');}drag.ghost?.remove();drag=null;$('pizza').classList.remove('over');});for(const type of ['pointercancel','lostpointercapture'])button.addEventListener(type,()=>{drag?.ghost?.remove();drag=null;$('pizza').classList.remove('over');});button.addEventListener('click',()=>{if(skipClick){skipClick=false;return;}addIngredient(name);});}
 function overPizza(x,y){const r=$('pizza').getBoundingClientRect();return Math.hypot(x-(r.left+r.width/2),y-(r.top+r.height/2))<=r.width*.45;}
 $('hint').onclick=()=>{hintShown=true;renderProgress();};$('undo').onclick=()=>{if(!applied.length||counted)return;applied.pop();awaitingAdvance=false;selectedIngredient=null;paintPizza();renderProgress();setFeedback('Last ingredient removed.');};$('restart').onclick=()=>{if(!rush.active)newTicket(recipe.id);};$('recipe').onchange=e=>{if(!rush.active)newTicket(e.target.value);};
