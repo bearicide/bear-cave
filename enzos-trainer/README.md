@@ -26,3 +26,5 @@ Serve this folder over HTTPS or a local HTTP development server. SHA-256 passcod
 ## Assets
 
 Four images generated with the built-in ImageGen tool and converted to WebP without changing alpha. Three four-by-four atlases contain 48 ingredient/condiment sprites, plus an overhead dough base. Ingredient sprites illustrate food types, not actual Enzo's food, proprietary sauce formulas or portion standards. Mozzarella artwork also represents labeled extra cheese; orange cheddar artwork represents Monterey cheddar. Standard pepperoni artwork also illustrates the explicitly labeled cupping pepperoni. Unknown custom ingredients get a labeled generic fallback; do not invent their visual identity. See assets/CREDITS.md.
+
+Build update: sauce and cheese are mandatory topping steps. The saved sequence is always enforced; any-order mode is removed. Unedited saved menus migrate to the new base layers, while custom kitchen recipes are preserved. Default base layers and construction order require kitchen confirmation.

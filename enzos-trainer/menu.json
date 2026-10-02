@@ -4,7 +4,7 @@
     "location": "Flushing, Michigan",
     "researched": "2026-10-01",
     "coverage": "All retrieved Enzo’s reference menu items plus Flushing location listings. Complete current Flushing availability could not be verified.",
-    "orderNote": "Public menus specify ingredients, not kitchen assembly order. Default sequences are menu-list practice order until edited and confirmed in admin.",
+    "orderNote": "Every build includes sauce and cheese. Exact saved sequence is mandatory. Base layers and public-menu ingredient order are provisional until the kitchen confirms the recipe.",
     "sources": [
       {
         "id": "flushing",
@@ -26,7 +26,8 @@
         "name": "Enzo’s location ordering",
         "url": "https://enzospizzeriami.hungerrush.com/Order/Menu/3"
       }
-    ]
+    ],
+    "buildVersion": 2
   },
   "items": [
     {
@@ -34,6 +35,8 @@
       "name": "Hawaiian Pizza",
       "category": "Specialty pizzas",
       "ingredients": [
+        "Pizza sauce",
+        "Base cheese (confirm with kitchen)",
         "Ham",
         "Bacon",
         "Pineapple",
@@ -44,20 +47,31 @@
       "source": "flushing",
       "status": "Flushing listing",
       "sequence": [
+        "Pizza sauce",
+        "Base cheese (confirm with kitchen)",
         "Ham",
         "Bacon",
         "Pineapple",
         "Extra cheese"
       ],
       "orderConfirmed": false,
-      "note": "Published ingredient list; starting practice order follows the listing, not a verified kitchen recipe.",
-      "referenceNote": "Classic Ham, Bacon & Pineapple. Customize it w/ Your Favorite Crust Flavor!"
+      "note": "Strict practice sequence: base sauce, base cheese, then remaining listed ingredients. Added base layers and placement order need kitchen confirmation; finishing cheese and drizzles remain separate steps.",
+      "referenceNote": "Classic Ham, Bacon & Pineapple. Customize it w/ Your Favorite Crust Flavor!",
+      "publishedIngredients": [
+        "Ham",
+        "Bacon",
+        "Pineapple",
+        "Extra cheese"
+      ],
+      "buildVersion": 2
     },
     {
       "id": "veggie-pizza",
       "name": "Veggie Pizza",
       "category": "Specialty pizzas",
       "ingredients": [
+        "Pizza sauce",
+        "Base cheese (confirm with kitchen)",
         "Mushroom",
         "Onion",
         "Green pepper",
@@ -70,6 +84,8 @@
       "source": "flushing",
       "status": "Flushing listing",
       "sequence": [
+        "Pizza sauce",
+        "Base cheese (confirm with kitchen)",
         "Mushroom",
         "Onion",
         "Green pepper",
@@ -78,8 +94,17 @@
         "Tomato"
       ],
       "orderConfirmed": false,
-      "note": "Published ingredient list; starting practice order follows the listing, not a verified kitchen recipe.",
-      "referenceNote": "Sliced Tomato, Mushrooms, Onions, Green Peppers, Green & Black Olives!"
+      "note": "Strict practice sequence: base sauce, base cheese, then remaining listed ingredients. Added base layers and placement order need kitchen confirmation; finishing cheese and drizzles remain separate steps.",
+      "referenceNote": "Sliced Tomato, Mushrooms, Onions, Green Peppers, Green & Black Olives!",
+      "publishedIngredients": [
+        "Mushroom",
+        "Onion",
+        "Green pepper",
+        "Black olive",
+        "Green olive",
+        "Tomato"
+      ],
+      "buildVersion": 2
     },
     {
       "id": "buff-chicken-ranch-pizza",
@@ -87,6 +112,7 @@
       "category": "Specialty pizzas",
       "ingredients": [
         "Buffalo sauce",
+        "Base cheese (confirm with kitchen)",
         "Grilled chicken",
         "Ranch drizzle",
         "Scallions"
@@ -97,12 +123,20 @@
       "status": "Flushing listing",
       "sequence": [
         "Buffalo sauce",
+        "Base cheese (confirm with kitchen)",
         "Grilled chicken",
         "Ranch drizzle",
         "Scallions"
       ],
       "orderConfirmed": false,
-      "note": "Published ingredient list; starting practice order follows the listing, not a verified kitchen recipe."
+      "note": "Strict practice sequence: base sauce, base cheese, then remaining listed ingredients. Added base layers and placement order need kitchen confirmation; finishing cheese and drizzles remain separate steps.",
+      "publishedIngredients": [
+        "Buffalo sauce",
+        "Grilled chicken",
+        "Ranch drizzle",
+        "Scallions"
+      ],
+      "buildVersion": 2
     },
     {
       "id": "breakfast-pizza",
@@ -110,9 +144,9 @@
       "category": "Specialty pizzas",
       "ingredients": [
         "Sausage gravy",
+        "Monterey cheddar",
         "Scrambled egg",
-        "Sausage",
-        "Monterey cheddar"
+        "Sausage"
       ],
       "crust": "Everything bagel",
       "description": "Sausage gravy, Scrambled egg, Sausage, Monterey cheddar.",
@@ -120,18 +154,27 @@
       "status": "Flushing listing",
       "sequence": [
         "Sausage gravy",
+        "Monterey cheddar",
+        "Scrambled egg",
+        "Sausage"
+      ],
+      "orderConfirmed": false,
+      "note": "Strict practice sequence: base sauce, base cheese, then remaining listed ingredients. Added base layers and placement order need kitchen confirmation; finishing cheese and drizzles remain separate steps.",
+      "publishedIngredients": [
+        "Sausage gravy",
         "Scrambled egg",
         "Sausage",
         "Monterey cheddar"
       ],
-      "orderConfirmed": false,
-      "note": "Published ingredient list; starting practice order follows the listing, not a verified kitchen recipe."
+      "buildVersion": 2
     },
     {
       "id": "mexican-street-corn-pizza",
       "name": "Mexican Street Corn Pizza",
       "category": "Specialty pizzas",
       "ingredients": [
+        "Base sauce (confirm with kitchen)",
+        "Base cheese (confirm with kitchen)",
         "Sweet corn",
         "Chili powder blend",
         "Lemon aioli",
@@ -142,14 +185,23 @@
       "source": "flushing",
       "status": "Flushing listing",
       "sequence": [
+        "Base sauce (confirm with kitchen)",
+        "Base cheese (confirm with kitchen)",
         "Sweet corn",
         "Chili powder blend",
         "Lemon aioli",
         "Cotija cheese"
       ],
       "orderConfirmed": false,
-      "note": "Published ingredient list; starting practice order follows the listing, not a verified kitchen recipe.",
-      "referenceNote": "Chili Lime Crust, Enzo Cheese Blend, Michigan Sweet Corn, Chili Powder, Lemon Aoili, Cotija Cheese, Chili Lime Seasoning"
+      "note": "Strict practice sequence: base sauce, base cheese, then remaining listed ingredients. Added base layers and placement order need kitchen confirmation; finishing cheese and drizzles remain separate steps.",
+      "referenceNote": "Chili Lime Crust, Enzo Cheese Blend, Michigan Sweet Corn, Chili Powder, Lemon Aoili, Cotija Cheese, Chili Lime Seasoning",
+      "publishedIngredients": [
+        "Sweet corn",
+        "Chili powder blend",
+        "Lemon aioli",
+        "Cotija cheese"
+      ],
+      "buildVersion": 2
     },
     {
       "id": "korean-pepper-steak-pizza",
@@ -157,6 +209,7 @@
       "category": "Specialty pizzas",
       "ingredients": [
         "Korean BBQ sauce",
+        "Base cheese (confirm with kitchen)",
         "Shaved ribeye",
         "Onion",
         "Green pepper"
@@ -167,13 +220,21 @@
       "status": "Flushing listing",
       "sequence": [
         "Korean BBQ sauce",
+        "Base cheese (confirm with kitchen)",
         "Shaved ribeye",
         "Onion",
         "Green pepper"
       ],
       "orderConfirmed": false,
-      "note": "Published ingredient list; starting practice order follows the listing, not a verified kitchen recipe.",
-      "referenceNote": "Shaved Ribeye, Onions, Green Peppers, Our Signature Super Saiyan Wing Sauce, w/ Sesame Crust."
+      "note": "Strict practice sequence: base sauce, base cheese, then remaining listed ingredients. Added base layers and placement order need kitchen confirmation; finishing cheese and drizzles remain separate steps.",
+      "referenceNote": "Shaved Ribeye, Onions, Green Peppers, Our Signature Super Saiyan Wing Sauce, w/ Sesame Crust.",
+      "publishedIngredients": [
+        "Korean BBQ sauce",
+        "Shaved ribeye",
+        "Onion",
+        "Green pepper"
+      ],
+      "buildVersion": 2
     },
     {
       "id": "crab-rangoon-pizza",
@@ -181,6 +242,7 @@
       "category": "Specialty pizzas",
       "ingredients": [
         "Garlic cream cheese dip",
+        "Base cheese (confirm with kitchen)",
         "Crab",
         "Crispy wontons",
         "Scallions"
@@ -191,19 +253,29 @@
       "status": "Flushing listing",
       "sequence": [
         "Garlic cream cheese dip",
+        "Base cheese (confirm with kitchen)",
         "Crab",
         "Crispy wontons",
         "Scallions"
       ],
       "orderConfirmed": false,
-      "note": "Published ingredient list; starting practice order follows the listing, not a verified kitchen recipe.",
-      "referenceNote": "Enzo's Garlic Cream Cheese Dip, Lobster & Crab. Topped w/ Sweet Chili Sauce, Crispy Wontons, & Scallions!"
+      "note": "Strict practice sequence: base sauce, base cheese, then remaining listed ingredients. Added base layers and placement order need kitchen confirmation; finishing cheese and drizzles remain separate steps.",
+      "referenceNote": "Enzo's Garlic Cream Cheese Dip, Lobster & Crab. Topped w/ Sweet Chili Sauce, Crispy Wontons, & Scallions!",
+      "publishedIngredients": [
+        "Garlic cream cheese dip",
+        "Crab",
+        "Crispy wontons",
+        "Scallions"
+      ],
+      "buildVersion": 2
     },
     {
       "id": "return-of-the-mac-pizza",
       "name": "Return of the Mac Pizza",
       "category": "Specialty pizzas",
       "ingredients": [
+        "Base sauce (confirm with kitchen)",
+        "Base cheese (confirm with kitchen)",
         "Beef",
         "Onion",
         "Pickles",
@@ -215,6 +287,8 @@
       "source": "flushing",
       "status": "Flushing listing",
       "sequence": [
+        "Base sauce (confirm with kitchen)",
+        "Base cheese (confirm with kitchen)",
         "Beef",
         "Onion",
         "Pickles",
@@ -222,8 +296,16 @@
         "Special sauce"
       ],
       "orderConfirmed": false,
-      "note": "Published ingredient list; starting practice order follows the listing, not a verified kitchen recipe.",
-      "referenceNote": "OUR VERSION OF AN AMERICAN CLASSIC. Lots of Beef, Pickles, Onions, Cheddar Cheese, & Sesame Seed Crust! Topped w/ Lettuce & Special Sauce"
+      "note": "Strict practice sequence: base sauce, base cheese, then remaining listed ingredients. Added base layers and placement order need kitchen confirmation; finishing cheese and drizzles remain separate steps.",
+      "referenceNote": "OUR VERSION OF AN AMERICAN CLASSIC. Lots of Beef, Pickles, Onions, Cheddar Cheese, & Sesame Seed Crust! Topped w/ Lettuce & Special Sauce",
+      "publishedIngredients": [
+        "Beef",
+        "Onion",
+        "Pickles",
+        "Lettuce",
+        "Special sauce"
+      ],
+      "buildVersion": 2
     },
     {
       "id": "chicken-alfredo-pizza",
@@ -231,6 +313,7 @@
       "category": "Specialty pizzas",
       "ingredients": [
         "Alfredo sauce",
+        "Base cheese (confirm with kitchen)",
         "Grilled chicken",
         "Herbs"
       ],
@@ -240,18 +323,27 @@
       "status": "Flushing listing",
       "sequence": [
         "Alfredo sauce",
+        "Base cheese (confirm with kitchen)",
         "Grilled chicken",
         "Herbs"
       ],
       "orderConfirmed": false,
-      "note": "Published ingredient list; starting practice order follows the listing, not a verified kitchen recipe.",
-      "referenceNote": "Alfredo Base, Chicken, Enzo Cheese Blend & Parmesan, Fresh Basil & Garlic Butter Parm Crust"
+      "note": "Strict practice sequence: base sauce, base cheese, then remaining listed ingredients. Added base layers and placement order need kitchen confirmation; finishing cheese and drizzles remain separate steps.",
+      "referenceNote": "Alfredo Base, Chicken, Enzo Cheese Blend & Parmesan, Fresh Basil & Garlic Butter Parm Crust",
+      "publishedIngredients": [
+        "Alfredo sauce",
+        "Grilled chicken",
+        "Herbs"
+      ],
+      "buildVersion": 2
     },
     {
       "id": "blt-pizza",
       "name": "BLT Pizza",
       "category": "Specialty pizzas",
       "ingredients": [
+        "Base sauce (confirm with kitchen)",
+        "Base cheese (confirm with kitchen)",
         "Bacon",
         "Lettuce",
         "Tomato",
@@ -262,22 +354,32 @@
       "source": "flushing",
       "status": "Flushing listing",
       "sequence": [
+        "Base sauce (confirm with kitchen)",
+        "Base cheese (confirm with kitchen)",
         "Bacon",
         "Lettuce",
         "Tomato",
         "Mayo"
       ],
       "orderConfirmed": false,
-      "note": "Published ingredient list; starting practice order follows the listing, not a verified kitchen recipe.",
-      "referenceNote": "Enzo's Signature Cheese Blend, Crumbled Bacon. Lettuce, Tomato & Mayo"
+      "note": "Strict practice sequence: base sauce, base cheese, then remaining listed ingredients. Added base layers and placement order need kitchen confirmation; finishing cheese and drizzles remain separate steps.",
+      "referenceNote": "Enzo's Signature Cheese Blend, Crumbled Bacon. Lettuce, Tomato & Mayo",
+      "publishedIngredients": [
+        "Bacon",
+        "Lettuce",
+        "Tomato",
+        "Mayo"
+      ],
+      "buildVersion": 2
     },
     {
       "id": "philly-cheese-steak-pizza",
       "name": "Philly Cheese Steak Pizza",
       "category": "Specialty pizzas",
       "ingredients": [
-        "Shaved ribeye",
+        "Base sauce (confirm with kitchen)",
         "Mozzarella",
+        "Shaved ribeye",
         "Onion",
         "Banana peppers",
         "Mushroom",
@@ -288,6 +390,18 @@
       "source": "flushing",
       "status": "Flushing listing",
       "sequence": [
+        "Base sauce (confirm with kitchen)",
+        "Mozzarella",
+        "Shaved ribeye",
+        "Onion",
+        "Banana peppers",
+        "Mushroom",
+        "Ranch drizzle"
+      ],
+      "orderConfirmed": false,
+      "note": "Strict practice sequence: base sauce, base cheese, then remaining listed ingredients. Added base layers and placement order need kitchen confirmation; finishing cheese and drizzles remain separate steps.",
+      "referenceNote": "Enzo's House Made Ranch, Tender Shaved Ribeye, Onions, Mushrooms, & Banana Peppers.",
+      "publishedIngredients": [
         "Shaved ribeye",
         "Mozzarella",
         "Onion",
@@ -295,15 +409,15 @@
         "Mushroom",
         "Ranch drizzle"
       ],
-      "orderConfirmed": false,
-      "note": "Published ingredient list; starting practice order follows the listing, not a verified kitchen recipe.",
-      "referenceNote": "Enzo's House Made Ranch, Tender Shaved Ribeye, Onions, Mushrooms, & Banana Peppers."
+      "buildVersion": 2
     },
     {
       "id": "chicken-bacon-ranch-pizza",
       "name": "Chicken Bacon Ranch Pizza",
       "category": "Specialty pizzas",
       "ingredients": [
+        "Base sauce (confirm with kitchen)",
+        "Base cheese (confirm with kitchen)",
         "Grilled chicken",
         "Bacon",
         "Onion",
@@ -315,6 +429,8 @@
       "source": "flushing",
       "status": "Flushing listing",
       "sequence": [
+        "Base sauce (confirm with kitchen)",
+        "Base cheese (confirm with kitchen)",
         "Grilled chicken",
         "Bacon",
         "Onion",
@@ -322,14 +438,24 @@
         "Ranch drizzle"
       ],
       "orderConfirmed": false,
-      "note": "Published ingredient list; starting practice order follows the listing, not a verified kitchen recipe.",
-      "referenceNote": "Enzo's House Made Ranch, Chicken, Bacon, Onion, Banana Peppers, & Ranch Crust."
+      "note": "Strict practice sequence: base sauce, base cheese, then remaining listed ingredients. Added base layers and placement order need kitchen confirmation; finishing cheese and drizzles remain separate steps.",
+      "referenceNote": "Enzo's House Made Ranch, Chicken, Bacon, Onion, Banana Peppers, & Ranch Crust.",
+      "publishedIngredients": [
+        "Grilled chicken",
+        "Bacon",
+        "Onion",
+        "Banana peppers",
+        "Ranch drizzle"
+      ],
+      "buildVersion": 2
     },
     {
       "id": "the-intimidator-pizza",
       "name": "The Intimidator Pizza",
       "category": "Specialty pizzas",
       "ingredients": [
+        "Pizza sauce",
+        "Base cheese (confirm with kitchen)",
         "Pepperoni",
         "Ham",
         "Sausage",
@@ -349,6 +475,8 @@
       "source": "flushing",
       "status": "Flushing listing",
       "sequence": [
+        "Pizza sauce",
+        "Base cheese (confirm with kitchen)",
         "Pepperoni",
         "Ham",
         "Sausage",
@@ -364,8 +492,24 @@
         "Ranch drizzle"
       ],
       "orderConfirmed": false,
-      "note": "Published ingredient list; starting practice order follows the listing, not a verified kitchen recipe.",
-      "referenceNote": "Everything But The Kitchen Sink.\nPepperoni, Ham, Sausage, Beef, Bacon, Chicken, Mushrooms, Red Onion, Green Pepper, Banana Peppers, & EXTRA CHEESE. w/ Buffalo & Ranch Drizzle."
+      "note": "Strict practice sequence: base sauce, base cheese, then remaining listed ingredients. Added base layers and placement order need kitchen confirmation; finishing cheese and drizzles remain separate steps.",
+      "referenceNote": "Everything But The Kitchen Sink.\nPepperoni, Ham, Sausage, Beef, Bacon, Chicken, Mushrooms, Red Onion, Green Pepper, Banana Peppers, & EXTRA CHEESE. w/ Buffalo & Ranch Drizzle.",
+      "publishedIngredients": [
+        "Pepperoni",
+        "Ham",
+        "Sausage",
+        "Bacon",
+        "Beef",
+        "Grilled chicken",
+        "Mushroom",
+        "Red onion",
+        "Green pepper",
+        "Banana peppers",
+        "Extra cheese",
+        "Buffalo sauce",
+        "Ranch drizzle"
+      ],
+      "buildVersion": 2
     },
     {
       "id": "oinker-pizza",
@@ -373,6 +517,7 @@
       "category": "Specialty pizzas",
       "ingredients": [
         "Vodka sauce",
+        "Base cheese (confirm with kitchen)",
         "Extra cheese",
         "Cup & crisp pepperoni",
         "Fat ranch"
@@ -383,19 +528,29 @@
       "status": "Flushing listing",
       "sequence": [
         "Vodka sauce",
+        "Base cheese (confirm with kitchen)",
         "Extra cheese",
         "Cup & crisp pepperoni",
         "Fat ranch"
       ],
       "orderConfirmed": false,
-      "note": "Published ingredient list; starting practice order follows the listing, not a verified kitchen recipe.",
-      "referenceNote": "Vodka Sauce, EXTRA CHEESE, Served w/ a Full Pig of Cupping Pepperoni & Drizzled w/ Fat Ranch"
+      "note": "Strict practice sequence: base sauce, base cheese, then remaining listed ingredients. Added base layers and placement order need kitchen confirmation; finishing cheese and drizzles remain separate steps.",
+      "referenceNote": "Vodka Sauce, EXTRA CHEESE, Served w/ a Full Pig of Cupping Pepperoni & Drizzled w/ Fat Ranch",
+      "publishedIngredients": [
+        "Vodka sauce",
+        "Extra cheese",
+        "Cup & crisp pepperoni",
+        "Fat ranch"
+      ],
+      "buildVersion": 2
     },
     {
       "id": "sweet-heat-pizza",
       "name": "Sweet Heat Pizza",
       "category": "Specialty pizzas",
       "ingredients": [
+        "Pizza sauce",
+        "Base cheese (confirm with kitchen)",
         "Cup & crisp pepperoni",
         "Jalapeño",
         "Honey"
@@ -405,13 +560,21 @@
       "source": "flushing",
       "status": "Flushing listing",
       "sequence": [
+        "Pizza sauce",
+        "Base cheese (confirm with kitchen)",
         "Cup & crisp pepperoni",
         "Jalapeño",
         "Honey"
       ],
       "orderConfirmed": false,
-      "note": "Published ingredient list; starting practice order follows the listing, not a verified kitchen recipe.",
-      "referenceNote": "Spicy Jalapenos, Traditional Cupping Pepperoni, Hot Honey, & Garlic Butter Parm Crust"
+      "note": "Strict practice sequence: base sauce, base cheese, then remaining listed ingredients. Added base layers and placement order need kitchen confirmation; finishing cheese and drizzles remain separate steps.",
+      "referenceNote": "Spicy Jalapenos, Traditional Cupping Pepperoni, Hot Honey, & Garlic Butter Parm Crust",
+      "publishedIngredients": [
+        "Cup & crisp pepperoni",
+        "Jalapeño",
+        "Honey"
+      ],
+      "buildVersion": 2
     },
     {
       "id": "bbq-chicken-pizza",
@@ -419,6 +582,7 @@
       "category": "Specialty pizzas",
       "ingredients": [
         "BBQ sauce",
+        "Base cheese (confirm with kitchen)",
         "Grilled chicken",
         "Bacon",
         "Red onion",
@@ -430,20 +594,30 @@
       "status": "Flushing listing",
       "sequence": [
         "BBQ sauce",
+        "Base cheese (confirm with kitchen)",
         "Grilled chicken",
         "Bacon",
         "Red onion",
         "Green pepper"
       ],
       "orderConfirmed": false,
-      "note": "Published ingredient list; starting practice order follows the listing, not a verified kitchen recipe.",
-      "referenceNote": "Sweet Baby Rays BBQ, Chicken, Bacon, Green Peppers & Red Onions."
+      "note": "Strict practice sequence: base sauce, base cheese, then remaining listed ingredients. Added base layers and placement order need kitchen confirmation; finishing cheese and drizzles remain separate steps.",
+      "referenceNote": "Sweet Baby Rays BBQ, Chicken, Bacon, Green Peppers & Red Onions.",
+      "publishedIngredients": [
+        "BBQ sauce",
+        "Grilled chicken",
+        "Bacon",
+        "Red onion",
+        "Green pepper"
+      ],
+      "buildVersion": 2
     },
     {
       "id": "margherita-pizza",
       "name": "Margherita Pizza",
       "category": "Specialty pizzas",
       "ingredients": [
+        "Pizza sauce",
         "Fresh mozzarella",
         "Tomato",
         "Balsamic glaze",
@@ -454,20 +628,30 @@
       "source": "flushing",
       "status": "Flushing listing",
       "sequence": [
+        "Pizza sauce",
         "Fresh mozzarella",
         "Tomato",
         "Balsamic glaze",
         "Basil"
       ],
       "orderConfirmed": false,
-      "note": "Published ingredient list; starting practice order follows the listing, not a verified kitchen recipe.",
-      "referenceNote": "Fresh Mozzarella, Roma Tomatoes, Fresh Basil & Balsamic Drizzle!"
+      "note": "Strict practice sequence: base sauce, base cheese, then remaining listed ingredients. Added base layers and placement order need kitchen confirmation; finishing cheese and drizzles remain separate steps.",
+      "referenceNote": "Fresh Mozzarella, Roma Tomatoes, Fresh Basil & Balsamic Drizzle!",
+      "publishedIngredients": [
+        "Fresh mozzarella",
+        "Tomato",
+        "Balsamic glaze",
+        "Basil"
+      ],
+      "buildVersion": 2
     },
     {
       "id": "huckleberry-pizza",
       "name": "Huckleberry Pizza",
       "category": "Specialty pizzas",
       "ingredients": [
+        "Pizza sauce",
+        "Base cheese (confirm with kitchen)",
         "Pepperoni",
         "Ham",
         "Sausage",
@@ -482,6 +666,8 @@
       "source": "flushing",
       "status": "Flushing listing",
       "sequence": [
+        "Pizza sauce",
+        "Base cheese (confirm with kitchen)",
         "Pepperoni",
         "Ham",
         "Sausage",
@@ -492,8 +678,19 @@
         "Green olive"
       ],
       "orderConfirmed": false,
-      "note": "Published ingredient list; starting practice order follows the listing, not a verified kitchen recipe.",
-      "referenceNote": "Enzo's Totally LOADED Supreme.\nPepperoni, Ham, Sausage, Beef, Mushrooms, Green Peppers, Onions, & Green Olives!"
+      "note": "Strict practice sequence: base sauce, base cheese, then remaining listed ingredients. Added base layers and placement order need kitchen confirmation; finishing cheese and drizzles remain separate steps.",
+      "referenceNote": "Enzo's Totally LOADED Supreme.\nPepperoni, Ham, Sausage, Beef, Mushrooms, Green Peppers, Onions, & Green Olives!",
+      "publishedIngredients": [
+        "Pepperoni",
+        "Ham",
+        "Sausage",
+        "Beef",
+        "Mushroom",
+        "Onion",
+        "Green pepper",
+        "Green olive"
+      ],
+      "buildVersion": 2
     },
     {
       "id": "pickle-pizza",
@@ -501,6 +698,7 @@
       "category": "Specialty pizzas",
       "ingredients": [
         "Super secret sauce",
+        "Base cheese (confirm with kitchen)",
         "Pickles",
         "Dill",
         "Herbs"
@@ -511,19 +709,29 @@
       "status": "Flushing listing",
       "sequence": [
         "Super secret sauce",
+        "Base cheese (confirm with kitchen)",
         "Pickles",
         "Dill",
         "Herbs"
       ],
       "orderConfirmed": false,
-      "note": "Published ingredient list; starting practice order follows the listing, not a verified kitchen recipe.",
-      "referenceNote": "Often Imitated, Never Duplicated!\nAlot of Pickles, Fresh Dill, & Ranch, THE REST IS A SECRET!"
+      "note": "Strict practice sequence: base sauce, base cheese, then remaining listed ingredients. Added base layers and placement order need kitchen confirmation; finishing cheese and drizzles remain separate steps.",
+      "referenceNote": "Often Imitated, Never Duplicated!\nAlot of Pickles, Fresh Dill, & Ranch, THE REST IS A SECRET!",
+      "publishedIngredients": [
+        "Super secret sauce",
+        "Pickles",
+        "Dill",
+        "Herbs"
+      ],
+      "buildVersion": 2
     },
     {
       "id": "meat-lovers-pizza",
       "name": "Meat Lovers Pizza",
       "category": "Specialty pizzas",
       "ingredients": [
+        "Pizza sauce",
+        "Base cheese (confirm with kitchen)",
         "Pepperoni",
         "Ham",
         "Beef",
@@ -535,6 +743,8 @@
       "source": "flushing",
       "status": "Flushing listing",
       "sequence": [
+        "Pizza sauce",
+        "Base cheese (confirm with kitchen)",
         "Pepperoni",
         "Ham",
         "Beef",
@@ -542,8 +752,16 @@
         "Bacon"
       ],
       "orderConfirmed": false,
-      "note": "Published ingredient list; starting practice order follows the listing, not a verified kitchen recipe.",
-      "referenceNote": "MEAT & CHEESE.\nPepperoni, Ham, Sausage, Beef, & Bacon."
+      "note": "Strict practice sequence: base sauce, base cheese, then remaining listed ingredients. Added base layers and placement order need kitchen confirmation; finishing cheese and drizzles remain separate steps.",
+      "referenceNote": "MEAT & CHEESE.\nPepperoni, Ham, Sausage, Beef, & Bacon.",
+      "publishedIngredients": [
+        "Pepperoni",
+        "Ham",
+        "Beef",
+        "Sausage",
+        "Bacon"
+      ],
+      "buildVersion": 2
     },
     {
       "id": "cheese-pizza",
@@ -577,6 +795,7 @@
       "category": "Specialty pizzas",
       "ingredients": [
         "Garlic cream cheese dip",
+        "Base cheese (confirm with kitchen)",
         "Jalapeño",
         "Bacon"
       ],
@@ -584,14 +803,21 @@
       "description": "Jalapeno Popper Pizza! Enzo's Garlic Cream Cheese Dip, Jalapenos, Bacon & Garlic Herb Crust.",
       "source": "flushing",
       "status": "Flushing listing",
-      "note": "Published Flushing ingredients; initial practice order is not kitchen-confirmed.",
+      "note": "Strict practice sequence: base sauce, base cheese, then remaining listed ingredients. Added base layers and placement order need kitchen confirmation; finishing cheese and drizzles remain separate steps.",
       "sequence": [
         "Garlic cream cheese dip",
+        "Base cheese (confirm with kitchen)",
         "Jalapeño",
         "Bacon"
       ],
       "orderConfirmed": false,
-      "sourceId": "flushing-order"
+      "sourceId": "flushing-order",
+      "publishedIngredients": [
+        "Garlic cream cheese dip",
+        "Jalapeño",
+        "Bacon"
+      ],
+      "buildVersion": 2
     },
     {
       "id": "2-lg-3-topping-breadsticks",
