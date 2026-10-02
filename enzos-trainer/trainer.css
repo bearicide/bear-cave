@@ -2,3 +2,5 @@
 
 /* Ingredient labels remain legible on compact topping bins. */
 .topping span:last-child{font-size:14px}.topping{min-height:122px}.rail .muted,.order-note{font-size:13px}
+
+.topping,.pizza{user-select:none;-webkit-user-select:none}.topping .sprite{-webkit-user-drag:none}
