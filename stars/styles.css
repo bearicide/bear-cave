@@ -126,3 +126,13 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--accent,#c7a8ff);out
 .show-summary-actions{display:flex;gap:8px;flex-wrap:wrap}
 @media(max-width:850px){#hosts .card{min-height:300px}}
 @media(max-width:480px){#hosts .card{min-height:0}}
+
+/* Lean, consistent host UI */
+.resource-heading{margin:36px 0 -20px}.resource-heading h2{margin:8px 0}.resource-heading p{margin:0;color:#cbd0df}
+.business-intro{margin-bottom:24px}
+.signature-feature{margin:22px 0 36px}
+.resource-grid{margin-top:32px}
+.resource-card{background:#151b2d;border-color:#414963;border-top-color:var(--accent);box-shadow:none}
+.resource-detail summary{font-size:14px}
+.signature-feature .button{min-height:46px}
+@media(max-width:680px){.business-intro,.signature-feature,.resource-card{border-radius:15px}.resource-heading{margin-bottom:-10px}.resource-grid{gap:12px}.signature-feature{margin-top:18px}}
