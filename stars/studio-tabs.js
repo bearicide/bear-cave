@@ -1,8 +1,9 @@
 'use strict';
 (()=>{
 const tabs=[...document.querySelectorAll('[data-studio-tab]')],panels=[...document.querySelectorAll('[data-studio-panel]')];
-function activate(name){tabs.forEach(t=>t.setAttribute('aria-pressed',String(t.dataset.studioTab===name)));panels.forEach(p=>p.classList.toggle('studio-visible',p.dataset.studioPanel===name));try{sessionStorage.setItem('starseedlings-studio-tab',name)}catch(e){}}
-tabs.forEach(t=>t.addEventListener('click',()=>activate(t.dataset.studioTab)));
-let initial='beats';try{const stored=sessionStorage.getItem('starseedlings-studio-tab');if(tabs.some(t=>t.dataset.studioTab===stored))initial=stored}catch(e){}
-activate(initial);
+function activate(name,focus=false){if(!tabs.some(t=>t.dataset.studioTab===name))return;tabs.forEach(t=>{const on=t.dataset.studioTab===name;t.setAttribute('aria-selected',String(on));t.setAttribute('aria-pressed',String(on));t.tabIndex=on?0:-1});panels.forEach(p=>{const on=p.dataset.studioPanel===name;p.classList.toggle('studio-visible',on);p.setAttribute('aria-hidden',String(!on))});if(focus)tabs.find(t=>t.dataset.studioTab===name)?.focus();try{sessionStorage.setItem('starseedlings-studio-tab',name)}catch(e){}}
+const nav=document.querySelector('.studio-tabs');if(nav)nav.setAttribute('role','tablist');
+tabs.forEach((t,i)=>{t.setAttribute('role','tab');const p=panels.find(p=>p.dataset.studioPanel===t.dataset.studioTab);if(p){const id='studio-tab-'+t.dataset.studioTab;t.id=id;p.setAttribute('role','tabpanel');p.setAttribute('aria-labelledby',id)}t.addEventListener('click',()=>activate(t.dataset.studioTab));t.addEventListener('keydown',e=>{let n;if(e.key==='ArrowRight')n=(i+1)%tabs.length;else if(e.key==='ArrowLeft')n=(i-1+tabs.length)%tabs.length;else if(e.key==='Home')n=0;else if(e.key==='End')n=tabs.length-1;else return;e.preventDefault();activate(tabs[n].dataset.studioTab,true)})});
+window.starseedlingsStudio={activate,current:()=>tabs.find(t=>t.getAttribute('aria-selected')==='true')?.dataset.studioTab};
+let initial='beats';try{const stored=sessionStorage.getItem('starseedlings-studio-tab');if(tabs.some(t=>t.dataset.studioTab===stored))initial=stored}catch(e){}activate(initial);
 })();
