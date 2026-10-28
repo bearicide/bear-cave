@@ -112,3 +112,17 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--accent,#c7a8ff);out
 #signature-tool{scroll-margin-top:105px}
 #hosts,#show,#process{scroll-margin-top:105px}
 @media(max-width:760px){.business-intro{grid-template-columns:1fr;padding:25px}.business-journey{grid-template-columns:1fr}.business-intro h2{font-size:32px}main{padding-top:24px}}
+
+/* Focused landing page */
+#hosts{padding-top:20px}#hosts>h2{margin:9px 0 10px}#hosts .section-intro{color:#cfd4e5;font-size:17px;max-width:660px}
+#hosts .grid{align-items:stretch;gap:18px;margin-top:24px}
+#hosts .card{min-height:330px;padding:24px;box-shadow:0 12px 35px #0003}
+#hosts .card .host-focus{font-size:12px;letter-spacing:.06em;text-transform:uppercase;font-weight:800;color:var(--accent)}
+#hosts .card p{font-size:15px;line-height:1.6;flex:1}
+#hosts .card .card-action{display:block;font-size:14px;font-weight:850;color:#e8e2ff;padding-top:12px;border-top:1px solid #ffffff30}
+#hosts .card:hover .card-action{color:var(--accent)}
+.show-summary{margin-top:48px;max-width:100%;background:linear-gradient(115deg,#1d2540,#111628)}
+.show-summary>p:not(.fineprint){max-width:790px;font-size:17px;line-height:1.7}
+.show-summary-actions{display:flex;gap:8px;flex-wrap:wrap}
+@media(max-width:850px){#hosts .card{min-height:300px}}
+@media(max-width:480px){#hosts .card{min-height:0}}
