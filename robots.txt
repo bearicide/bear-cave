@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://bearicide.github.io/bear-cave/sitemap.xml
