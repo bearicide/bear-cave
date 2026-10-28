@@ -8,3 +8,50 @@
 /* Embedded music and video station */.media-station{border-color:#3ecfe6;background:linear-gradient(130deg,#0d2337,#201334 65%,#241a2d)}.media-station h2{margin:10px 0}.media-tabs{display:flex;gap:9px;flex-wrap:wrap;margin:22px 0 16px}.media-tab{font:800 14px system-ui,sans-serif;color:#ded7ef;background:#1b2140;border:1px solid #6c658a;border-radius:100px;padding:11px 21px;cursor:pointer;transition:background .25s,transform .25s}.media-tab:hover{transform:translateY(-2px)}.media-tab.active{background:#c5a8ff;color:#141022;border-color:#c5a8ff}.media-panel[hidden]{display:none}.video-placeholder{min-height:310px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:25px;border-radius:16px;border:1px dashed #625879;background:radial-gradient(circle at 50% 30%,#433066,#0b1224 75%)}.play-glyph{display:grid;place-items:center;width:74px;height:74px;border-radius:50%;background:#ff4b82;color:white;font-size:26px;box-shadow:0 0 45px #ff4b8266}.video-placeholder h3{font-size:25px;margin:14px 0 0}.video-placeholder p{max-width:450px}
 
 /* Cosmic illustration gallery */main{position:relative;isolation:isolate}.cosmic-art{position:absolute;top:0;right:0;width:min(56vw,660px);height:340px;pointer-events:none;z-index:-1;opacity:.55;mask-image:linear-gradient(to right,transparent,#000 30%,#000 70%,transparent);animation:artHover 12s ease-in-out infinite}.cosmic-art img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 0 22px #b36bff55)}main>h1,main>.lead,main>.eyebrow{position:relative;z-index:1}.resource-card{backdrop-filter:blur(8px)}.resource-card:nth-child(2n){border-top-color:#39d9e7}.resource-card:nth-child(3n){border-top-color:#f4c86c}@keyframes artHover{50%{transform:translateY(13px) rotate(2deg)}}@media(max-width:680px){.cosmic-art{top:30px;width:95vw;height:240px;opacity:.25}}@media(prefers-reduced-motion:reduce){.cosmic-art{animation:none}}
+
+/* V2 visual system: navigation, celestial headers, iconography and accessibility */
+:root{--surface:#11182e;--edge:#8270a34d}
+body{background-color:#070815;background-image:radial-gradient(ellipse 52% 40% at 95% 12%,#4b228059,transparent),radial-gradient(ellipse 50% 38% at 4% 53%,#12618b38,transparent),radial-gradient(ellipse 52% 48% at 75% 95%,#714c2a33,transparent),linear-gradient(150deg,#080a1d,#0a1024 50%,#0d081c)}
+body[data-page="cyeraquill"]{--page-glow:#ff6cd5;--page-tint:#4e204e}
+body[data-page="giogold"]{--page-glow:#ffd071;--page-tint:#45321b}
+body[data-page="mattbear"]{--page-glow:#48e9ff;--page-tint:#103d51}
+body[data-page="serstarseed"]{--page-glow:#b9a1ff;--page-tint:#302052}
+body[data-page="index"]{--page-glow:#c7a5ff;--page-tint:#322058}
+header{border-bottom:1px solid #d5bbff35;box-shadow:0 8px 40px #02030c77}
+header .brand{white-space:nowrap;font-size:clamp(15px,1.7vw,20px)}
+header nav a{font-weight:700;transition:color .2s,background .2s}
+header nav a:hover,header nav a:focus-visible{background:#a67bff33}
+nav a[aria-current=page]{box-shadow:inset 0 -2px var(--page-glow,#bd91ff)}
+.skip-link{position:fixed;top:-100px;left:15px;z-index:1000;background:#fff;color:#141226;padding:12px 18px;border-radius:10px;font-weight:900}
+.skip-link:focus{top:10px}
+:focus-visible{outline:3px solid #5be5ff;outline-offset:4px}
+main{padding-top:58px}
+main>h1{max-width:100%;overflow-wrap:anywhere;font-size:clamp(42px,8vw,98px);text-shadow:0 0 44px var(--page-tint,#3a2060)}
+main>.eyebrow{display:inline-flex;align-items:center;gap:12px;background:#101831ba;border:1px solid #c4a7ff60;padding:8px 15px;border-radius:100px}
+main>.eyebrow:before{content:"✦";font-size:16px;color:var(--page-glow,#c7a5ff)}
+main>.lead{position:relative;text-wrap:pretty}
+main>.lead:first-of-type{font-weight:650;color:#f6f1ff}
+.cosmic-art{z-index:0;opacity:.36;mix-blend-mode:screen}
+main>h1,main>.lead,main>.eyebrow,main>.ticker,main>.button{position:relative;z-index:1}
+.panel{background:linear-gradient(135deg,#151c33ed,#121229ed);border-color:#9b88c047;box-shadow:inset 0 1px #ffffff13,0 20px 60px #03071366}
+.panel h2,.resource-card h2{letter-spacing:-.035em}
+.resource-card{background:linear-gradient(145deg,var(--page-tint,#251a44),#0b182bd9 75%);border-color:#b6a5d84f;box-shadow:inset 0 1px #ffffff18}
+.resource-card .eyebrow{color:#f0d5ff}
+.resource-card:after{content:"✦";position:absolute;top:18px;right:20px;font-size:22px;color:var(--accent,var(--page-glow,#c6a4ff));opacity:.7}
+.commerce-tile .symbol{display:inline-grid;place-items:center;width:68px;height:68px;border-radius:20px;border:1px solid #ffe1a277;background:#ffffff10;box-shadow:0 0 35px #d3b1ff1b}
+#hosts>.grid .card{min-height:310px}
+#hosts>.grid .card strong{overflow-wrap:anywhere;line-height:1.2}
+#hosts>.grid .card .orb{width:84px;height:84px}
+#hosts>.grid .card:nth-child(1) .orb{background:radial-gradient(circle at 32% 24%,#fff,#b79cff 32%,#422168 69%,#131124)}
+#hosts>.grid .card:nth-child(2) .orb{background:radial-gradient(circle at 32% 24%,#fff,#51e6ff 32%,#14567d 69%,#131124)}
+#hosts>.grid .card:nth-child(3) .orb{background:radial-gradient(circle at 32% 24%,#fff,#ff83d6 32%,#6b285f 69%,#131124)}
+#hosts>.grid .card:nth-child(4) .orb{background:radial-gradient(circle at 32% 24%,#fff,#ffdf89 32%,#77512a 69%,#131124)}
+.footer-inner{max-width:1160px;margin:0 auto 20px;display:flex;justify-content:space-between;gap:30px;text-align:left;flex-wrap:wrap}
+.footer-inner p{margin:8px 0;color:#b5b7cf}
+.footer-logo{font-weight:900;text-decoration:none;letter-spacing:.12em;color:#e7d4ff}
+.footer-nav{max-width:580px;display:flex;flex-wrap:wrap;gap:8px}
+.footer-nav a{padding:7px 10px;border-radius:8px;color:#d8d1ec;text-decoration:none}
+.footer-nav a:hover{text-decoration:underline;color:#fff}
+footer>small{display:block;border-top:1px solid #ffffff20;padding-top:20px;max-width:1160px;margin:auto}
+@media(max-width:760px){header .bar{display:block;padding:12px 18px}header .brand{display:block;margin-bottom:8px}header nav{display:flex;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:thin;padding-bottom:4px;overscroll-behavior-inline:contain}header nav a{white-space:nowrap;flex:0 0 auto;font-size:12px}main{padding-top:36px}.cosmic-art{opacity:.24}.footer-inner{display:block}.footer-nav{margin-top:14px}}
+@media(prefers-reduced-motion:reduce){.cosmic-art,.orb,.brand span{animation:none!important}}
