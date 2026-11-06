@@ -1,0 +1,26 @@
+name: Generate LOOP LAB original WAV samples
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['loop-lab/generate_samples.py']
+permissions:
+  contents: write
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python loop-lab/generate_samples.py
+      - name: Commit original samples
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add loop-lab/assets/samples/*.wav
+          if ! git diff --cached --quiet; then
+            git commit -m "Generate original LOOP LAB WAV sample bank"
+            git push
+          fi
