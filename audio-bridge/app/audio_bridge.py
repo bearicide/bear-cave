@@ -20,6 +20,7 @@ class Bridge:
         self.muted=False
         self.q=queue.Queue(maxsize=48)
         self.level=0
+        self.cached_gain=.75
         self.gain=tk.DoubleVar(value=.75)
         self.monitor=tk.BooleanVar(value=True)
         self.status=tk.StringVar(value="Stopped")
@@ -65,8 +66,13 @@ class Bridge:
         try:
             src=self.index(self.source); dst=self.index(self.broadcast)
             mon=self.index(self.headphones)
+            if "cable input" not in self.broadcast.get().lower():
+                raise ValueError("Select CABLE Input for the broadcast output; install VB-CABLE first.")
             if self.monitor.get() and mon==dst:
                 raise ValueError("Monitor and broadcast outputs must be different")
+            sd.check_input_settings(device=src,channels=1,samplerate=RATE,dtype="float32")
+            sd.check_output_settings(device=dst,channels=2,samplerate=RATE,dtype="float32")
+            if self.monitor.get(): sd.check_output_settings(device=mon,channels=2,samplerate=RATE,dtype="float32")
             self.running=True
             self.worker=threading.Thread(target=self.run,args=(src,dst,mon,self.monitor.get()),daemon=True)
             self.worker.start()
@@ -90,7 +96,7 @@ class Bridge:
         finally:
             self.running=False
     def capture(self,indata,frames,time,status):
-        audio=np.repeat(indata,2,axis=1)*float(self.gain.get())
+        audio=np.repeat(indata,2,axis=1)*float(self.cached_gain)
         if self.muted:audio*=0
         audio=np.clip(audio,-1,1)
         self.level=float(np.max(np.abs(audio)))*100
@@ -112,6 +118,7 @@ class Bridge:
             n=min(frames,len(audio))
             outdata[:n]=audio[:n]
     def tick(self):
+        self.cached_gain=float(self.gain.get())
         self.meter["value"]=min(self.level,100)
         self.root.after(100,self.tick)
     def stop(self):
