@@ -1,0 +1,40 @@
+name: Build MATTBEAR Audio Bridge for Windows
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'audio-bridge/app/**'
+      - '.github/workflows/audio-bridge-windows.yml'
+  workflow_dispatch:
+jobs:
+  windows-build:
+    runs-on: windows-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: python -m pip install -r audio-bridge/app/requirements.txt
+      - name: Syntax and import check
+        run: |
+          python -m py_compile audio-bridge/app/audio_bridge.py
+          python -c "import numpy, sounddevice, tkinter"
+      - name: Build portable Windows EXE
+        working-directory: audio-bridge/app
+        run: python -m PyInstaller --clean --noconfirm --onefile --windowed --name MATTBEAR_Audio_Bridge audio_bridge.py
+      - name: Package application and setup
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path release | Out-Null
+          Copy-Item audio-bridge/app/dist/MATTBEAR_Audio_Bridge.exe release/
+          Copy-Item audio-bridge/app/INSTALL_PREREQUISITES.bat release/
+          Copy-Item audio-bridge/app/README.txt release/
+          Compress-Archive -Path release/* -DestinationPath MATTBEAR_Audio_Bridge_Windows.zip -Force
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MATTBEAR_Audio_Bridge_Windows
+          path: MATTBEAR_Audio_Bridge_Windows.zip
+          if-no-files-found: error
