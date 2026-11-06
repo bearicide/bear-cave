@@ -25,17 +25,23 @@ const drag=$('keyDrag'),float=$('floatingKeys');let dragging=null;drag.addEventL
 // Floating mini XY FX: parallel wet bus, seven live effect families.
 let xyEnabled=false,xyLatched=false,xyIndex=0,xyX=.5,xyY=.5,xyGraph=null,xyPointer=null;
 const xyGroups=['DELAY','GLITCH','FILTER','REVERB','CRUSH','STUTTER','REVERSE'];
-function xyBuild(){if(!ctx)return;if(xyGraph){try{xyGraph.input.disconnect();xyGraph.nodes.forEach(n=>n.disconnect());xyGraph.oscs.forEach(o=>o.stop())}catch{}xyGraph=null}
-const input=ctx.createGain(),wet=ctx.createGain(),nodes=[input,wet],oscs=[];wet.gain.value=0;let target=wet;
-const group=xyGroups[xyIndex];const delay=()=>{const d=ctx.createDelay(2);nodes.push(d);return d};
-if(group==='DELAY'||group==='GLITCH'||group==='REVERSE'){const d=delay(),fb=ctx.createGain(),filter=ctx.createBiquadFilter();nodes.push(fb,filter);filter.type='lowpass';d.delayTime.value=group==='REVERSE'?.42:group==='GLITCH'?.085:.32;fb.gain.value=.35;filter.frequency.value=4500;input.connect(d);d.connect(filter).connect(wet);d.connect(fb).connect(d);xyGraph={input,wet,nodes,oscs,d,fb,filter,group}}
+function xyBuild(){if(!ctx)return;if(xyGraph){try{xyGraph.input.disconnect();xyGraph.nodes.forEach(n=>n.disconnect());xyGraph.oscs.forEach(o=>o.stop());if(xyGraph.processor)xyGraph.processor.onaudioprocess=null}catch{}xyGraph=null}
+const input=ctx.createGain(),wet=ctx.createGain(),nodes=[input,wet],oscs=[],group=xyGroups[xyIndex];wet.gain.value=0;
+if(['GLITCH','STUTTER','REVERSE','CRUSH'].includes(group)){
+const processor=ctx.createScriptProcessor(512,1,1),size=ctx.sampleRate*3|0,ring=new Float32Array(size);let write=0,phase=0,held=0,last=0,count=0,segment=0,reverseStart=0;
+processor.onaudioprocess=e=>{const src=e.inputBuffer.getChannelData(0),dst=e.outputBuffer.getChannelData(0),rate=ctx.sampleRate;
+for(let i=0;i<src.length;i++){ring[write]=src[i];let v=src[i];
+if(group==='CRUSH'){const bits=3+Math.floor(xyX*10),hold=Math.max(1,Math.floor((1-xyY)*65)+1);if(count++%hold===0)held=Math.round(src[i]*(2**bits))/(2**bits);v=held}
+else if(group==='STUTTER'||group==='GLITCH'){const len=Math.max(128,Math.floor(rate*(.45-xyX*.425)));if(phase===0){segment=write;if(group==='GLITCH')reverseStart=Math.floor(Math.random()*Math.min(rate*.3,write+size))}const offset=group==='GLITCH'?reverseStart:0;const read=(segment-offset+phase+size*3)%size;v=ring[read|0];if(group==='GLITCH'&&xyY>.55&&phase%Math.max(20,Math.floor(900-xyY*800))===0)v=-v;phase=(phase+1)%len}
+else if(group==='REVERSE'){const len=Math.max(256,Math.floor(rate*(.8-xyX*.72)));if(phase===0)segment=(write-len+size*2)%size;v=ring[(segment+len-1-phase+size*2)%size|0];phase=(phase+1)%len}
+dst[i]=Math.max(-1,Math.min(1,v));write=(write+1)%size}}
+nodes.push(processor);input.connect(processor).connect(wet);xyGraph={input,wet,nodes,oscs,processor,group}}
+else if(group==='DELAY'){const d=ctx.createDelay(2),fb=ctx.createGain(),filter=ctx.createBiquadFilter();nodes.push(d,fb,filter);filter.type='lowpass';d.delayTime.value=.3;fb.gain.value=.4;input.connect(d);d.connect(filter).connect(wet);d.connect(fb).connect(d);xyGraph={input,wet,nodes,oscs,d,fb,filter,group}}
 else if(group==='FILTER'){const filter=ctx.createBiquadFilter();nodes.push(filter);filter.type='lowpass';input.connect(filter).connect(wet);xyGraph={input,wet,nodes,oscs,filter,group}}
 else if(group==='REVERB'){const conv=ctx.createConvolver(),filter=ctx.createBiquadFilter();nodes.push(conv,filter);conv.buffer=noiseBuffer;filter.type='lowpass';input.connect(conv).connect(filter).connect(wet);xyGraph={input,wet,nodes,oscs,filter,group}}
-else if(group==='CRUSH'){const sh=shaper(.7),filter=ctx.createBiquadFilter();nodes.push(sh,filter);filter.type='lowpass';input.connect(sh).connect(filter).connect(wet);xyGraph={input,wet,nodes,oscs,filter,group}}
-else if(group==='STUTTER'){const gate=ctx.createGain(),lfo=ctx.createOscillator(),depth=ctx.createGain();nodes.push(gate,depth);oscs.push(lfo);gate.gain.value=.5;depth.gain.value=.5;lfo.type='square';lfo.connect(depth).connect(gate.gain);lfo.start();input.connect(gate).connect(wet);xyGraph={input,wet,nodes,oscs,lfo,gate,depth,group}}
 wet.connect(master);connectXY();xyApply()}
-function connectXY(){if(!xyGraph||!sourceGain)return;try{sourceGain.connect(xyGraph.input)}catch{}}
-function xyApply(){if(!xyGraph||!ctx)return;const g=xyGraph,t=ctx.currentTime;g.wet.gain.setTargetAtTime(xyEnabled?(.08+xyY*.6):0,t,.025);if(g.d){g.d.delayTime.setTargetAtTime(g.group==='GLITCH'?.025+xyX*.22:g.group==='REVERSE'?.18+xyX*.7:.09+xyX*.85,t,.04);g.fb.gain.setTargetAtTime(.08+xyY*.7,t,.03);g.filter.frequency.setTargetAtTime(900+xyX*6500,t,.03)}if(g.filter&&!g.d){g.filter.frequency.setTargetAtTime(g.group==='FILTER'?180+xyX*12500:550+xyX*9000,t,.02);if(g.group==='FILTER')g.filter.Q.setTargetAtTime(1+xyY*16,t,.02)}if(g.lfo){g.lfo.frequency.setTargetAtTime(2+xyX*23,t,.03);g.depth.gain.setTargetAtTime(.15+xyY*.35,t,.03);g.gate.gain.setTargetAtTime(1-(.15+xyY*.35),t,.03)}}
+function connectXY(){if(!xyGraph||!sourceGain)return;sourceGain.connect(xyGraph.input)}
+function xyApply(){if(!xyGraph||!ctx)return;const g=xyGraph,t=ctx.currentTime;g.wet.gain.setTargetAtTime(xyEnabled?(.15+xyY*.85):0,t,.015);if(g.d){g.d.delayTime.setTargetAtTime(.06+xyX*.9,t,.04);g.fb.gain.setTargetAtTime(.2+xyY*.75,t,.03);g.filter.frequency.setTargetAtTime(800+xyX*9000,t,.03)}if(g.filter&&!g.d){g.filter.frequency.setTargetAtTime(g.group==='FILTER'?90+xyX*14500:500+xyX*10000,t,.015);if(g.group==='FILTER')g.filter.Q.setTargetAtTime(1+xyY*24,t,.02)}}
 function xySet(x,y){xyX=Math.max(0,Math.min(1,x));xyY=Math.max(0,Math.min(1,y));$('xyDot').style.left=(xyX*100)+'%';$('xyDot').style.top=((1-xyY)*100)+'%';$('xyReadout').textContent='X '+Math.round(xyX*100)+' · Y '+Math.round(xyY*100);$('xySurface').setAttribute('aria-valuenow',String(Math.round(xyX*100)));xyApply()}
 function xyGroupChange(d){xyIndex=(xyIndex+d+xyGroups.length)%xyGroups.length;$('xyGroup').textContent=xyGroups[xyIndex];xyBuild()}
 function xyToggle(on){xyEnabled=on;$('xyPanel').hidden=!on;$('xyToggle').textContent=on?'XY ON':'XY OFF';$('xyToggle').classList.toggle('on',on);$('xyToggle').setAttribute('aria-pressed',String(on));if(on&&ctx&&!xyGraph)xyBuild();xyApply()}
