@@ -9,3 +9,5 @@ Select CABLE Output as BIGO microphone.
 WARNING: not validated on Windows/Audient hardware. Cubase ASIO requires loopback. Never connect an amplified speaker output to an interface line input.
 
 Known issues: mono only; fixed 48kHz; separate stream clocks can drift; monitoring can lag; no hotplug recovery. Please test before streaming.
+
+PREREQUISITES: Run INSTALL_PREREQUISITES.bat to open the official Audient and VB-CABLE driver pages. Download and install vendor drivers, restart Windows, then launch Audio Bridge. The launcher does not bundle or silently install third-party drivers.
