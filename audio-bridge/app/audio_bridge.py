@@ -24,6 +24,7 @@ class Bridge:
         self.gain=tk.DoubleVar(value=.75)
         self.monitor=tk.BooleanVar(value=True)
         self.status=tk.StringVar(value="Stopped")
+        self.status_events=queue.SimpleQueue()
         self.source=tk.StringVar()
         self.broadcast=tk.StringVar()
         self.headphones=tk.StringVar()
@@ -86,13 +87,13 @@ class Bridge:
                 with sd.OutputStream(device=dst,channels=2,samplerate=RATE,blocksize=BLOCK,dtype="float32",callback=self.play):
                     if monitor:
                         with sd.OutputStream(device=mon,channels=2,samplerate=RATE,blocksize=BLOCK,dtype="float32",callback=self.listen):
-                            self.status.set("Running")
+                            self.status_events.put("Running")
                             while self.running:threading.Event().wait(.1)
                     else:
-                        self.status.set("Running")
+                        self.status_events.put("Running")
                         while self.running:threading.Event().wait(.1)
         except Exception as e:
-            self.status.set("Audio error: "+str(e))
+            self.status_events.put("Audio error: "+str(e))
         finally:
             self.running=False
     def capture(self,indata,frames,time,status):
@@ -119,11 +120,13 @@ class Bridge:
             outdata[:n]=audio[:n]
     def tick(self):
         self.cached_gain=float(self.gain.get())
+        while not self.status_events.empty():
+            self.status.set(self.status_events.get_nowait())
         self.meter["value"]=min(self.level,100)
         self.root.after(100,self.tick)
     def stop(self):
         self.running=False
-        self.status.set("Stopping…")
+        self.status.set("Stopped")
     def close(self):
         self.running=False
         self.root.destroy()
