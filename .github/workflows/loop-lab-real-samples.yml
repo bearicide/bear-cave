@@ -1,0 +1,40 @@
+name: Publish licensed CC0 LOOP LAB samples
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/loop-lab-real-samples.yml'
+permissions:
+  contents: write
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch 12 CC0 drum and percussion WAV files
+        run: |
+          mkdir -p loop-lab/assets/samples
+          curl --fail --location --retry 3 --silent --show-error "https://raw.githubusercontent.com/Boochi44/free-drum-samples/main/drum-samples/01-hard-trap/kicks/hard-kick-01.wav" -o "loop-lab/assets/samples/0_0.wav"
+          curl --fail --location --retry 3 --silent --show-error "https://raw.githubusercontent.com/Boochi44/free-drum-samples/main/drum-samples/02-bounce/kicks/bounce-kick-01.wav" -o "loop-lab/assets/samples/0_1.wav"
+          curl --fail --location --retry 3 --silent --show-error "https://raw.githubusercontent.com/Boochi44/free-drum-samples/main/drum-samples/03-soulful-vintage/kicks/vintage-kick-01.wav" -o "loop-lab/assets/samples/0_2.wav"
+          curl --fail --location --retry 3 --silent --show-error "https://raw.githubusercontent.com/Boochi44/free-drum-samples/main/drum-samples/01-hard-trap/snares/hard-snare-01.wav" -o "loop-lab/assets/samples/0_3.wav"
+          curl --fail --location --retry 3 --silent --show-error "https://raw.githubusercontent.com/Boochi44/free-drum-samples/main/drum-samples/02-bounce/snares/bounce-snare-01.wav" -o "loop-lab/assets/samples/0_4.wav"
+          curl --fail --location --retry 3 --silent --show-error "https://raw.githubusercontent.com/Boochi44/free-drum-samples/main/drum-samples/03-soulful-vintage/snares/vintage-snare-01.wav" -o "loop-lab/assets/samples/0_5.wav"
+          curl --fail --location --retry 3 --silent --show-error "https://raw.githubusercontent.com/Boochi44/free-drum-samples/main/drum-samples/01-hard-trap/hi-hats/hi-hat-closed-01.wav" -o "loop-lab/assets/samples/3_0.wav"
+          curl --fail --location --retry 3 --silent --show-error "https://raw.githubusercontent.com/Boochi44/free-drum-samples/main/drum-samples/02-bounce/open-hats/open-hat-01.wav" -o "loop-lab/assets/samples/3_1.wav"
+          curl --fail --location --retry 3 --silent --show-error "https://raw.githubusercontent.com/Boochi44/free-drum-samples/main/drum-samples/03-soulful-vintage/hi-hats/ch-lofi.wav" -o "loop-lab/assets/samples/3_2.wav"
+          curl --fail --location --retry 3 --silent --show-error "https://raw.githubusercontent.com/Boochi44/free-drum-samples/main/drum-samples/01-hard-trap/percs/perc-rimshot.wav" -o "loop-lab/assets/samples/3_3.wav"
+          curl --fail --location --retry 3 --silent --show-error "https://raw.githubusercontent.com/Boochi44/free-drum-samples/main/drum-samples/01-hard-trap/percs/perc-cowbell.wav" -o "loop-lab/assets/samples/3_4.wav"
+          curl --fail --location --retry 3 --silent --show-error "https://raw.githubusercontent.com/Boochi44/free-drum-samples/main/drum-samples/03-soulful-vintage/percs/perc-maraca.wav" -o "loop-lab/assets/samples/3_5.wav"
+          file loop-lab/assets/samples/*.wav
+      - name: Commit sample bank
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add loop-lab/assets/samples
+          if ! git diff --cached --quiet; then
+            git commit -m "Add CC0 recorded drum sample bank"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
