@@ -1299,3 +1299,35 @@ body:not(.live-view) .console .fx-zone{border-color:var(--citrus-divider)}
   padding:1px 3px;
   border-radius:2px;
 }
+
+.performance-links{display:none}
+.performance-view .live-heading>.social-links{display:none}
+.live-view.performance-view .mixer .performance-links{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:5px;
+  grid-column:1/-1;
+  margin-top:6px;
+  padding-top:8px;
+  border-top:1px solid #8b7052;
+}
+.performance-links a{
+  display:grid;
+  place-items:center;
+  width:44px;
+  height:44px;
+  border:1px solid #ac869f;
+  border-radius:3px;
+  background:#27172f;
+  color:#fff2fa;
+}
+.performance-links a:hover,.performance-links a:focus-visible{
+  border-color:currentColor;
+  background:#1e1228;
+}
+.performance-links svg{width:22px;height:22px}
+.performance-links a:nth-child(1){color:#c7caff}
+.performance-links a:nth-child(2){color:#a0f5ad}
+.performance-links a:nth-child(3){color:#ffb78c}
+.performance-links a:nth-child(4){color:#ffaed9}
