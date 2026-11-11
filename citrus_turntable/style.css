@@ -710,3 +710,28 @@ input:is([type=text],[type=search],[type=url],[type=email],[type=password],[type
 textarea:not([readonly]):not(:disabled),
 [contenteditable=true]{cursor:text}
 a[href],select:not(:disabled){cursor:pointer}
+
+/* Keep button text legible at performance distance and on touch screens. */
+body button,body .upload,
+body:not(.live-view) .console button,body:not(.live-view) .console .upload{
+  font-size:1.125rem;
+  line-height:1.22;
+  min-height:48px;
+}
+body:not(.live-view) .console #play-all,
+body:not(.live-view) .console button[data-act=play],
+.live-view #play-all,.live-view .controls button[data-act=play]{
+  font-size:1.25rem;
+  line-height:1.2;
+  min-height:52px;
+}
+.live-view .mixer-transport button,.live-view .light-cues button,
+.live-view #oneshot-pads button,.live-view .live-actions button{
+  font-size:1.125rem;
+  line-height:1.22;
+  text-wrap:balance;
+}
+.live-view .light-cues button{flex-basis:85px;min-height:52px}
+.live-view .fixture-head,.live-view #fixture-bank button{font-size:1rem}
+.live-view .fixture-head{min-height:0}
+body:not(.live-view) .console button{white-space:normal;overflow-wrap:anywhere}
