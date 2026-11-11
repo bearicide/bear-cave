@@ -1668,7 +1668,9 @@ function drawLiveLights(time) {
 const liveTrackButtons = [$('live-tracks'), $('oneshot-load-tracks')];
 for (const button of liveTrackButtons) {
   button.onclick = () => {
-    const expanded = document.body.classList.toggle('live-tracks-open');
+    const expanded = performanceMode || !document.body.classList.contains('live-tracks-open');
+    if (performanceMode) setPerformanceMode(false);
+    document.body.classList.toggle('live-tracks-open', expanded);
     for (const control of liveTrackButtons) {
       control.setAttribute('aria-expanded', String(expanded));
       control.textContent = expanded ? 'Hide Tracks' : 'Load Tracks';

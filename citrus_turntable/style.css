@@ -1095,7 +1095,7 @@ body:not(.live-view) .console .fx-zone{border-color:var(--citrus-divider)}
   grid-area:1/1;
 }
 .performance-view .live-heading h1{font-size:clamp(1.8rem,5vw,3.8rem)}
-.live-view.performance-view :is(.light-board,.library,.oneshot-dock,#live-tracks,#leave-live,#mic-controls,#record,#mixStatus){display:none}
+.live-view.performance-view :is(.light-board,.library,#live-tracks,#leave-live,#mic-controls,#record,#mixStatus){display:none}
 .live-view.performance-view .live-table{
   grid-area:2/1;
   align-self:start;
@@ -1131,4 +1131,74 @@ body:not(.live-view) .console .fx-zone{border-color:var(--citrus-divider)}
 }
 @media(max-height:600px) and (orientation:landscape){
   .live-view.performance-view main{row-gap:70px}
+}
+
+.performance-intro{display:none}
+.performance-view .performance-intro{
+  display:grid;
+  position:fixed;
+  z-index:20;
+  inset:0;
+  place-items:center;
+  overflow:hidden;
+  pointer-events:none;
+}
+@property --performance-aperture{
+  syntax:"<length>";
+  inherits:false;
+  initial-value:0px;
+}
+.performance-iris{
+  position:absolute;
+  inset:0;
+  background:radial-gradient(circle at 50% 47%,
+    transparent var(--performance-aperture),#040208 calc(var(--performance-aperture) + 2vmax));
+  animation:performance-iris 1.65s cubic-bezier(.67,.03,.32,1) both;
+}
+@keyframes performance-iris{
+  0%{--performance-aperture:0px;opacity:1;background-color:#040208}
+  18%{--performance-aperture:0px;opacity:1;background-color:transparent}
+  82%{opacity:1}
+  100%{--performance-aperture:80vmax;opacity:0;background-color:transparent}
+}
+.performance-title{
+  position:relative;
+  display:grid;
+  justify-items:center;
+  gap:4px;
+  text-align:center;
+  color:#fff3cf;
+  text-shadow:0 0 30px #f99d665e;
+  animation:performance-title 1.45s ease both;
+}
+.performance-title span{
+  font:700 .85rem var(--readout-font);
+  letter-spacing:.25em;
+}
+.performance-title strong{
+  font:700 clamp(2.6rem,10vw,7rem)/1 var(--display-font);
+  text-transform:uppercase;
+}
+.performance-title em{color:#dcfc83;font-style:normal}
+@keyframes performance-title{
+  0%{opacity:0;transform:scale(.94)}
+  19%,50%{opacity:1}
+  86%,100%{opacity:0;transform:scale(1.06)}
+}
+.performance-view #live-crowd::after{
+  background:radial-gradient(ellipse at 50% 48%,transparent 23%,#06030f65 54%,#050208e8 83%,#030105 100%);
+}
+.performance-view .live-table{
+  animation:booth-reveal 1.45s ease both;
+}
+@keyframes booth-reveal{
+  0%,23%{opacity:.18;transform:translateY(12px)}
+  100%{opacity:1;transform:none}
+}
+.performance-view #live-crowd::before{
+  filter:brightness(calc(.82 + var(--crowd-energy,0)*.55)) saturate(1.25);
+}
+@media(prefers-reduced-motion:reduce){
+  .performance-view .performance-intro{display:none}
+  .performance-view .live-table{animation:none}
 }
