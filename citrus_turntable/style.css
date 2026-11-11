@@ -735,3 +735,48 @@ body:not(.live-view) .console button[data-act=play],
 .live-view .fixture-head,.live-view #fixture-bank button{font-size:1rem}
 .live-view .fixture-head{min-height:0}
 body:not(.live-view) .console button{white-space:normal;overflow-wrap:anywhere}
+
+.live-view.live-tracks-open .library{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  align-items:start;
+  gap:6px 10px;
+  padding:10px 12px;
+}
+.live-view .library h2,.live-view .library #crate,.live-view .library #track-load-status{grid-column:1/-1}
+.live-view .library h2{font-size:1.2rem}
+.live-view .library>p:not(#track-load-status){display:none}
+.live-view .library #track-load-status{margin:0;font-size:.8rem}
+.live-view .library .upload,.live-view .library>details{
+  margin:0;
+  min-width:0;
+  padding:5px 8px;
+  font-size:.85rem;
+  background:#261a31;
+}
+.live-view .library>details>summary{min-height:32px;padding:7px 0;line-height:1.15}
+.live-view .library .crate-upload{grid-row:2;grid-column:1;min-height:42px}
+.live-view .library #track-link{grid-row:2;grid-column:2}
+.live-view .library form{margin:6px 0 0}
+.live-view .library form p{margin:6px 0;font-size:.8rem}
+.live-view.live-tracks-open #crate{max-height:220px;display:grid;align-content:start;gap:0 10px}
+.live-view #crate .crate-track{
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;
+  gap:3px 8px;
+  padding:5px 0;
+}
+.live-view #crate .crate-track>strong{font-size:.95rem}
+.live-view #crate .crate-track>canvas{height:14px;grid-column:1}
+.live-view #crate .crate-track>small{grid-column:1;font-size:.72rem}
+.live-view #crate .crate-track>.crate-actions{grid-column:2;grid-row:1/4;justify-content:end}
+.live-view #crate .crate-track>a{grid-column:1/-1;font-size:.72rem}
+.live-view .library button{min-height:42px;font-size:.94rem;padding:4px 7px}
+.live-view .library .track-sources{grid-column:1/-1}
+@media(min-width:950px) and (orientation:landscape){
+  .live-view.live-tracks-open #crate{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:460px){
+  .live-view #crate .crate-track{grid-template-columns:minmax(0,1fr)}
+  .live-view #crate .crate-track>.crate-actions{grid-column:1;grid-row:auto;justify-content:start}
+}

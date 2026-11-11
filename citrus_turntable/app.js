@@ -1324,6 +1324,7 @@ $('live-tracks').onclick = () => {
   if (expanded) $('add-your-music').scrollIntoView({block:'nearest'});
 };
 function showLiveView(enabled) {
+  if (enabled !== document.body.classList.contains('live-view')) $('track-link').open = !enabled;
   if (enabled) oneShots.preload();
   document.body.classList.toggle('live-view',enabled);
   liveCanvas.hidden = !enabled;
