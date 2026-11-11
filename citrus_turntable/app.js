@@ -277,6 +277,16 @@ class Deck {
     this.spectrumPaint = this.spectrum.getContext('2d');
     this.spectrumBins = new Uint8Array(this.analyser.frequencyBinCount);
     this.paint = this.canvas.getContext('2d');
+    const letter = 'ab'[index];
+    this.liveWave = $('live-wave-'+letter);
+    this.liveWavePaint = this.liveWave.getContext('2d');
+    this.liveWaveTime = $('live-wave-time-'+letter);
+    this.bindScratch(this.liveWave, false);
+    this.liveWave.onkeydown = event => {
+      if (!['ArrowLeft','ArrowRight'].includes(event.key) || !Number.isFinite(this.player.duration)) return;
+      event.preventDefault();
+      this.jump(this.player.currentTime+(event.key === 'ArrowLeft' ? -1 : 1));
+    };
     this.cue = 0;
     this.generation = 0;
     this.get('input[type=file]').onchange = (e) => {
@@ -559,16 +569,29 @@ class Deck {
   draw() {
     this.drawSpectrum();
     this.refresh();
-    const {width:w,height:h} = this.canvas;
-    const ctx = this.paint;
+    if ($('live-waveforms').hidden) {
+      this.drawWave(this.paint);
+    } else {
+      this.drawWave(this.liveWavePaint, true);
+      const time = clock(this.player.currentTime)+' / '+clock(this.player.duration);
+      if (this.liveWaveTime.textContent !== time) this.liveWaveTime.textContent = time;
+    }
+  }
+  drawWave(ctx, live = false) {
+    const {width:w,height:h} = ctx.canvas;
     ctx.clearRect(0,0,w,h);
     const progress = this.player.duration ? this.player.currentTime/this.player.duration : 0;
     const color = this.index ? '#d7fb75' : '#ffac60';
+    if (live) {
+      ctx.fillStyle = '#554360';
+      for (let i=1;i<8;i++) ctx.fillRect(i*w/8,h*.15,1,h*.7);
+    }
     if (this.wave) {
       this.wave.forEach((peak,i) => {
-        ctx.fillStyle = i/256 <= progress ? color : '#805475';
-        const height = Math.max(1,peak*h);
-        ctx.fillRect(i*w/256,(h-height)/2,w/256,height);
+        ctx.fillStyle = i/this.wave.length <= progress ? color : '#805475';
+        const height = Math.max(1,peak*h*(live ? .85 : 1));
+        const step = w/this.wave.length;
+        ctx.fillRect(i*step,(h-height)/2,live ? step*.75 : step,height);
       });
     } else {
       this.analyser.getByteTimeDomainData(this.samples);
@@ -580,6 +603,10 @@ class Deck {
         if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
       }
       ctx.stroke();
+    }
+    if (live && this.player.duration) {
+      ctx.fillStyle = '#fff5df';
+      ctx.fillRect(Math.min(w-3,Math.max(0,w*progress-1)),0,3,h);
     }
   }
 }
@@ -1630,6 +1657,7 @@ function showLiveView(enabled) {
   document.body.classList.toggle('live-view',enabled);
   fxPadDock.hidden = !enabled;
   $('mic-controls').hidden = !enabled;
+  $('live-waveforms').hidden = !enabled;
   if (!enabled) disableMic();
   if (enabled) moveFxPad(fxPadX, fxPadY);
   else setFxPadOpen(false);

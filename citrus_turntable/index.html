@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#171027"><meta name="description" content="Mix your tracks on two browser turntables. Free starter loops, EQ, tempo, cue points, and recording."><title>Citrus Turntable • MATTBEAR</title><link rel="stylesheet" href="style.css?v=58"><script defer src="app.js?v=58"></script></head>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#171027"><meta name="description" content="Mix your tracks on two browser turntables. Free starter loops, EQ, tempo, cue points, and recording."><title>Citrus Turntable • MATTBEAR</title><link rel="stylesheet" href="style.css?v=59"><script defer src="app.js?v=59"></script></head>
 <body><div id="live-crowd" aria-hidden="true"></div><canvas id="live-lights" aria-hidden="true" hidden></canvas><main>
 <div class="site-bar"><a class="brand" href="https://bearicide.github.io/"><strong>MATTBEAR</strong><span>Bearicide Productions</span></a><nav aria-label="Citrus Turntable"><a href="./" aria-current="page">Mixer</a><a href="about.html">About</a><a href="instructions.html">Instructions</a><a href="contact.html">Contact</a><a href="review.html">Review</a></nav></div>
 <header><a href="../">← Bear Cave</a><h1><span>CITRUS</span> <em>TURNTABLE</em></h1><p>Two tracks are loaded. Ten starter tracks are ready to mix.</p><div class="start-actions"><button id="try-mixer" type="button">Try both starter tracks</button><a href="#add-your-music">Add Your Music!</a><a id="live-mode" href="?view=live">Live view</a></div></header>
@@ -20,6 +20,12 @@
 </div>
 </section>
 <div id="deck-b" class="deck-slot"><span id="patch-out-b" class="patch-jack" aria-hidden="true"></span></div>
+<section id="live-waveforms" aria-labelledby="live-waveforms-title" hidden>
+  <div class="live-wave-heading"><h2 id="live-waveforms-title">Deck waveforms</h2><span>Tap to jump · Drag to scratch</span></div>
+  <div class="live-wave"><span id="live-wave-label-a">Deck A</span><canvas id="live-wave-a" width="1024" height="72" tabindex="0" aria-labelledby="live-wave-label-a" aria-describedby="live-wave-help"></canvas><span id="live-wave-time-a">0:00 / 0:00</span></div>
+  <div class="live-wave"><span id="live-wave-label-b">Deck B</span><canvas id="live-wave-b" width="1024" height="72" tabindex="0" aria-labelledby="live-wave-label-b" aria-describedby="live-wave-help"></canvas><span id="live-wave-time-b">0:00 / 0:00</span></div>
+  <span id="live-wave-help" class="live-wave-help">Use the left and right arrow keys to move one second.</span>
+</section>
 </div>
 <details class="light-board" data-scene="chase" open><summary>Lighting board <span class="fixture-meter" aria-hidden="true"><i id="beat-meter"></i></span></summary>
 <div class="fixture-surface">
