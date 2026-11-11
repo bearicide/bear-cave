@@ -241,7 +241,7 @@ button[aria-pressed=true],#autosync[aria-pressed=true]{background:#d7fb75;border
 #live-lights{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;border-radius:0;background:transparent}
 body.live-view{background:#07030f}
 .live-view main{position:relative;grid-template-columns:repeat(2,minmax(0,1fr));max-width:1120px;gap:clamp(8px,2vw,24px);padding:12px 16px}
-.live-view main>.site-bar,.live-view main>header,.live-view .library,.live-view .deck-help,.live-view .site-footer,.live-view .deck .upload,.live-view .deck canvas,.live-view .deck .value-box,.live-view .deck .eq,.live-view .deck .controls:not(:has([data-act=play])),.live-view .deck .controls button:not([data-act=play]),.live-view #autosync,.live-view #xy-help,.live-view #record,.live-view #center{display:none}
+.live-view main>.site-bar,.live-view main>header,.live-view .library,.live-view .deck-help,.live-view .site-footer,.live-view .deck .upload,.live-view .deck canvas,.live-view .deck .value-box,.live-view .deck .eq,.live-view .deck .controls:not(:has([data-act=play])),.live-view .deck .controls button:not([data-act=play]),.live-view #autosync,.live-view #xy-help,.live-view #center{display:none}
 .live-heading{grid-column:1/-1;grid-row:1;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}
 .live-heading h1{margin:0;font-size:clamp(2.7rem,7vw,5rem);text-transform:uppercase;color:#ffbb70;text-shadow:0 0 26px #ff7447a0}
 .live-heading a{display:flex;align-items:center;min-height:44px}
@@ -984,3 +984,23 @@ body:not(.live-view) .console .fx-zone{border-color:var(--citrus-divider)}
   user-select:none;
 }
 #oneshot-move:active{cursor:grabbing}
+
+.live-view #record{grid-column:1/-1}
+.mic-controls{
+  grid-column:1/-1;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  align-items:end;
+  gap:6px;
+  padding-top:8px;
+  border-top:1px solid #a68d57;
+}
+.mic-controls .value-box{min-width:0}
+#mic-toggle{min-height:44px}
+#mic-toggle[aria-pressed="true"]{background:#e1fa8b;color:#23172b}
+#mic-meter,.mic-monitor,#mic-status{grid-column:1/-1}
+#mic-meter{width:100%;height:12px}
+.mic-monitor{display:flex;align-items:center;gap:6px;min-height:44px;font-size:.86rem}
+.mic-monitor input{accent-color:#d7fb75}
+#mic-status{margin:0;font-size:.85rem;color:#e6c7df}
+#mic-status:empty{display:none}

@@ -18,7 +18,8 @@ const limiter = audio.createDynamicsCompressor();
 const capture = audio.createMediaStreamDestination();
 master.connect(limiter);
 limiter.connect(audio.destination);
-limiter.connect(capture);
+const captureLimiter = audio.createDynamicsCompressor();
+limiter.connect(captureLimiter).connect(capture);
 let recording;
 let autoSync = true;
 try { autoSync = localStorage.getItem('citrus-auto-sync') !== 'off'; } catch {}
@@ -1006,6 +1007,7 @@ function setFxPadOpen(open) {
 }
 fxPadToggle.onclick = () => setFxPadOpen($('oneshot-board').hidden);
 function stop() {
+  disableMic();
   oneShots.stopAll();
   mixerEffects.bypass();
   stopPreview();
@@ -1135,40 +1137,148 @@ async function importAudio(url,deck,status,title) {
     if (generation===deck.generation && attempt===deck.importAttempt) status.textContent = 'That link didn’t open an audio file. Try Find free music or choose a file saved on this device.';
   }
 }
-$('record').onclick = async () => {
+const micGain = audio.createGain();
+const micAnalyser = audio.createAnalyser();
+const micMonitor = audio.createGain();
+micGain.gain.value = .75;
+micMonitor.gain.value = 0;
+micGain.connect(micAnalyser).connect(captureLimiter);
+micGain.connect(micMonitor).connect(audio.destination);
+const micSamples = new Float32Array(micAnalyser.fftSize);
+const micToggle = $('mic-toggle');
+const micVolume = $('mic-volume');
+const micMonitorToggle = $('mic-monitor');
+const micStatus = $('mic-status');
+const micMeter = $('mic-meter');
+let micStream;
+let micSource;
+let micRequest;
+dragNumber(micVolume, value => micGain.gain.setTargetAtTime(value/100, audio.currentTime, .015));
+
+function disableMic(message = '') {
+  if (!micStream && !micRequest) return;
+  micRequest = null;
+  micSource?.disconnect();
+  micSource = null;
+  micStream?.getTracks().forEach(track => track.stop());
+  micStream = null;
+  micToggle.textContent = 'Enable mic';
+  micToggle.setAttribute('aria-pressed', 'false');
+  micVolume.disabled = true;
+  micMonitorToggle.disabled = true;
+  micMonitorToggle.checked = false;
+  micMonitor.gain.value = 0;
+  micMeter.value = 0;
+  micStatus.textContent = message;
+}
+
+micToggle.onclick = async () => {
+  if (micStream || micRequest) {
+    disableMic();
+    return;
+  }
+  if (!navigator.mediaDevices?.getUserMedia) {
+    micStatus.textContent = 'Microphone access is unavailable in this browser.';
+    return;
+  }
+  const request = {};
+  micRequest = request;
+  micToggle.textContent = 'Cancel mic';
+  micStatus.textContent = 'Allow microphone access in your browser.';
+  let stream;
+  try {
+    await audio.resume();
+    if (micRequest !== request) return;
+    stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    if (micRequest !== request) {
+      stream.getTracks().forEach(track => track.stop());
+      return;
+    }
+    micSource = audio.createMediaStreamSource(stream);
+    micSource.connect(micGain);
+    micStream = stream;
+    micRequest = null;
+    stream.getAudioTracks().forEach(track => track.addEventListener('ended', () => {
+      if (micStream === stream) disableMic('Microphone disconnected.');
+    }));
+    micToggle.textContent = 'Mute mic';
+    micToggle.setAttribute('aria-pressed', 'true');
+    micVolume.disabled = false;
+    micMonitorToggle.disabled = false;
+    micStatus.textContent = 'Mic on for recording.';
+  } catch (error) {
+    stream?.getTracks().forEach(track => track.stop());
+    if (micRequest !== request) return;
+    disableMic(error.name === 'NotAllowedError' ? 'Microphone access was blocked.' :
+      error.name === 'NotFoundError' ? 'No microphone found.' : 'Couldn’t start the microphone.');
+  }
+};
+micMonitorToggle.onchange = () => {
+  micMonitor.gain.setTargetAtTime(micMonitorToggle.checked ? 1 : 0, audio.currentTime, .015);
+  micStatus.textContent = micMonitorToggle.checked ? 'Mic on for recording and headphones.' : 'Mic on for recording.';
+};
+
+const recordButton = $('record');
+let recordingUrl;
+recordButton.onclick = async () => {
   const status = $('mixStatus');
   if (recording?.state === 'recording') {
+    recordButton.disabled = true;
     recording.stop();
     return;
   }
   if (recording) return;
+  recordButton.disabled = true;
   try {
     await audio.resume();
-    if (recording) return;
     const recorder = new MediaRecorder(capture.stream);
     const chunks = [];
-    recorder.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
+    const finish = () => {
+      if (recording !== recorder) return false;
+      recordButton.textContent = '● Record mix';
+      recordButton.setAttribute('aria-pressed','false');
+      recordButton.disabled = false;
+      recording = null;
+      return true;
+    };
+    recorder.ondataavailable = event => { if (event.data.size) chunks.push(event.data); };
+    recorder.onerror = () => {
+      if (finish()) status.textContent = 'Recording stopped because of an error.';
+    };
     recorder.onstop = () => {
-      const type = recorder.mimeType || chunks[0]?.type || 'audio/webm';
-      const url = URL.createObjectURL(new Blob(chunks,{type}));
+      if (!finish()) return;
+      if (!chunks.length) {
+        status.textContent = 'No audio was saved. Try recording again.';
+        return;
+      }
+      const type = recorder.mimeType || chunks[0].type || 'audio/webm';
+      if (recordingUrl) URL.revokeObjectURL(recordingUrl);
+      recordingUrl = URL.createObjectURL(new Blob(chunks,{type}));
       const link = document.createElement('a');
-      link.href = url;
+      link.href = recordingUrl;
       link.download = 'citrus_mix.'+(type.includes('mp4')?'m4a':type.includes('ogg')?'ogg':'webm');
       link.textContent = 'Download mix';
       status.replaceChildren(link);
-      link.onclick = () => setTimeout(() => URL.revokeObjectURL(url),60000);
-      $('record').textContent = '● Record';
-      $('record').setAttribute('aria-pressed','false');
-      recording = null;
     };
-    recorder.start();
+    recorder.start(1000);
     recording = recorder;
-    $('record').textContent = '■ Finish recording';
-    $('record').setAttribute('aria-pressed','true');
-    status.textContent = 'Recording the master output…';
-  } catch { status.textContent = 'Recording is unavailable in this browser.'; }
+    recordButton.textContent = '■ Finish recording';
+    recordButton.setAttribute('aria-pressed','true');
+    recordButton.disabled = false;
+    status.textContent = 'Recording the mix…';
+  } catch {
+    recordButton.disabled = false;
+    status.textContent = 'Recording is unavailable in this browser.';
+  }
 };
-setInterval(() => decks.forEach((deck) => deck.draw()),65);
+setInterval(() => {
+  decks.forEach(deck => deck.draw());
+  if (!micStream) return;
+  micAnalyser.getFloatTimeDomainData(micSamples);
+  let peak = 0;
+  for (const sample of micSamples) peak = Math.max(peak, Math.abs(sample));
+  micMeter.value = peak;
+},65);
 
 const liveCanvas = $('live-lights');
 const livePaint = liveCanvas.getContext('2d');
@@ -1519,6 +1629,8 @@ function showLiveView(enabled) {
   if (enabled) oneShots.preload();
   document.body.classList.toggle('live-view',enabled);
   fxPadDock.hidden = !enabled;
+  $('mic-controls').hidden = !enabled;
+  if (!enabled) disableMic();
   if (enabled) moveFxPad(fxPadX, fxPadY);
   else setFxPadOpen(false);
   liveCanvas.hidden = !enabled;
