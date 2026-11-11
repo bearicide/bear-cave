@@ -1331,3 +1331,47 @@ body:not(.live-view) .console .fx-zone{border-color:var(--citrus-divider)}
 .performance-links a:nth-child(2){color:#a0f5ad}
 .performance-links a:nth-child(3){color:#ffb78c}
 .performance-links a:nth-child(4){color:#ffaed9}
+
+.performance-cues{display:none}
+.live-view.performance-view .mixer .performance-cues{
+  display:grid;
+  grid-column:1/-1;
+  gap:6px;
+  margin-top:6px;
+  padding-top:8px;
+  border-top:1px solid #8b7052;
+}
+.live-view.performance-view .performance-cues h3{
+  margin:0;
+  font-size:.92rem;
+  color:#ffe7b5;
+}
+.performance-cue-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:4px;
+}
+.live-view .performance-cue-grid button{
+  min-width:0;
+  min-height:44px;
+  padding:3px;
+  font-size:.76rem;
+  line-height:1.05;
+  text-wrap:balance;
+  border-color:#916e91;
+}
+.live-view .performance-cue-grid button[aria-pressed="true"]{
+  background:#d7fb75;
+  color:#221327;
+  border-color:#efffbd;
+}
+.live-view .performance-cue-grid #stage-blackout[aria-pressed="true"]{
+  background:#f5b0cb;
+  color:#261027;
+}
+.live-view .performance-cue-grid button:active{
+  box-shadow:inset 0 0 0 2px #ffdf84;
+}
+@container (max-width:155px){
+  .performance-cue-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}

@@ -884,9 +884,11 @@ let blend = 50;
 let volume = 80;
 const showBlend = dragNumber($('cross'), value => mix(value, volume), 2);
 const showVolume = dragNumber($('master'), value => mix(blend, value), 2);
+const stageBlendButtons = [...document.querySelectorAll('[data-stage-blend]')];
 function mix(x, y) {
   blend = Math.round(Math.max(0, Math.min(100, x)));
   volume = Math.round(Math.max(0, Math.min(100, y)));
+  for (const button of stageBlendButtons) button.setAttribute('aria-pressed', String(blend === Number(button.dataset.stageBlend)));
   const pan = blend / 100;
   showBlend(blend);
   showVolume(volume);
@@ -921,6 +923,7 @@ pad.onkeydown = (event) => {
   mix(blend+delta[0],volume+delta[1]);
 };
 $('center').onclick = () => mix(50,volume);
+for (const button of stageBlendButtons) button.onclick = () => mix(Number(button.dataset.stageBlend), volume);
 mix(blend,volume);
 
 function initOneShots() {
@@ -1010,9 +1013,17 @@ function initOneShots() {
     buttons.forEach(button => button.classList.remove('oneshot-playing'));
   }
   $('oneshot-stop').onclick = stopAll;
-  return {trigger,stopAll,preload:() => sounds.forEach((_,index) => load(index).catch(() => {})),isPlaying:() => active.size > 0};
+  function triggerNamed(slug) {
+    const index = sounds.findIndex(sound => sound[1] === slug);
+    if (index !== -1) trigger(index);
+  }
+  return {trigger,triggerNamed,stopAll,preload:() => sounds.forEach((_,index) => load(index).catch(() => {})),isPlaying:() => active.size > 0};
 }
 const oneShots = initOneShots();
+for (const button of document.querySelectorAll('[data-stage-sound]')) {
+  button.onclick = () => oneShots.triggerNamed(button.dataset.stageSound);
+}
+$('stage-stop-fx').onclick = oneShots.stopAll;
 const fxPadToggle = $('oneshot-toggle');
 const fxPadDock = fxPadToggle.closest('.oneshot-dock');
 const fxPadHandle = $('oneshot-move');
@@ -1405,17 +1416,19 @@ sceneButtons.forEach(button => {
     sceneButtons.forEach(scene => scene.setAttribute('aria-pressed',String(scene === button)));
   };
 });
-$('light-sound').onclick = () => {
+$('light-sound').onclick = $('stage-beat-sync').onclick = () => {
   beatSync = !beatSync;
   $('light-sound').setAttribute('aria-pressed',String(beatSync));
+  $('stage-beat-sync').setAttribute('aria-pressed',String(beatSync));
 };
-$('light-blackout').onclick = () => {
+$('light-blackout').onclick = $('stage-blackout').onclick = () => {
   blackout = !blackout;
   bumpUntil = 0;
   $('light-blackout').setAttribute('aria-pressed',String(blackout));
+  $('stage-blackout').setAttribute('aria-pressed',String(blackout));
   document.body.classList.toggle('light-blackout',blackout);
 };
-$('light-bump').onclick = () => {
+$('light-bump').onclick = $('stage-bump').onclick = () => {
   if (!blackout) bumpUntil = performance.now()+420;
 };
 const lightPalettes = {

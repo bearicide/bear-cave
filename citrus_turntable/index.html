@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#171027"><meta name="description" content="Mix your tracks on two browser turntables. Free starter loops, EQ, tempo, cue points, and recording."><title>Citrus Turntable • MATTBEAR</title><link rel="stylesheet" href="style.css?v=68"><script defer src="app.js?v=66"></script></head>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#171027"><meta name="description" content="Mix your tracks on two browser turntables. Free starter loops, EQ, tempo, cue points, and recording."><title>Citrus Turntable • MATTBEAR</title><link rel="stylesheet" href="style.css?v=69"><script defer src="app.js?v=69"></script></head>
 <body><div class="performance-intro" aria-hidden="true"><div class="performance-iris"></div><div class="performance-title"><span>MATTBEAR</span><strong>Citrus <em>Live</em></strong></div></div><div id="live-crowd" aria-hidden="true"></div><canvas id="live-lights" aria-hidden="true" hidden></canvas><main>
 <div class="site-bar"><a class="brand" href="https://bearicide.github.io/"><strong>MATTBEAR</strong><span>Bearicide Productions</span></a><nav aria-label="Citrus Turntable"><a href="./" aria-current="page">Mixer</a><a href="about.html">About</a><a href="instructions.html">Instructions</a><a href="contact.html">Contact</a><a href="review.html">Review</a></nav><nav class="social-links" aria-label="Header socials"><a href="https://discord.gg/xcX5knzmZA">Discord</a><a href="https://open.spotify.com/album/0ALg72gJE4BDMTL2E7ppex">Spotify</a><a href="https://soundcloud.com/mattbear86">SoundCloud</a><a href="https://suno.com/@mattbear86">Suno</a></nav></div>
 <header><a href="../">← Bear Cave</a><h1><span>CITRUS</span> <em>TURNTABLE</em></h1><p>Two tracks are loaded. Ten starter tracks are ready to mix.</p><div class="start-actions"><button id="try-mixer" type="button">Try both starter tracks</button><a href="#add-your-music">Add Your Music!</a><a id="live-mode" href="?view=live">Live view</a></div></header>
@@ -18,6 +18,20 @@
   <label class="mic-monitor"><input id="mic-monitor" type="checkbox" disabled> Hear mic in headphones</label>
   <p id="mic-status" role="status"></p>
 </div>
+<section class="performance-cues" aria-labelledby="performance-cues-title">
+  <h3 id="performance-cues-title">Show controls</h3>
+  <div class="performance-cue-grid">
+    <button type="button" data-stage-blend="0" aria-pressed="false">Deck A</button>
+    <button type="button" data-stage-blend="50" aria-pressed="true">Center</button>
+    <button type="button" data-stage-blend="100" aria-pressed="false">Deck B</button>
+    <button type="button" data-stage-sound="crowd_reaction">Cheer</button>
+    <button type="button" data-stage-sound="dj_horn">Horn</button>
+    <button type="button" id="stage-stop-fx">Stop FX</button>
+    <button type="button" id="stage-bump">Light Hit</button>
+    <button type="button" id="stage-blackout" aria-pressed="false">Blackout</button>
+    <button type="button" id="stage-beat-sync" aria-pressed="true">Beat Sync</button>
+  </div>
+</section>
 <nav class="performance-links" aria-label="MATTBEAR socials">
     <a href="https://discord.gg/xcX5knzmZA" target="_blank" rel="noopener" aria-label="Discord" title="Discord"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M20.3 4.4a19 19 0 0 0-4.7-1.5l-.6 1.2a17.5 17.5 0 0 0-6 0l-.6-1.2a19 19 0 0 0-4.7 1.5C.7 8.8-.2 13.1.2 17.3a19 19 0 0 0 5.8 2.9l1.2-1.9-1.8-.9.4-.3c3.9 1.8 8.5 1.8 12.4 0l.4.3-1.8.9 1.2 1.9a19 19 0 0 0 5.8-2.9c.5-4.9-.9-9.1-3.5-12.9ZM8 14.6c-1.2 0-2.1-1.1-2.1-2.4S6.8 9.8 8 9.8s2.2 1.1 2.2 2.4-.9 2.4-2.2 2.4Zm8 0c-1.2 0-2.1-1.1-2.1-2.4s.9-2.4 2.1-2.4 2.2 1.1 2.2 2.4-.9 2.4-2.2 2.4Z"/></svg></a>
     <a href="https://open.spotify.com/album/0ALg72gJE4BDMTL2E7ppex" target="_blank" rel="noopener" aria-label="Spotify" title="Spotify"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="11" fill="currentColor"/><path d="M5.6 9.4c4.4-1.3 8.9-.8 13 1.4M6.5 12.8c3.6-1.1 7.3-.6 10.8 1.2M7.4 15.9c3-.8 6-.5 8.9 1" fill="none" stroke="#1e1228" stroke-width="1.6" stroke-linecap="round"/></svg></a>
