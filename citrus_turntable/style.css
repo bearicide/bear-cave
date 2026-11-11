@@ -191,3 +191,10 @@ kbd{display:inline-block;padding:0 .35em;border:1px solid #87577e;border-bottom-
   header h1 span{transition:transform 240ms ease}
   header h1:hover span{transform:rotate(-2deg) translateY(-2px)}
 }
+
+#music-search{margin-top:10px}
+.music-search-input{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+#music-query{flex:1 1 130px;min-width:0;min-height:44px;padding:8px;border:1px solid #87577e;border-radius:8px;background:#171024;color:inherit;font:inherit}
+#music-results{list-style:none;padding:0;max-height:300px;overflow:auto}
+#music-results li{display:grid;gap:6px;padding:8px 0;border-bottom:1px solid #6b426c;overflow-wrap:anywhere}
+#music-results a{font-size:.88rem}

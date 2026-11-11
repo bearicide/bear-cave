@@ -635,6 +635,58 @@ document.addEventListener('keydown',(e) => {
   if (e.target.closest('button')) return;
   if ('alqp'.includes(key) && key.length===1) decks['lp'.includes(key)?1:0].action('al'.includes(key)?'play':'cue');
 });
+let musicSearch;
+$('music-search').onsubmit = async event => {
+  event.preventDefault();
+  const query = $('music-query').value.trim();
+  if (!query) return;
+  musicSearch?.abort();
+  const controller = new AbortController();
+  musicSearch = controller;
+  const status = $('music-status');
+  const results = $('music-results');
+  results.replaceChildren();
+  status.textContent = 'Searching…';
+  const params = new URLSearchParams({
+    action:'query',generator:'search',gsrsearch:query+' filetype:audio',gsrnamespace:'6',
+    gsrlimit:'12',prop:'imageinfo',iiprop:'url|mime|extmetadata',format:'json',origin:'*'
+  });
+  try {
+    const response = await fetch('https://commons.wikimedia.org/w/api.php?'+params,{signal:controller.signal});
+    if (!response.ok) throw Error('Search unavailable');
+    const data = await response.json();
+    if (data.error) throw Error('Search unavailable');
+    if (musicSearch !== controller) return;
+    for (const page of Object.values(data.query?.pages || {}).sort((a,b) => a.index-b.index)) {
+      const info = page.imageinfo?.[0];
+      const license = info?.extmetadata?.LicenseShortName?.value;
+      if (!license || !(info.mime?.startsWith('audio/') || info.mime === 'application/ogg') ||
+          !info.url?.startsWith('https://upload.wikimedia.org/') ||
+          !info.descriptionurl?.startsWith('https://commons.wikimedia.org/')) continue;
+      const row = document.createElement('li');
+      const title = document.createElement('strong');
+      title.textContent = page.title.replace(/^File:/,'').replace(/\.[^.]+$/,'').replaceAll('_',' ');
+      const source = document.createElement('a');
+      source.href = info.descriptionurl;
+      source.target = '_blank';
+      source.rel = 'noopener noreferrer';
+      source.textContent = license+' · Source and credits';
+      const actions = document.createElement('div');
+      actions.className = 'crate-actions';
+      decks.forEach((deck,i) => {
+        const button = document.createElement('button');
+        button.textContent = 'Load '+'AB'[i];
+        button.onclick = () => importAudio(new URL(info.url),deck,status,title.textContent);
+        actions.append(button);
+      });
+      row.append(title,source,actions);
+      results.append(row);
+    }
+    status.textContent = results.children.length ? '' : 'No matching audio found. Try another title, artist, or style.';
+  } catch {
+    if (musicSearch === controller) status.textContent = 'Search is unavailable right now. Try again or add music from your device.';
+  }
+};
 $('remote').onsubmit = async (e) => {
   e.preventDefault();
   const deck = decks[+(e.submitter?.value || 0)];
@@ -650,6 +702,9 @@ $('remote').onsubmit = async (e) => {
     status.textContent = 'YouTube video links won’t load here. If you have the audio file, choose Add music from your device.';
     return;
   }
+  importAudio(url,deck,status);
+};
+async function importAudio(url,deck,status,title) {
   const generation = deck.generation;
   const attempt = (deck.importAttempt || 0)+1;
   deck.importAttempt = attempt;
@@ -660,11 +715,11 @@ $('remote').onsubmit = async (e) => {
     const blob = await response.blob();
     if (generation !== deck.generation || attempt !== deck.importAttempt) return;
     status.textContent = 'Sent to Deck '+'AB'[deck.index]+'.';
-    deck.load(URL.createObjectURL(blob),decodeURIComponent(url.pathname.split('/').pop() || 'Online audio'),'',true,false,blob);
+    deck.load(URL.createObjectURL(blob),title || decodeURIComponent(url.pathname.split('/').pop() || 'Online audio'),'',true,false,blob);
   } catch {
     if (generation===deck.generation && attempt===deck.importAttempt) status.textContent = 'That link didn’t load. Download the song first, then choose Add music from your device.';
   }
-};
+}
 $('record').onclick = async () => {
   const status = $('mixStatus');
   if (recording?.state === 'recording') {
