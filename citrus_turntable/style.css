@@ -912,3 +912,19 @@ body:not(.live-view) .console .fx-zone{border-color:var(--citrus-divider)}
   .live-view .light-board{grid-area:2/2}
   .live-view.live-tracks-open .library{grid-area:3/1/4/3}
 }
+
+.live-view .live-table .oneshot-board{padding:8px 10px}
+.live-view .oneshot-heading{margin-bottom:6px}
+.live-view #oneshot-pads{gap:5px}
+.live-view #oneshot-pads button{
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr);
+  align-items:center;
+  align-content:center;
+  gap:6px;
+  min-height:46px;
+  padding:4px 7px;
+  text-wrap:wrap;
+}
+.live-view #oneshot-pads kbd{align-self:center}
+.live-view .oneshot-credits{margin-top:6px}

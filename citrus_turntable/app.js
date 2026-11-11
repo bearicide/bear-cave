@@ -870,12 +870,12 @@ mix(blend,volume);
 
 function initOneShots() {
   const sounds = [
-    ['DJ Horn','dj_horn'],
-    ['Vinyl Scratch','vinyl_scratch'],
-    ['Crowd Reaction','crowd_reaction'],
-    ['Handclap','handclap'],
-    ['Cymbal Hit','cymbal_hit'],
-    ['Cymbal Rise','cymbal_rise'],
+    ['DJ Horn','dj_horn',0,1.85,.68],
+    ['Vinyl Scratch','vinyl_scratch',0,1.12,.83],
+    ['Crowd Reaction','crowd_reaction',0,1.05,.73],
+    ['Handclap','handclap',0,.23,.88],
+    ['Cymbal Hit','cymbal_hit',0,.83,.76],
+    ['Cymbal Rise','cymbal_rise',.10,1.37,.72],
   ];
   const level = audio.createGain();
   level.gain.value = .7;
@@ -906,17 +906,26 @@ function initOneShots() {
     $('oneshot-status').textContent = '';
     active.get(index)?.stop();
     const source = audio.createBufferSource();
+    const envelope = audio.createGain();
+    const [, , offset, limit, gain] = sounds[index];
+    const duration = Math.min(limit,buffer.duration-offset);
+    const now = audio.currentTime;
+    envelope.gain.setValueAtTime(0,now);
+    envelope.gain.linearRampToValueAtTime(gain,now+.003);
+    envelope.gain.setValueAtTime(gain,now+duration-.04);
+    envelope.gain.linearRampToValueAtTime(0,now+duration);
     source.buffer = buffer;
-    source.connect(level);
+    source.connect(envelope).connect(level);
     active.set(index,source);
     buttons[index].classList.add('oneshot-playing');
     source.onended = () => {
       source.disconnect();
+      envelope.disconnect();
       if (active.get(index) !== source) return;
       active.delete(index);
       buttons[index].classList.remove('oneshot-playing');
     };
-    source.start();
+    source.start(now,offset,duration);
   }
   const buttons = sounds.map(([name],index) => {
     const button = document.createElement('button');
