@@ -154,3 +154,11 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
 .crate-track small{color:#e6c7df}
 .crate-actions{display:flex;flex-wrap:wrap;gap:5px}
 .crate-actions button:disabled{opacity:.55}
+
+.review-form{display:grid;gap:10px;max-width:560px;margin:0}
+.review-form label{font-weight:800}
+.review-form small,.review-note{color:#e6c7df}
+.review-form select,.review-form textarea{width:100%;min-height:46px;padding:10px 12px;border:1px solid #a56393;border-radius:9px;background:#171024;color:inherit;font:inherit}
+.review-form textarea{resize:vertical}
+.review-form button{justify-self:start;background:#ffac60;color:#25132c;border-color:#ffd491}
+.review-note{margin:0;font-size:.9rem}
