@@ -847,6 +847,36 @@ const lightBins = new Uint8Array(lightAnalyser.frequencyBinCount);
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
 let lightFrame = 0;
 let lightEnergy = 0;
+let lightLevel = .85;
+let lightSpeed = 1;
+let lightPhase = 0;
+let lastLightTime = 0;
+let lightScene = 'chase';
+let beatSync = true;
+let blackout = false;
+let bumpUntil = 0;
+dragNumber($('light-dimmer'),value => { lightLevel = value/100; },2);
+dragNumber($('light-speed'),value => { lightSpeed = value/100; },4);
+const sceneButtons = document.querySelectorAll('[data-light-scene]');
+sceneButtons.forEach(button => {
+  button.onclick = () => {
+    lightScene = button.dataset.lightScene;
+    sceneButtons.forEach(scene => scene.setAttribute('aria-pressed',String(scene === button)));
+  };
+});
+$('light-sound').onclick = () => {
+  beatSync = !beatSync;
+  $('light-sound').setAttribute('aria-pressed',String(beatSync));
+};
+$('light-blackout').onclick = () => {
+  blackout = !blackout;
+  bumpUntil = 0;
+  $('light-blackout').setAttribute('aria-pressed',String(blackout));
+  document.body.classList.toggle('light-blackout',blackout);
+};
+$('light-bump').onclick = () => {
+  if (!blackout) bumpUntil = performance.now()+420;
+};
 const lightPalettes = {
   lime:[82,102,65,175,132,49],
   lemon:[52,60,37,74,46,170],
@@ -884,9 +914,14 @@ function drawLiveLights(time) {
   ctx.clearRect(0,0,width,height);
   const spread = Math.max(width,height);
   const still = reduceMotion.matches;
-  const phase = still ? 0 : time/2500;
-  const energy = still ? .14 : lightEnergy;
+  const elapsed = lastLightTime ? Math.min(40,time-lastLightTime) : 0;
+  lastLightTime = time;
+  if (!still && lightScene === 'chase') lightPhase += elapsed*lightSpeed/1900;
+  const phase = still || lightScene !== 'chase' ? 0 : lightPhase;
+  const energy = still || !beatSync ? .15 : lightEnergy;
+  const brightness = blackout ? 0 : lightLevel;
   const palette = lightPalettes[themePicker.value];
+  ctx.globalAlpha = brightness;
   ctx.globalCompositeOperation = 'screen';
   for (const [position,hue] of [[.27,palette[0]],[.73,palette[3]]]) {
     const x = width*position;
@@ -898,7 +933,7 @@ function drawLiveLights(time) {
     ctx.fillStyle = glow;
     ctx.fillRect(0,0,width,height);
   }
-  for (let i=0;i<6;i++) {
+  for (let i=0;lightScene !== 'wash' && i<6;i++) {
     const x = width*(.16+.136*i);
     const y = height*.60;
     const tilt = Math.sin(phase+i*1.25)*.56;
@@ -914,7 +949,7 @@ function drawLiveLights(time) {
     ctx.lineTo(x+5,y);
     ctx.fill();
   }
-  for (let i=0;i<5;i++) {
+  for (let i=0;lightScene === 'chase' && i<5;i++) {
     const x = width*(.17+i*.165);
     const y = height*(.70+.045*i);
     ctx.strokeStyle = 'hsla('+palette[(i+1)%palette.length]+',100%,66%,'+(.08+energy*.28)+')';
@@ -924,6 +959,12 @@ function drawLiveLights(time) {
     ctx.lineTo(x+Math.sin(phase+i)*width*.14,y);
     ctx.stroke();
   }
+  if (!still && time < bumpUntil) {
+    ctx.globalAlpha = brightness*Math.min(.36,(bumpUntil-time)/950);
+    ctx.fillStyle = '#fffbe8';
+    ctx.fillRect(0,0,width,height);
+  }
+  ctx.globalAlpha = 1;
   ctx.globalCompositeOperation = 'source-over';
   const edge = ctx.createRadialGradient(width*.5,height*.39,Math.min(width,height)*.16,width*.5,height*.46,spread*.62);
   edge.addColorStop(0,'transparent');
@@ -946,6 +987,7 @@ function showLiveView(enabled) {
   if (!enabled && lightFrame) {
     cancelAnimationFrame(lightFrame);
     lightFrame = 0;
+    lastLightTime = 0;
   }
 }
 function liveFromLocation() {
