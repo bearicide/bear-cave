@@ -836,3 +836,83 @@ $('record').onclick = async () => {
   } catch { status.textContent = 'Recording is unavailable in this browser.'; }
 };
 setInterval(() => decks.forEach((deck) => deck.draw()),65);
+
+const liveCanvas = $('live-lights');
+const livePaint = liveCanvas.getContext('2d');
+const lightAnalyser = audio.createAnalyser();
+lightAnalyser.fftSize = 512;
+limiter.connect(lightAnalyser);
+const lightBins = new Uint8Array(lightAnalyser.frequencyBinCount);
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
+let lightFrame = 0;
+let lightEnergy = 0;
+
+function drawLiveLights(time) {
+  const width = innerWidth;
+  const height = innerHeight;
+  const scale = Math.min(devicePixelRatio || 1,1.5);
+  const canvasWidth = Math.round(width*scale);
+  const canvasHeight = Math.round(height*scale);
+  if (liveCanvas.width !== canvasWidth || liveCanvas.height !== canvasHeight) {
+    liveCanvas.width = canvasWidth;
+    liveCanvas.height = canvasHeight;
+  }
+  lightAnalyser.getByteFrequencyData(lightBins);
+  const bass = lightBins.slice(1,5).reduce((sum,value) => sum+value,0)/1020;
+  lightEnergy += (bass-lightEnergy)*.12;
+  const ctx = livePaint;
+  ctx.setTransform(scale,0,0,scale,0,0);
+  ctx.clearRect(0,0,width,height);
+  const spread = Math.max(width,height);
+  const still = reduceMotion.matches;
+  const phase = still ? 0 : time/2500;
+  const energy = still ? .14 : lightEnergy;
+  ctx.globalCompositeOperation = 'screen';
+  for (let i=0;i<6;i++) {
+    const x = width*(.16+.136*i);
+    const y = height*.46;
+    const tilt = Math.sin(phase+i*1.25)*.56;
+    const beam = ctx.createLinearGradient(0,y,0,y-spread*.72);
+    const hue = [27,324,284,185,307,76][i];
+    beam.addColorStop(0,'hsla('+hue+',100%,61%,'+(.12+energy*.44)+')');
+    beam.addColorStop(1,'transparent');
+    ctx.fillStyle = beam;
+    ctx.beginPath();
+    ctx.moveTo(x-5,y);
+    ctx.lineTo(x+tilt*spread-spread*.075,y-spread*.72);
+    ctx.lineTo(x+tilt*spread+spread*.075,y-spread*.72);
+    ctx.lineTo(x+5,y);
+    ctx.fill();
+  }
+  ctx.globalCompositeOperation = 'source-over';
+  const edge = ctx.createRadialGradient(width*.5,height*.39,Math.min(width,height)*.16,width*.5,height*.46,spread*.62);
+  edge.addColorStop(0,'transparent');
+  edge.addColorStop(1,'#06020feb');
+  ctx.fillStyle = edge;
+  ctx.fillRect(0,0,width,height);
+  lightFrame = requestAnimationFrame(drawLiveLights);
+}
+function showLiveView(enabled) {
+  document.body.classList.toggle('live-view',enabled);
+  liveCanvas.hidden = !enabled;
+  document.querySelector('.live-heading').hidden = !enabled;
+  if (enabled && !lightFrame) lightFrame = requestAnimationFrame(drawLiveLights);
+  if (!enabled && lightFrame) {
+    cancelAnimationFrame(lightFrame);
+    lightFrame = 0;
+  }
+}
+function liveFromLocation() {
+  showLiveView(new URLSearchParams(location.search).get('view') === 'live');
+}
+for (const [id,enabled] of [['live-mode',true],['leave-live',false]]) {
+  $(id).onclick = event => {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    history.pushState(null,'',event.currentTarget.href);
+    showLiveView(enabled);
+    $(enabled ? 'leave-live' : 'live-mode').focus();
+  };
+}
+window.addEventListener('popstate',liveFromLocation);
+liveFromLocation();
