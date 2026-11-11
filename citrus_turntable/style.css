@@ -1288,3 +1288,14 @@ body:not(.live-view) .console .fx-zone{border-color:var(--citrus-divider)}
   .live-view .oneshot-dock #oneshot-pads button{grid-template-columns:20px minmax(0,1fr);font-size:.8rem}
   .oneshot-icon{width:20px}
 }
+
+.shortcut-key,
+.live-view #oneshot-pads kbd{
+  color:#08060b;
+  background:#fff2d7;
+  border-color:#08060b;
+}
+.live-view #oneshot-pads kbd{
+  padding:1px 3px;
+  border-radius:2px;
+}
