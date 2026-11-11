@@ -912,6 +912,51 @@ themePicker.onchange = () => {
 };
 applyLiveTheme();
 
+const aimPad = $('light-aim');
+const aimDot = $('light-aim-dot');
+let aim = .5;
+let beamSpread = .5;
+const fixtures = Array(6).fill(true);
+fixtures.forEach((_,i) => {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.textContent = String(i+1);
+  button.setAttribute('aria-label','Fixture '+(i+1));
+  button.setAttribute('aria-pressed','true');
+  button.style.setProperty('--fixture-index',i);
+  button.onclick = () => {
+    fixtures[i] = !fixtures[i];
+    button.setAttribute('aria-pressed',String(fixtures[i]));
+  };
+  $('fixture-bank').append(button);
+});
+function setLightAim(x,y) {
+  aim = Math.max(0,Math.min(1,x));
+  beamSpread = Math.max(0,Math.min(1,y));
+  aimDot.style.left = aim*100+'%';
+  aimDot.style.top = (1-beamSpread)*100+'%';
+}
+function aimFromPointer(event) {
+  const rect = aimPad.getBoundingClientRect();
+  setLightAim((event.clientX-rect.left)/rect.width,(rect.bottom-event.clientY)/rect.height);
+}
+aimPad.onpointerdown = event => {
+  if (!event.isPrimary || event.button !== 0) return;
+  aimPad.focus({preventScroll:true});
+  aimPad.setPointerCapture(event.pointerId);
+  aimFromPointer(event);
+};
+aimPad.onpointermove = event => {
+  if (aimPad.hasPointerCapture(event.pointerId)) aimFromPointer(event);
+};
+aimPad.onkeydown = event => {
+  const delta = {ArrowLeft:[-.05,0],ArrowRight:[.05,0],ArrowUp:[0,.05],ArrowDown:[0,-.05]}[event.key];
+  if (!delta) return;
+  event.preventDefault();
+  setLightAim(aim+delta[0],beamSpread+delta[1]);
+};
+setLightAim(aim,beamSpread);
+
 function drawLiveLights(time) {
   const width = innerWidth;
   const height = innerHeight;
@@ -943,12 +988,15 @@ function drawLiveLights(time) {
   const palette = lightPalettes[themePicker.value];
   ctx.globalAlpha = brightness;
   ctx.globalCompositeOperation = 'screen';
-  for (const [position,hue] of [[.27,palette[0]],[.73,palette[3]]]) {
-    const x = width*position;
+  for (let i=0;i<fixtures.length;i++) {
+    if (!fixtures[i]) continue;
+    const position = .16+.136*i;
+    const hue = palette[i];
+    const x = width*(position+(aim-.5)*.55);
     const y = height*.37;
-    const glow = ctx.createRadialGradient(x,y,0,x,y,spread*.38);
-    glow.addColorStop(0,'hsla('+hue+',100%,57%,'+(.24+energy*.48)+')');
-    glow.addColorStop(.5,'hsla('+hue+',100%,50%,'+(.13+energy*.21)+')');
+    const glow = ctx.createRadialGradient(x,y,0,x,y,spread*(.16+beamSpread*.44));
+    glow.addColorStop(0,'hsla('+hue+',100%,57%,'+(.12+energy*.28)+')');
+    glow.addColorStop(.5,'hsla('+hue+',100%,50%,'+(.07+energy*.14)+')');
     glow.addColorStop(1,'transparent');
     ctx.fillStyle = glow;
     ctx.fillRect(0,0,width,height);
@@ -956,7 +1004,9 @@ function drawLiveLights(time) {
   for (let i=0;lightScene !== 'wash' && lightScene !== 'prism' && i<6;i++) {
     const x = width*(.16+.136*i);
     const y = height*.60;
-    const tilt = Math.sin(phase+i*1.25)*.56;
+    if (!fixtures[i]) continue;
+    const tilt = Math.sin(phase+i*1.25)*.56+(aim-.5)*1.25;
+    const beamWidth = spread*(.015+beamSpread*.12);
     const beam = ctx.createLinearGradient(0,y,0,y-spread*.72);
     const hue = palette[i];
     beam.addColorStop(0,'hsla('+hue+',100%,61%,'+(.24+energy*.51)+')');
@@ -964,13 +1014,14 @@ function drawLiveLights(time) {
     ctx.fillStyle = beam;
     ctx.beginPath();
     ctx.moveTo(x-5,y);
-    ctx.lineTo(x+tilt*spread-spread*.075,y-spread*.72);
-    ctx.lineTo(x+tilt*spread+spread*.075,y-spread*.72);
+    ctx.lineTo(x+tilt*spread-beamWidth,y-spread*.72);
+    ctx.lineTo(x+tilt*spread+beamWidth,y-spread*.72);
     ctx.lineTo(x+5,y);
     ctx.fill();
   }
   for (let i=0;(lightScene === 'chase' || lightScene === 'laser') && i<(lightScene === 'laser' ? 18 : 5);i++) {
-    const x = width*(lightScene === 'laser' ? i/17 : .17+i*.165);
+    if (!fixtures[i%fixtures.length]) continue;
+    const x = width*(aim+((lightScene === 'laser' ? i/17 : .17+i*.165)-.5)*(.35+beamSpread*1.3));
     const y = height*(lightScene === 'laser' ? .98 : .70+.045*i);
     ctx.strokeStyle = 'hsla('+palette[(i+1)%palette.length]+',100%,66%,'+(.22+energy*.52)+')';
     ctx.lineWidth = 1+i%2;
@@ -981,8 +1032,9 @@ function drawLiveLights(time) {
   }
   if (lightScene === 'prism') {
     for (let i=0;i<8;i++) {
+      if (!fixtures[i%fixtures.length]) continue;
       const angle = phase*.8+i*Math.PI/4;
-      const x = width*.5+Math.cos(angle)*width*.34;
+      const x = width*aim+Math.cos(angle)*width*(.13+beamSpread*.42);
       const y = height*.46+Math.sin(angle)*height*.28;
       const radius = Math.min(width,height)*(.09+energy*.08);
       ctx.strokeStyle = 'hsla('+palette[i%palette.length]+',100%,66%,'+(.35+energy*.5)+')';

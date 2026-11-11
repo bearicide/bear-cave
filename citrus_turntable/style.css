@@ -365,3 +365,13 @@ body.live-view{background:#07030f}
   .light-board[data-scene=chase]::after{background-size:170% 100%;animation:console-chase 3s ease-in-out infinite alternate}
 }
 @keyframes console-chase{from{background-position:left}to{background-position:right}}
+
+.fixture-surface{display:grid;gap:8px;margin-top:10px}
+#light-aim{position:relative;min-height:118px;overflow:hidden;touch-action:none;cursor:crosshair;border:1px solid #b46fa6;border-radius:8px;background:var(--scene-light),repeating-linear-gradient(90deg,transparent 0 calc(20% - 1px),#dd99da28 calc(20% - 1px) 20%),repeating-linear-gradient(0deg,#160c21 0 calc(25% - 1px),#dd99da28 calc(25% - 1px) 25%)}
+#light-aim-dot{position:absolute;width:22px;height:22px;border-radius:50%;border:2px solid #fff;background:var(--live-heading,#d7fb75);box-shadow:0 0 15px var(--live-glow,#a3fa52);transform:translate(-50%,-50%);pointer-events:none}
+.fixture-guide{position:absolute;bottom:6px;left:8px;padding:3px 6px;border-radius:4px;background:#160c21;color:#f9e0f3;pointer-events:none}
+#fixture-bank{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:5px}
+#fixture-bank button{padding-inline:0;min-height:44px}
+#fixture-bank button[aria-pressed=true]{background:hsl(calc(var(--fixture-index) * 17deg + 45deg),80%,68%);color:#22132d}
+.light-blackout #fixture-bank button[aria-pressed=true]{background:#584262;color:#fff}
+#fixture-help{margin:0;color:#f4dbee;font-size:.9rem}
