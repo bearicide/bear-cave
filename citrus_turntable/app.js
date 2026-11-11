@@ -851,6 +851,7 @@ let beatSensitivity = .6;
 let beatEnvelope = 0;
 const beatDetector = {average:0,previous:0,last:-Infinity};
 const beatMeter = $('beat-meter');
+const lightingBoard = document.querySelector('.light-board');
 function detectLightBeat(detector,bass,time,sensitivity) {
   const lift = bass-detector.average;
   const rise = bass-detector.previous;
@@ -875,6 +876,7 @@ const sceneButtons = document.querySelectorAll('[data-light-scene]');
 sceneButtons.forEach(button => {
   button.onclick = () => {
     lightScene = button.dataset.lightScene;
+    lightingBoard.dataset.scene = lightScene;
     sceneButtons.forEach(scene => scene.setAttribute('aria-pressed',String(scene === button)));
   };
 });
@@ -935,6 +937,7 @@ function drawLiveLights(time) {
   const phase = still || !moving ? 0 : lightPhase;
   beatEnvelope = hit ? 1 : beatEnvelope*Math.exp(-elapsed/135);
   const energy = still || !beatSync ? .16 : .08+beatEnvelope*.88;
+  lightingBoard.style.setProperty('--console-light',String(blackout ? 0 : lightLevel*(.5+energy*.5)));
   beatMeter.style.transform = 'scaleX('+(!blackout && beatSync ? (still ? .15 : energy) : 0)+')';
   const brightness = blackout ? 0 : lightLevel;
   const palette = lightPalettes[themePicker.value];

@@ -331,3 +331,37 @@ body.live-view{background:#07030f}
 .light-cues button[data-light-scene][aria-pressed=true]{background:var(--live-heading,#d7fb75);border-color:#fcf4c7;color:#1b1025}
 #light-bump{background:#ede3e8;color:#2a1530;border-color:#b9a6c9}
 @media(max-width:560px){.light-controls{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.live-view .light-board{
+  position:relative;
+  isolation:isolate;
+  background:#140c1d;
+  --scene-light:linear-gradient(110deg,transparent 12%,#fff3 30%,transparent 49%,#fff2 65%,transparent 84%);
+}
+.live-view .light-board::before,.live-view .light-board::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  border-radius:inherit;
+  pointer-events:none;
+}
+.live-view .light-board::before{
+  background:url(assets/live_light_console.webp) center/100% 100% no-repeat;
+  filter:hue-rotate(var(--art-hue,0deg)) brightness(.82);
+}
+.live-view .light-board::after{
+  background:var(--scene-light);
+  mix-blend-mode:screen;
+  opacity:var(--console-light,.65);
+}
+.light-board[data-scene=wash]{--scene-light:radial-gradient(ellipse at center,color-mix(in srgb,var(--live-glow,#ff7447),transparent 40%),transparent 74%)}
+.light-board[data-scene=beams]{--scene-light:linear-gradient(66deg,transparent 20%,#fff5 31%,transparent 40%),linear-gradient(-66deg,transparent 20%,#fff5 31%,transparent 40%)}
+.light-board[data-scene=prism]{--scene-light:radial-gradient(circle at 23% 68%,transparent 9%,#ef68ff88 11%,transparent 14%),radial-gradient(circle at 79% 37%,transparent 13%,#58e5ff99 15%,transparent 18%),radial-gradient(circle at 53% 48%,transparent 15%,#e6ff6999 17%,transparent 20%)}
+.light-board[data-scene=laser]{--scene-light:repeating-conic-gradient(from 195deg at 50% 100%,transparent 0deg 9deg,#fffd 10deg,transparent 11deg 16deg)}
+.light-blackout .light-board::before{filter:grayscale(.8) brightness(.36)}
+@media(prefers-reduced-motion:no-preference){
+  .live-view .light-board::before{transition:filter 220ms ease}
+  .light-board[data-scene=chase]::after{background-size:170% 100%;animation:console-chase 3s ease-in-out infinite alternate}
+}
+@keyframes console-chase{from{background-position:left}to{background-position:right}}
