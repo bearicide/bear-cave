@@ -103,6 +103,33 @@ function dragNumber(input, onChange, pixelsPerStep = 5) {
   return set;
 }
 
+function normalizationGain(buffer) {
+  const channels = Array.from({length:buffer.numberOfChannels}, (_, index) => buffer.getChannelData(index));
+  const blockSize = Math.round(buffer.sampleRate*.4);
+  const blocks = [];
+  let peak = 0;
+  for (let start=0; start<buffer.length; start+=blockSize) {
+    const end = Math.min(buffer.length,start+blockSize);
+    let sum = 0;
+    for (const channel of channels) {
+      for (let i=start; i<end; i++) {
+        const sample = channel[i];
+        sum += sample*sample;
+        peak = Math.max(peak,Math.abs(sample));
+      }
+    }
+    const power = sum / ((end-start)*channels.length);
+    if (power > 10**(-55/10)) blocks.push(power);
+  }
+  if (!blocks.length) return 1;
+  const mean = values => values.reduce((sum,value) => sum+value,0)/values.length;
+  const gate = mean(blocks)/10;
+  const active = blocks.filter(power => power >= gate);
+  const target = 10**(-18/20);
+  const ceiling = 10**(-1.5/20);
+  return Math.min(target/Math.sqrt(mean(active)),ceiling/peak,10**(18/20));
+}
+
 class Deck {
   constructor(index) {
     this.index = index;
@@ -118,7 +145,9 @@ class Deck {
     this.analyser = audio.createAnalyser();
     this.analyser.fftSize = 1024;
     this.samples = new Uint8Array(this.analyser.fftSize);
-    let chain = audio.createMediaElementSource(this.player);
+    this.normalization = audio.createGain();
+    audio.createMediaElementSource(this.player).connect(this.normalization);
+    let chain = this.normalization;
     for (const [label,type,frequency] of [['Low','lowshelf',200],['Mid','peaking',1100],['High','highshelf',4200],['Level']]) {
       const wrap = document.createElement('label');
       wrap.textContent = label;
@@ -186,7 +215,7 @@ class Deck {
     this.player.onloadedmetadata = () => this.refresh();
     this.player.onerror = () => this.message('This audio could not be opened.');
     this.canvas.onpointerdown = (event) => {
-      if (!event.isPrimary || event.button !== 0 || !Number.isFinite(this.player.duration)) return;
+      if (this.loading || !event.isPrimary || event.button !== 0 || !Number.isFinite(this.player.duration)) return;
       const rect = this.canvas.getBoundingClientRect();
       this.scratch = { id: event.pointerId, rect, resume: !this.player.paused, x: event.clientX };
       this.canvas.setPointerCapture(event.pointerId);
@@ -240,7 +269,7 @@ class Deck {
     envelope.gain.setValueAtTime(0,now);
     envelope.gain.linearRampToValueAtTime(.65,now+.005);
     envelope.gain.linearRampToValueAtTime(0,end);
-    grain.connect(envelope).connect(this.analyser);
+    grain.connect(envelope).connect(this.normalization);
     grain.onended = () => { grain.disconnect(); envelope.disconnect(); };
     grain.start(now);
   }
@@ -265,6 +294,7 @@ class Deck {
   }
   async action(action) {
     if (action === 'play') {
+      if (this.loading) return;
       if (!this.player.paused) return this.player.pause();
       try {
         await audio.resume();
@@ -311,6 +341,9 @@ class Deck {
   }
   async load(url,title,bpm,owned=false,loop=false,file) {
     const generation = ++this.generation;
+    this.loading = true;
+    this.playButton.disabled = true;
+    this.normalization.gain.value = 1;
     this.player.pause();
     if (this.owned) URL.revokeObjectURL(this.owned);
     this.owned = owned ? url : null;
@@ -323,13 +356,15 @@ class Deck {
     this.bpm.value = bpm;
     this.rate(0);
     this.get('.title').textContent = title;
-    this.message('');
+    this.message('Normalizing track…');
     this.refresh();
     try {
       const bytes = file ? await file.arrayBuffer() : await (await fetch(url)).arrayBuffer();
       if (generation !== this.generation) return;
       const buffer = await audio.decodeAudioData(bytes);
       if (generation !== this.generation) return;
+      const gain = normalizationGain(buffer);
+      this.normalization.gain.value = gain;
       this.decoded = buffer;
       const channel = buffer.getChannelData(0);
       this.wave = Array.from({length:256},(_,i) => {
@@ -339,8 +374,14 @@ class Deck {
         for (let n=start;n<end;n++) peak = Math.max(peak,Math.abs(channel[n]));
         return peak;
       });
+      this.message('Normalized · '+(gain > 1 ? '+' : '')+(20*Math.log10(gain)).toFixed(1)+' dB');
     } catch {
-      // The media element can still play formats that the decoder cannot inspect.
+      if (generation === this.generation) this.message('Normalization unavailable for this file.');
+    } finally {
+      if (generation === this.generation) {
+        this.loading = false;
+        this.playButton.disabled = false;
+      }
     }
   }
   drawSpectrum() {
