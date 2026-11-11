@@ -578,3 +578,61 @@ h2,.light-board summary{font-weight:700;letter-spacing:.035em}
   .deck-help{grid-row:5}
 }
 @media(max-width:760px){#fx-zones{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.live-view .console{display:contents}
+body:not(.live-view) main{grid-template-columns:minmax(0,1fr)}
+body:not(.live-view) .console{
+  display:grid;
+  grid-column:1/-1;
+  grid-template-columns:minmax(0,1fr) minmax(195px,.66fr) minmax(0,1fr);
+  background:#24182e;
+  border:1px solid #835878;
+  border-radius:5px;
+  box-shadow:0 5px 0 #080410;
+  overflow:hidden;
+}
+body:not(.live-view) .console h2,body:not(.live-view) .console h3,
+body:not(.live-view) .console button,body:not(.live-view) main>header h1,
+body:not(.live-view) main>header h1 em{
+  font-family:var(--body-font);
+  letter-spacing:normal;
+}
+body:not(.live-view) main>header h1{font-size:clamp(1.85rem,4.1vw,4.2rem);font-weight:800;line-height:1.05}
+body:not(.live-view) main>header h1 span{transform:none;font-style:normal;text-shadow:none}
+body:not(.live-view) main>header h1 em{text-shadow:none}
+body:not(.live-view) .console h2{font-size:1.3rem;font-weight:800}
+body:not(.live-view) .console button{font-size:.94rem;font-weight:700}
+body:not(.live-view) .console #deck-a{grid-area:1/1}
+body:not(.live-view) .console .mixer{grid-area:1/2}
+body:not(.live-view) .console #deck-b{grid-area:1/3}
+body:not(.live-view) .console .fx-board{grid-area:2/1/3/4}
+body:not(.live-view) .console .library{grid-area:3/1/4/4}
+body:not(.live-view) .deck-help{grid-column:1/-1;grid-row:auto}
+body:not(.live-view) .console .deck,
+body:not(.live-view) .console .mixer,
+body:not(.live-view) .console .fx-board,
+body:not(.live-view) .console .library{
+  background:#24182e;
+  border:0;
+  border-radius:0;
+  box-shadow:none;
+  padding:clamp(12px,1.7vw,22px);
+}
+body:not(.live-view) .console .mixer{border-inline:1px solid #63445f;background:#1e1428}
+body:not(.live-view) .console .fx-board,body:not(.live-view) .console .library{border-top:1px solid #63445f}
+body:not(.live-view) .console .library{display:block}
+body:not(.live-view) .console .library>details{max-width:none}
+body:not(.live-view) .console .fx-zone{background:#1e1428}
+body:not(.live-view) .console .fx-heading h2,body:not(.live-view) .console .fx-label h3{text-transform:none}
+body:not(.live-view) .console .fx-label h3{font-size:1.08rem}
+body:not(.live-view) .console .value-box input{background:#17101e}
+body:not(.live-view) .console button,body:not(.live-view) .console .upload{border-radius:4px}
+body:not(.live-view) .console #deck-b .deck{--accent:#d7fb75}
+@media(max-width:680px){
+  body:not(.live-view) .console{grid-template-columns:minmax(0,1fr)}
+  body:not(.live-view) .console #deck-a,body:not(.live-view) .console #deck-b,
+  body:not(.live-view) .console .mixer,body:not(.live-view) .console .fx-board,
+  body:not(.live-view) .console .library{grid-area:auto}
+  body:not(.live-view) .console .mixer{border-inline:0;border-block:1px solid #63445f}
+  body:not(.live-view) .console .deck{border-radius:0}
+}
