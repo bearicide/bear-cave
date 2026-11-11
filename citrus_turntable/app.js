@@ -14,6 +14,23 @@ master.connect(limiter);
 limiter.connect(audio.destination);
 limiter.connect(capture);
 let recording;
+let autoSync = true;
+try { autoSync = localStorage.getItem('citrus-auto-sync') !== 'off'; } catch {}
+function showSync() {
+  $('autosync').setAttribute('aria-pressed', String(autoSync));
+  $('autosync').textContent = autoSync ? 'Auto-sync on' : 'Auto-sync off';
+}
+$('autosync').onclick = () => {
+  autoSync = !autoSync;
+  showSync();
+  try { localStorage.setItem('citrus-auto-sync', autoSync ? 'on' : 'off'); } catch {}
+  if (autoSync) syncPlayingDecks();
+};
+showSync();
+function syncPlayingDecks() {
+  const playing = decks.filter(deck => !deck.player.paused);
+  if (playing.length === 2) playing[1].sync(playing[0]);
+}
 const clock = (s) => Number.isFinite(s) ? Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0') : '0:00';
 
 class Deck {
@@ -84,7 +101,12 @@ class Deck {
       if (action) this.action(action);
     };
     this.seek.oninput = () => this.jump(this.player.duration * this.seek.value / 1000);
-    this.tempo.oninput = () => this.rate(+this.tempo.value);
+    this.tempo.oninput = () => {
+      this.rate(+this.tempo.value);
+      const other = decks[1-this.index];
+      if (autoSync && !this.player.paused && !other.player.paused) other.sync(this);
+    };
+    this.bpm.onchange = () => { if (autoSync) syncPlayingDecks(); };
     this.player.onplay = this.player.onpause = this.player.onended = () => this.refresh();
     this.player.onloadedmetadata = () => this.refresh();
     this.player.onerror = () => this.message('This audio could not be opened.');
@@ -116,6 +138,14 @@ class Deck {
       if (!this.player.paused) return this.player.pause();
       try {
         await audio.resume();
+        const other = decks[1-this.index];
+        if (autoSync && !other.player.paused && this.sync(other) && this.player.currentTime <= this.cue + .08) {
+          const sourceBeat = 60 / Number(other.bpm.value);
+          const beat = 60 / Number(this.bpm.value);
+          const elapsed = (other.player.currentTime-other.cue)/sourceBeat;
+          const phase = elapsed-Math.floor(elapsed);
+          this.jump(this.cue + phase*beat);
+        }
         await this.player.play();
       } catch { this.message('Playback failed. Try another audio file.'); }
     }
@@ -126,15 +156,22 @@ class Deck {
     if (action === 'loop') this.loop.setAttribute('aria-pressed',String(this.player.loop = !this.player.loop));
     if (action === 'sync') {
       const other = decks[1-this.index];
-      if (!this.bpm.value || !other.bpm.value || !this.bpm.validity.valid || !other.bpm.validity.valid) {
-        return this.message('Enter the BPM on both decks.');
-      }
-      const target = (other.bpm.value*other.player.playbackRate/this.bpm.value-1)*100;
-      if (target < -50 || target > 100) return this.message('Target BPM is outside the tempo range.');
-      this.rate(target);
-      this.message('Matched tempo. Use cue to line up the beats.');
+      if (this.sync(other, true)) this.message('Tempo matched. Use the cue to line up beats.');
     }
     this.refresh();
+  }
+  sync(other, feedback = false) {
+    if (!this.bpm.value || !other.bpm.value || !this.bpm.validity.valid || !other.bpm.validity.valid) {
+      if (feedback) this.message('Enter the BPM on both decks.');
+      return false;
+    }
+    const target = (other.bpm.value*other.player.playbackRate/this.bpm.value-1)*100;
+    if (target < -50 || target > 100) {
+      if (feedback) this.message('Target BPM is outside the tempo range.');
+      return false;
+    }
+    this.rate(target);
+    return true;
   }
   local(file) {
     if (file) this.load(URL.createObjectURL(file),file.name,'',true,false,file);
