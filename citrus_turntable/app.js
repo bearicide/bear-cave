@@ -812,14 +812,12 @@ mix(blend,volume);
 
 function initOneShots() {
   const sounds = [
-    ['Air Horn',.95,(t,n) => (.72*Math.sin(t*2*Math.PI*292)+.3*Math.sin(t*2*Math.PI*367)+.23*Math.sin(t*2*Math.PI*587)+n*.08)*(1+.16*Math.sin(t*22))],
-    ['Laser',.38,(t,n) => Math.sin(2*Math.PI*(160*t+74*(1-Math.exp(-t*24))))*.85+n*.09],
-    ['Rewind',.79,(t,n) => Math.sin(2*Math.PI*(800*t+39*Math.sin(t*5.5)))*(.52+.36*Math.sin(t*97))+n*.25],
-    ['Impact',1.02,(t,n) => Math.sin(2*Math.PI*(43*t+4*(1-Math.exp(-t*18))))*Math.exp(-t*3.5)+n*.62*Math.exp(-t*15)],
-    ['Riser',1.45,(t,n,d) => (n*.5+Math.sin(2*Math.PI*(100*t+395*t*t))*.45)*(t/d)**1.35],
-    ['Clap',.36,(t,n) => n*(Math.exp(-t*32)+.7*Math.exp(-Math.abs(t-.025)*110)+.57*Math.exp(-Math.abs(t-.05)*95))],
-    ['Vinyl Cut',.55,(t,n) => (n*.52+Math.sin(2*Math.PI*(560*t+6*Math.sin(t*21)))*.65)*(.5+.5*Math.sin(t*41))**2],
-    ['Bass Drop',1.3,(t,n) => Math.sin(2*Math.PI*(32*t+14*(1-Math.exp(-t*5))))*.9+n*.1*Math.exp(-t*24)],
+    ['DJ Horn','dj_horn'],
+    ['Vinyl Scratch','vinyl_scratch'],
+    ['Crowd Reaction','crowd_reaction'],
+    ['Handclap','handclap'],
+    ['Cymbal Hit','cymbal_hit'],
+    ['Cymbal Rise','cymbal_rise'],
   ];
   const level = audio.createGain();
   level.gain.value = .7;
@@ -828,31 +826,29 @@ function initOneShots() {
   const buffers = [];
   const active = new Map();
   let pendingGeneration = 0;
-  function makeBuffer(duration,sample) {
-    const buffer = audio.createBuffer(1,Math.round(duration*audio.sampleRate),audio.sampleRate);
-    const data = buffer.getChannelData(0);
-    let peak = 0;
-    for (let i=0;i<data.length;i++) {
-      const t = i/audio.sampleRate;
-      const envelope = Math.min(1,t/.009,(duration-t)/.075);
-      data[i] = sample(t,Math.random()*2-1,duration)*envelope;
-      peak = Math.max(peak,Math.abs(data[i]));
-    }
-    if (peak > 0) for (let i=0;i<data.length;i++) data[i] *= .46/peak;
-    return buffer;
+  function load(index) {
+    return buffers[index] ||= fetch('assets/dj_fx/'+sounds[index][1]+'.mp3')
+      .then(response => {
+        if (!response.ok) throw Error('Sound unavailable');
+        return response.arrayBuffer();
+      })
+      .then(bytes => audio.decodeAudioData(bytes))
+      .catch(error => { buffers[index] = null; throw error; });
   }
   async function trigger(index) {
     const generation = pendingGeneration;
+    let buffer;
     try {
-      await audio.resume();
+      [,buffer] = await Promise.all([audio.resume(),load(index)]);
     } catch {
+      if (generation === pendingGeneration) $('oneshot-status').textContent = 'That sound couldn’t load. Try again.';
       return;
     }
     if (generation !== pendingGeneration) return;
+    $('oneshot-status').textContent = '';
     active.get(index)?.stop();
-    const [,duration,sample] = sounds[index];
     const source = audio.createBufferSource();
-    source.buffer = buffers[index] ||= makeBuffer(duration,sample);
+    source.buffer = buffer;
     source.connect(level);
     active.set(index,source);
     buttons[index].classList.add('oneshot-playing');
@@ -885,7 +881,7 @@ function initOneShots() {
     buttons.forEach(button => button.classList.remove('oneshot-playing'));
   }
   $('oneshot-stop').onclick = stopAll;
-  return {trigger,stopAll,isPlaying:() => active.size > 0};
+  return {trigger,stopAll,preload:() => sounds.forEach((_,index) => load(index).catch(() => {})),isPlaying:() => active.size > 0};
 }
 const oneShots = initOneShots();
 function stop() {
@@ -926,7 +922,7 @@ document.addEventListener('keydown',(e) => {
     else playAll();
     return;
   }
-  if (document.body.classList.contains('live-view') && /^[1-8]$/.test(key)) {
+  if (document.body.classList.contains('live-view') && /^[1-6]$/.test(key)) {
     e.preventDefault();
     oneShots.trigger(Number(key)-1);
     return;
@@ -1324,6 +1320,7 @@ $('live-tracks').onclick = () => {
   if (expanded) $('add-your-music').scrollIntoView({block:'nearest'});
 };
 function showLiveView(enabled) {
+  if (enabled) oneShots.preload();
   document.body.classList.toggle('live-view',enabled);
   liveCanvas.hidden = !enabled;
   document.querySelector('.live-heading').hidden = !enabled;

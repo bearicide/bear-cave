@@ -699,4 +699,7 @@ body:not(.live-view) .value-box>span{font-weight:600}
   .live-view .oneshot-board{grid-area:4/1/5/4}
   .live-view.live-tracks-open .library{grid-area:5/1/6/4}
 }
-@media(min-width:1050px) and (orientation:landscape){#oneshot-pads{grid-template-columns:repeat(8,minmax(0,1fr))}}
+@media(min-width:1050px) and (orientation:landscape){#oneshot-pads{grid-template-columns:repeat(6,minmax(0,1fr))}}
+
+#oneshot-status:empty{display:none}
+.oneshot-credits{margin-top:10px;font-size:.84rem}
