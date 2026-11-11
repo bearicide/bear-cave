@@ -499,7 +499,7 @@ async function crateTrack({name, url, file, sample}) {
   if (file) {
     const remove = document.createElement('button');
     remove.textContent = 'Remove';
-    remove.setAttribute('aria-label','Remove '+name+' from crate');
+    remove.setAttribute('aria-label','Remove '+name+' from the music list');
     remove.onclick = () => {
       if (activePreview === listen) stopPreview();
       URL.revokeObjectURL(url);
@@ -646,6 +646,10 @@ $('remote').onsubmit = async (e) => {
     return status.textContent = 'Paste a link to an audio file, like an MP3.';
   }
   if (!['http:','https:'].includes(url.protocol)) return status.textContent = 'Paste a link to an audio file, like an MP3.';
+  if (/(^|\.)youtube\.com$|(^|\.)youtu\.be$/i.test(url.hostname)) {
+    status.textContent = 'YouTube video links won’t load here. If you have the audio file, choose Add music from your device.';
+    return;
+  }
   const generation = deck.generation;
   const attempt = (deck.importAttempt || 0)+1;
   deck.importAttempt = attempt;
