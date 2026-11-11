@@ -1114,3 +1114,21 @@ body:not(.live-view) .console .fx-zone{border-color:var(--citrus-divider)}
 @media(min-width:650px){
   .live-view.performance-view .live-table{grid-template-columns:minmax(0,1fr) minmax(160px,.48fr) minmax(0,1fr)}
 }
+
+/* Leave room to see the audience above the booth. */
+.performance-view #live-crowd::before{
+  inset:-5% -4% auto;
+  height:60svh;
+  background-position:center 72%;
+  mask-image:linear-gradient(#000 72%,transparent);
+}
+.live-view.performance-view main{
+  max-width:1220px;
+  row-gap:clamp(102px,16svh,170px);
+}
+.live-view.performance-view .live-table .deck .platter{
+  width:min(100%,31svh,345px);
+}
+@media(max-height:600px) and (orientation:landscape){
+  .live-view.performance-view main{row-gap:70px}
+}
