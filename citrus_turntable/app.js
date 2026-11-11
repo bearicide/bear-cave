@@ -3,6 +3,10 @@ const $ = (id) => document.getElementById(id);
 const crate = [
   ['C-Funk',117,'c_funk','USUAN1100001'],
   ['Got Funk',98,'got_funk','USUAN1200005'],
+  ['Enter the Party',120,'enter_the_party','USUAN1100240'],
+  ['Funky One',121,'funky_one','USUAN1100222'],
+  ['Disco con Tutti',115,'disco_con_tutti','USUAN1200091'],
+  ['Local Forecast – Elevator',82,'local_forecast_elevator','USUAN1300012'],
 ];
 const audio = new AudioContext();
 const master = audio.createGain();
