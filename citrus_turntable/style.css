@@ -208,3 +208,9 @@ kbd{display:inline-block;padding:0 .35em;border:1px solid #87577e;border-bottom-
   .library{grid-row:5}
 }
 @media(min-width:1120px){.deck-help{grid-column:1/4;grid-row:4}}
+
+.start-actions{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;margin-top:12px}
+.start-actions button{background:#ffac60;color:#25132c;border-color:#ffd491}
+.start-actions a{display:inline-flex;align-items:center;min-height:44px;font-weight:800}
+#add-your-music{scroll-margin-top:12px}
+.track-help{margin:6px 0;font-size:.9rem}

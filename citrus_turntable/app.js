@@ -482,6 +482,7 @@ async function crateTrack({name, url, file, sample}) {
   buttons.className = 'crate-actions';
   const listen = document.createElement('button');
   listen.textContent = '▶ Preview';
+  listen.setAttribute('aria-label','Preview '+name);
   listen.disabled = true;
   buttons.append(listen);
   const loads = decks.map((deck,i) => {
@@ -622,6 +623,11 @@ function playAll() {
   }
 }
 $('play-all').onclick = playAll;
+$('try-mixer').onclick = () => {
+  playAll();
+  $('play-all').focus();
+};
+
 document.addEventListener('keydown',(e) => {
   if (e.repeat || e.altKey || e.ctrlKey || e.metaKey || e.target.closest('input,textarea,select,[contenteditable]')) return;
   const key = e.key.toLowerCase();
@@ -699,7 +705,7 @@ $('remote').onsubmit = async (e) => {
   }
   if (!['http:','https:'].includes(url.protocol)) return status.textContent = 'Paste a link to an audio file, like an MP3.';
   if (/(^|\.)youtube\.com$|(^|\.)youtu\.be$/i.test(url.hostname)) {
-    status.textContent = 'YouTube video links won’t load here. If you have the audio file, choose Add music from your device.';
+    status.textContent = 'That’s a YouTube page. Choose a saved audio file or try Find free music.';
     return;
   }
   importAudio(url,deck,status);
@@ -717,7 +723,7 @@ async function importAudio(url,deck,status,title) {
     status.textContent = 'Sent to Deck '+'AB'[deck.index]+'.';
     deck.load(URL.createObjectURL(blob),title || decodeURIComponent(url.pathname.split('/').pop() || 'Online audio'),'',true,false,blob);
   } catch {
-    if (generation===deck.generation && attempt===deck.importAttempt) status.textContent = 'That link didn’t load. Download the song first, then choose Add music from your device.';
+    if (generation===deck.generation && attempt===deck.importAttempt) status.textContent = 'That link didn’t open an audio file. Try Find free music or choose a file saved on this device.';
   }
 }
 $('record').onclick = async () => {
