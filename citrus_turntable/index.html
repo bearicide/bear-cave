@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#171027"><meta name="description" content="Mix your tracks on two browser turntables. Free starter loops, EQ, tempo, cue points, and recording."><title>Citrus Turntable • MATTBEAR</title><link rel="stylesheet" href="style.css?v=40"><script defer src="app.js?v=37"></script></head>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#171027"><meta name="description" content="Mix your tracks on two browser turntables. Free starter loops, EQ, tempo, cue points, and recording."><title>Citrus Turntable • MATTBEAR</title><link rel="stylesheet" href="style.css?v=41"><script defer src="app.js?v=41"></script></head>
 <body><div id="live-crowd" aria-hidden="true"></div><canvas id="live-lights" aria-hidden="true" hidden></canvas><main>
 <div class="site-bar"><a class="brand" href="https://bearicide.github.io/"><strong>MATTBEAR</strong><span>Bearicide Productions</span></a><nav aria-label="Citrus Turntable"><a href="./" aria-current="page">Mixer</a><a href="about.html">About</a><a href="instructions.html">Instructions</a><a href="contact.html">Contact</a><a href="review.html">Review</a></nav></div>
 <header><a href="../">← Bear Cave</a><h1><span>CITRUS</span> <em>TURNTABLE</em></h1><p>Two songs are ready to play. No downloads or account needed.</p><div class="start-actions"><button id="try-mixer" type="button">Try both starter tracks</button><a href="#add-your-music">Add Your Music!</a><a id="live-mode" href="?view=live">Live view</a></div></header>
@@ -22,6 +22,10 @@
 <div class="light-cues" role="group" aria-label="Light scenes"><button type="button" data-light-scene="wash" aria-pressed="false">Wash</button><button type="button" data-light-scene="beams" aria-pressed="false">Beams</button><button type="button" data-light-scene="chase" aria-pressed="true">Chase</button><button type="button" data-light-scene="prism" aria-pressed="false">Prism</button><button type="button" data-light-scene="laser" aria-pressed="false">Laser fan</button></div>
 <div class="light-cues"><button type="button" id="light-sound" aria-pressed="true">Beat sync</button><button type="button" id="light-bump">White bump</button><button type="button" id="light-blackout" aria-pressed="false">Blackout</button></div>
 </div></details>
+<section class="oneshot-board" aria-labelledby="oneshot-title">
+<div class="oneshot-heading"><h2 id="oneshot-title">DJ Sound FX</h2><div class="oneshot-settings"><label class="value-box"><span>Pad volume <small>%</small></span><input id="oneshot-level" type="number" min="0" max="100" step="1" value="70"></label><button id="oneshot-stop" type="button">Stop FX</button></div></div>
+<div id="oneshot-pads"></div>
+</section>
 <section class="fx-board" aria-labelledby="fx-heading">
 <div class="fx-heading"><div><h2 id="fx-heading">FX Board</h2><p>Shape the whole mix. Drag on an effect to turn it on and adjust it.</p></div><button id="fx-bypass" type="button">Bypass all FX</button></div>
 <div id="fx-zones"></div>

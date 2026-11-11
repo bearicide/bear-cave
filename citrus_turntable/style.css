@@ -664,3 +664,39 @@ body:not(.live-view) .console #play-all,
 body:not(.live-view) .console button[data-act=play]{font-weight:800}
 body:not(.live-view) .value-box>span{font-weight:600}
 .info-content h2{font-weight:700}
+
+.oneshot-board{display:none}
+.live-view .oneshot-board{
+  display:block;
+  grid-area:5/1/6/3;
+  padding:clamp(12px,2vw,22px);
+  border:1px solid var(--panel-edge);
+  border-radius:4px;
+  background:linear-gradient(#190d21a0,#130a1b70),url(assets/live_oneshot_board.webp) center/100% 100% no-repeat,#201429;
+  box-shadow:var(--panel-shadow);
+}
+.live-view.live-tracks-open .library{grid-area:6/1/7/3}
+.oneshot-heading,.oneshot-settings{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.oneshot-heading{margin-bottom:10px}
+.live-view .oneshot-heading h2{font:400 1.65rem/1 'Sedgwick Ave Display',cursive;color:var(--live-heading,#d7fb75)}
+.oneshot-settings{align-items:end}
+.oneshot-settings .value-box{width:94px}
+#oneshot-pads{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.live-view #oneshot-pads button{
+  display:grid;gap:4px;justify-items:start;text-align:left;
+  min-width:0;min-height:56px;padding:7px;
+  border-color:#a975a2;background:#35223e;color:#fff5e9;
+  font-size:clamp(.98rem,1.4vw,1.18rem);
+}
+.live-view #oneshot-pads button:hover{background:#553653}
+.live-view #oneshot-pads button.oneshot-playing{
+  color:#180d20;background:var(--live-heading,#d7fb75);
+  box-shadow:0 0 15px var(--live-glow,#b7f342);
+}
+#oneshot-pads kbd{font-size:.7rem;color:inherit}
+@media(max-width:460px){#oneshot-pads{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(min-width:760px) and (orientation:landscape){
+  .live-view .oneshot-board{grid-area:4/1/5/4}
+  .live-view.live-tracks-open .library{grid-area:5/1/6/4}
+}
+@media(min-width:1050px) and (orientation:landscape){#oneshot-pads{grid-template-columns:repeat(8,minmax(0,1fr))}}
