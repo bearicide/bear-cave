@@ -37,7 +37,7 @@ class Deck {
   constructor(index) {
     this.index = index;
     this.root = $('deck').content.firstElementChild.cloneNode(true);
-    $('decks').append(this.root);
+    $(index ? 'deck-b' : 'deck-a').append(this.root);
     this.get = (selector) => this.root.querySelector(selector);
     this.get('h2').textContent = 'Deck ' + 'AB'[index];
     this.player = new Audio();
@@ -110,10 +110,64 @@ class Deck {
     this.player.onplay = this.player.onpause = this.player.onended = () => this.refresh();
     this.player.onloadedmetadata = () => this.refresh();
     this.player.onerror = () => this.message('This audio could not be opened.');
-    this.canvas.onclick = (e) => {
+    this.canvas.onpointerdown = (event) => {
+      if (!event.isPrimary || event.button !== 0 || !Number.isFinite(this.player.duration)) return;
       const rect = this.canvas.getBoundingClientRect();
-      this.jump((e.clientX-rect.left)/rect.width*this.player.duration);
+      this.scratch = { id: event.pointerId, rect, resume: !this.player.paused, x: event.clientX };
+      this.canvas.setPointerCapture(event.pointerId);
+      this.player.pause();
+      audio.resume().catch(() => {});
+      this.jump((event.clientX-rect.left)/rect.width*this.player.duration);
+      this.root.classList.add('scratching');
     };
+    this.canvas.onpointermove = (event) => {
+      const scratch = this.scratch;
+      if (!scratch || event.pointerId !== scratch.id) return;
+      const delta = event.clientX-scratch.x;
+      if (delta === 0) return;
+      scratch.x = event.clientX;
+      const time = Math.max(0, Math.min(this.player.duration,
+        (event.clientX-scratch.rect.left)/scratch.rect.width*this.player.duration));
+      this.jump(time);
+      this.scratchGrain(time, delta);
+    };
+    const finishScratch = (event) => {
+      if (event.pointerId !== this.scratch?.id) return;
+      const { resume } = this.scratch;
+      this.scratch = null;
+      this.root.classList.remove('scratching');
+      if (resume) this.player.play().catch(() => this.message('Press Play to resume.'));
+    };
+    this.canvas.onpointerup = this.canvas.onpointercancel =
+      this.canvas.onlostpointercapture = finishScratch;
+  }
+  scratchGrain(time, delta) {
+    const buffer = this.decoded;
+    const now = audio.currentTime;
+    if (!buffer || audio.state !== 'running' || now < (this.nextGrain || 0)) return;
+    this.nextGrain = now + .032;
+    const clip = audio.createBuffer(buffer.numberOfChannels, Math.ceil(.05*buffer.sampleRate), buffer.sampleRate);
+    const direction = Math.sign(delta);
+    const start = Math.floor(time*buffer.sampleRate);
+    for (let channel=0;channel<clip.numberOfChannels;channel++) {
+      const source = buffer.getChannelData(channel);
+      const output = clip.getChannelData(channel);
+      for (let i=0;i<output.length;i++) {
+        const index = start+i*direction;
+        output[i] = source[index] || 0;
+      }
+    }
+    const grain = audio.createBufferSource();
+    const envelope = audio.createGain();
+    grain.buffer = clip;
+    grain.playbackRate.value = Math.max(.7, Math.min(2, Math.abs(delta)/5));
+    const end = now + clip.duration/grain.playbackRate.value;
+    envelope.gain.setValueAtTime(0,now);
+    envelope.gain.linearRampToValueAtTime(.65,now+.005);
+    envelope.gain.linearRampToValueAtTime(0,end);
+    grain.connect(envelope).connect(this.analyser);
+    grain.onended = () => { grain.disconnect(); envelope.disconnect(); };
+    grain.start(now);
   }
   message(value) { this.get('.status').textContent = value; }
   jump(time) {
@@ -185,6 +239,7 @@ class Deck {
     if (this.owned) URL.revokeObjectURL(this.owned);
     this.owned = owned ? url : null;
     this.wave = null;
+    this.decoded = null;
     this.player.src = url;
     this.player.loop = loop;
     this.loop.setAttribute('aria-pressed',String(loop));
@@ -199,6 +254,7 @@ class Deck {
       if (generation !== this.generation) return;
       const buffer = await audio.decodeAudioData(bytes);
       if (generation !== this.generation) return;
+      this.decoded = buffer;
       const channel = buffer.getChannelData(0);
       this.wave = Array.from({length:256},(_,i) => {
         let peak = 0;
@@ -265,7 +321,7 @@ function mix() {
 $('cross').oninput = $('master').oninput = mix;
 $('center').onclick = () => { $('cross').value = .5; mix(); };
 mix();
-function stop() { decks.forEach((deck) => { deck.player.pause(); deck.jump(0); }); }
+function stop() { decks.forEach((deck) => { if (deck.scratch) deck.scratch.resume = false; deck.player.pause(); deck.jump(0); }); }
 $('stop').onclick = stop;
 document.addEventListener('keydown',(e) => {
   if (e.repeat || e.altKey || e.ctrlKey || e.metaKey || e.target.closest('input,textarea,button,[contenteditable]')) return;

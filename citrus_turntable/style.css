@@ -71,3 +71,21 @@ header h1 em::before{content:none}
   .library{display:grid;gap:8px}
   .library>p,.library>form,.library>details{margin:0}
 }
+
+main{grid-template-columns:minmax(0,1fr) minmax(190px,.65fr) minmax(0,1fr);align-items:start}
+#deck-a{grid-column:1;grid-row:2}
+.mixer{grid-column:2;grid-row:2;grid-template-columns:1fr}
+#deck-b{grid-column:3;grid-row:2}
+.library{grid-column:1/-1;grid-row:3}
+.deck-slot{min-width:0}
+.deck canvas{height:48px;touch-action:none;cursor:grab;border:1px solid #805475}
+.scratching canvas{cursor:grabbing;border-color:var(--accent)}
+.scratch-hint{font-size:.8rem;color:#e6c7df}
+@media(min-width:1120px){
+  main{grid-template-columns:minmax(0,1fr) minmax(190px,.65fr) minmax(0,1fr) minmax(215px,.76fr)}
+  .library{grid-column:4;grid-row:2}
+}
+@media(max-width:680px){
+  main{grid-template-columns:minmax(0,1fr)}
+  #deck-a,.mixer,#deck-b,.library{grid-column:1;grid-row:auto}
+}
