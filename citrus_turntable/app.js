@@ -1,10 +1,8 @@
 'use strict';
 const $ = (id) => document.getElementById(id);
 const crate = [
-  ['Orange Soda',112,'orange_soda'],
-  ['Lime Wire',124,'lime_wire'],
-  ['Afterglow',98,'afterglow'],
-  ['Peel Break',116,'peel_break'],
+  ['C-Funk',117,'c_funk','USUAN1100001'],
+  ['Got Funk',98,'got_funk','USUAN1200005'],
 ];
 const audio = new AudioContext();
 const master = audio.createGain();
@@ -308,6 +306,12 @@ for (const sample of crate) {
     button.onclick = () => deck.starter(sample);
     buttons.append(button);
   });
+  const source = document.createElement('a');
+  source.href = 'https://incompetech.com/music/royalty-free/index.html?isrc='+sample[3];
+  source.textContent = 'Original track';
+  source.target = '_blank';
+  source.rel = 'noopener';
+  name.append(document.createElement('br'),source);
   row.append(name,buttons);
   $('crate').append(row);
 }
