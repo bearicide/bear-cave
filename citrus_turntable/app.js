@@ -959,10 +959,50 @@ function initOneShots() {
 }
 const oneShots = initOneShots();
 const fxPadToggle = $('oneshot-toggle');
+const fxPadDock = fxPadToggle.closest('.oneshot-dock');
+const fxPadHandle = $('oneshot-move');
+let fxPadX = 0;
+let fxPadY = 0;
+let fxPadDrag;
+
+function moveFxPad(x, y) {
+  if (fxPadDock.hidden) return;
+  const rect = fxPadDock.getBoundingClientRect();
+  // The collapsed dock only needs room for its controls.
+  const left = ($('oneshot-board').hidden ? fxPadHandle.getBoundingClientRect().left : rect.left) - fxPadX;
+  const right = rect.right - fxPadX;
+  const top = rect.top - fxPadY;
+  const bottom = rect.bottom - fxPadY;
+  fxPadX = Math.max(4-left, Math.min(x, document.documentElement.clientWidth-4-right));
+  fxPadY = Math.max(4-top, Math.min(y, document.documentElement.clientHeight-4-bottom));
+  fxPadDock.style.translate = fxPadX+'px '+fxPadY+'px';
+}
+
+fxPadHandle.addEventListener('pointerdown', event => {
+  if (event.button !== 0 || fxPadDrag) return;
+  fxPadDrag = {id:event.pointerId, x:event.clientX-fxPadX, y:event.clientY-fxPadY};
+  fxPadHandle.setPointerCapture(event.pointerId);
+});
+fxPadHandle.addEventListener('pointermove', event => {
+  if (fxPadDrag?.id !== event.pointerId) return;
+  moveFxPad(event.clientX-fxPadDrag.x, event.clientY-fxPadDrag.y);
+});
+fxPadHandle.addEventListener('lostpointercapture', event => {
+  if (fxPadDrag?.id === event.pointerId) fxPadDrag = null;
+});
+fxPadHandle.addEventListener('keydown', event => {
+  const step = {ArrowLeft:[-20,0], ArrowRight:[20,0], ArrowUp:[0,-20], ArrowDown:[0,20]}[event.key];
+  if (event.key !== 'Home' && !step) return;
+  event.preventDefault();
+  moveFxPad(...(step ? [fxPadX+step[0], fxPadY+step[1]] : [0,0]));
+});
+window.addEventListener('resize', () => moveFxPad(fxPadX, fxPadY));
+new ResizeObserver(() => moveFxPad(fxPadX, fxPadY)).observe(fxPadDock);
 function setFxPadOpen(open) {
   $('oneshot-board').hidden = !open;
   fxPadToggle.setAttribute('aria-expanded', String(open));
   fxPadToggle.textContent = open ? 'Hide FX Pad' : 'Open FX Pad';
+  moveFxPad(fxPadX, fxPadY);
 }
 fxPadToggle.onclick = () => setFxPadOpen($('oneshot-board').hidden);
 function stop() {
@@ -1478,8 +1518,9 @@ function showLiveView(enabled) {
   measurePatch();
   if (enabled) oneShots.preload();
   document.body.classList.toggle('live-view',enabled);
-  fxPadToggle.closest('.oneshot-dock').hidden = !enabled;
-  if (!enabled) setFxPadOpen(false);
+  fxPadDock.hidden = !enabled;
+  if (enabled) moveFxPad(fxPadX, fxPadY);
+  else setFxPadOpen(false);
   liveCanvas.hidden = !enabled;
   document.querySelector('.live-heading').hidden = !enabled;
   if (enabled && !lightFrame) lightFrame = requestAnimationFrame(drawLiveLights);

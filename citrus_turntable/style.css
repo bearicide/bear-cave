@@ -971,3 +971,16 @@ body:not(.live-view) .console .fx-zone{border-color:var(--citrus-divider)}
   .live-view .oneshot-dock #oneshot-pads button{grid-template-columns:20px minmax(0,1fr);font-size:.83rem}
   .oneshot-icon{width:20px}
 }
+
+.oneshot-dock-controls{display:flex;gap:6px;max-width:100%}
+#oneshot-move{
+  min-height:44px;
+  padding-inline:10px;
+  border-color:var(--live-heading,#d7fb75);
+  background:#251731;
+  color:#fff5e9;
+  cursor:grab;
+  touch-action:none;
+  user-select:none;
+}
+#oneshot-move:active{cursor:grabbing}
