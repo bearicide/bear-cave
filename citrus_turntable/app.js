@@ -1,16 +1,16 @@
 'use strict';
 const $ = (id) => document.getElementById(id);
 const crate = [
+  ['Cut Trance',110,'cut_trance','USUAN1100273','Trance / Techno'],
+  ['Melodica ft. Ketsa',154,'melodica','https://freemusicarchive.org/music/1000-handz/cc-by-free-to-use-dancehouse-instrumentals/melodica-ft-ketsa/','House','1000 Handz',true],
   ['C-Funk',117,'c_funk','USUAN1100001'],
   ['Got Funk',98,'got_funk','USUAN1200005'],
   ['Enter the Party',120,'enter_the_party','USUAN1100240'],
   ['Funky One',121,'funky_one','USUAN1100222'],
   ['Disco con Tutti',115,'disco_con_tutti','USUAN1200091'],
   ['Local Forecast – Elevator',82,'local_forecast_elevator','USUAN1300012'],
-  ['Melodica ft. Ketsa',154,'melodica','https://freemusicarchive.org/music/1000-handz/cc-by-free-to-use-dancehouse-instrumentals/melodica-ft-ketsa/','House','1000 Handz',true],
   ['Griphop',90,'griphop','USUAN1100413','Hip Hop'],
   ['Soul Sync',100,'soul_sync','https://freemusicarchive.org/music/Ketsa/cc-by-free-to-use-for-anything/soul-sync/','Soul','Ketsa',true],
-  ['Cut Trance',110,'cut_trance','USUAN1100273','Trance / Techno'],
 ];
 const audio = new AudioContext();
 const master = audio.createGain();
