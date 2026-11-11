@@ -1262,7 +1262,78 @@ aimPad.onkeydown = event => {
 };
 setLightAim(aim,beamSpread);
 
+const patchCanvas = $('live-patch');
+const patchPaint = patchCanvas.getContext('2d');
+const patchMain = patchCanvas.closest('main');
+const patchMeters = ['level-a','level-b','level-main'].map($);
+const patchAnalysers = [...decks.map(deck => deck.analyser),lightAnalyser];
+const patchSamples = patchAnalysers.map(analyser => new Float32Array(analyser.fftSize));
+const patchLevels = [0,0,0];
+const patchPorts = [['patch-out-a','patch-in-a'],['patch-out-b','patch-in-b']].map(pair => pair.map($));
+const patchColors = ['#ffad64','#d7fb75'];
+let patchLayout;
+
+function measurePatch() {
+  patchLayout = null;
+}
+const patchResize = new ResizeObserver(measurePatch);
+[patchMain,$('deck-a'),$('deck-b'),document.querySelector('.mixer')].forEach(node => patchResize.observe(node));
+window.addEventListener('resize',measurePatch);
+function drawPatch(time) {
+  if (!patchLayout) {
+    const bounds = patchMain.getBoundingClientRect();
+    const mixer = document.querySelector('.mixer').getBoundingClientRect();
+    const scale = Math.min(devicePixelRatio || 1,1.5);
+    const height = Math.ceil(mixer.top-bounds.top+16);
+    patchCanvas.width = Math.round(bounds.width*scale);
+    patchCanvas.height = Math.round(height*scale);
+    patchCanvas.style.height = height+'px';
+    patchLayout = {scale,lines:patchPorts.map(pair => pair.map(port => {
+      const r = port.getBoundingClientRect();
+      return {x:r.left-bounds.left+r.width/2,y:r.top-bounds.top+r.height/2};
+    }))};
+  }
+  patchAnalysers.forEach((analyser,i) => {
+    const data = patchSamples[i];
+    analyser.getFloatTimeDomainData(data);
+    let power = 0;
+    for (const sample of data) power += sample*sample;
+    const gain = i < 2 ? decks[i].gain.gain.value*decks[i].fade.gain.value : 1;
+    const signal = Math.min(1,Math.sqrt(power/data.length)*gain*5);
+    patchLevels[i] = Math.max(signal,patchLevels[i]*.88);
+    patchMeters[i].style.transform = 'scaleX('+patchLevels[i]+')';
+  });
+  const {scale,lines} = patchLayout;
+  const ctx = patchPaint;
+  ctx.setTransform(scale,0,0,scale,0,0);
+  ctx.clearRect(0,0,patchCanvas.width/scale,patchCanvas.height/scale);
+  lines.forEach(([from,to],i) => {
+    const middle = (from.y+to.y)/2;
+    ctx.beginPath();
+    ctx.moveTo(from.x,from.y);
+    ctx.bezierCurveTo(from.x,middle,to.x,middle,to.x,to.y);
+    ctx.lineCap = 'round';
+    ctx.setLineDash([]);
+    ctx.strokeStyle = '#09060f';
+    ctx.lineWidth = 8;
+    ctx.stroke();
+    ctx.strokeStyle = patchColors[i];
+    ctx.globalAlpha = .62;
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    if (patchLevels[i] > .025) {
+      ctx.globalAlpha = .5+patchLevels[i]*.5;
+      ctx.lineWidth = 3.5;
+      ctx.setLineDash([7,12]);
+      ctx.lineDashOffset = reduceMotion.matches ? 0 : -time/28;
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+  });
+}
+
 function drawLiveLights(time) {
+  drawPatch(time);
   const width = innerWidth;
   const height = innerHeight;
   const scale = Math.min(devicePixelRatio || 1,1.5);
@@ -1377,6 +1448,7 @@ $('live-tracks').onclick = () => {
   if (expanded) $('add-your-music').scrollIntoView({block:'nearest'});
 };
 function showLiveView(enabled) {
+  measurePatch();
   if (enabled) oneShots.preload();
   document.body.classList.toggle('live-view',enabled);
   liveCanvas.hidden = !enabled;
