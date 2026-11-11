@@ -31,6 +31,78 @@ function syncPlayingDecks() {
 }
 const clock = (s) => Number.isFinite(s) ? Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0') : '0:00';
 
+function dragNumber(input, onChange, pixelsPerStep = 5) {
+  let drag;
+  let editing = false;
+  const step = Number(input.step) || 1;
+  const decimals = (String(step).split('.')[1] || '').length;
+  const normalize = (value) => Number(Math.max(Number(input.min),
+    Math.min(input.max === '' ? Infinity : Number(input.max), value)).toFixed(decimals));
+  let previous = input.value;
+  input.readOnly = true;
+  input.title = 'Drag to adjust. Double-tap or press Enter to type.';
+  function set(value, notify = false) {
+    if (editing || (drag && !notify)) return;
+    input.value = normalize(value);
+    if (notify) onChange(Number(input.value));
+  }
+  function edit() {
+    if (input.disabled || editing) return;
+    editing = true;
+    previous = input.value;
+    input.readOnly = false;
+    input.focus();
+    input.select();
+  }
+  input.ondblclick = edit;
+  input.onblur = () => {
+    if (!editing) return;
+    const value = input.value === '' ? null : input.valueAsNumber;
+    editing = false;
+    input.readOnly = true;
+    if (Number.isFinite(value)) set(value,true);
+    else input.value = previous;
+  };
+  input.onkeydown = (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      if (editing) input.blur(); else edit();
+    } else if (editing && event.key === 'Escape') {
+      event.preventDefault();
+      input.value = previous;
+      input.blur();
+    } else if (!editing && ['ArrowUp','ArrowDown','ArrowRight','ArrowLeft'].includes(event.key)) {
+      event.preventDefault();
+      set(Number(input.value === '' ? input.min : input.value) + step * (['ArrowUp','ArrowRight'].includes(event.key) ? 1 : -1), true);
+    }
+  };
+  input.onpointerdown = (event) => {
+    if (editing || input.disabled || event.button !== 0 || drag) return;
+    input.focus({preventScroll:true});
+    drag = {id:event.pointerId,x:event.clientX,y:event.clientY,value:Number(input.value === '' ? input.min : input.value)};
+    input.setPointerCapture(event.pointerId);
+  };
+  input.onpointermove = (event) => {
+    if (drag?.id !== event.pointerId) return;
+    const dx = event.clientX-drag.x;
+    const dy = drag.y-event.clientY;
+    const delta = Math.abs(dx) > Math.abs(dy) ? dx : dy;
+    if (Math.abs(delta) >= pixelsPerStep) drag.moved = true;
+    if (drag.moved) set(drag.value + Math.round(delta/pixelsPerStep)*step,true);
+  };
+  let lastTap = null;
+  input.onpointerup = (event) => {
+    if (drag?.id !== event.pointerId) return;
+    if (event.pointerType === 'touch' && !drag.moved) {
+      if (lastTap !== null && event.timeStamp-lastTap < 400) { edit(); lastTap = null; }
+      else lastTap = event.timeStamp;
+    } else lastTap = null;
+    drag = null;
+  };
+  input.onpointercancel = input.onlostpointercapture = () => { drag = null; };
+  return set;
+}
+
 class Deck {
   constructor(index) {
     this.index = index;
@@ -51,7 +123,7 @@ class Deck {
       const wrap = document.createElement('label');
       wrap.textContent = label;
       const range = document.createElement('input');
-      range.type = 'range';
+      range.type = 'number';
       if (type) {
         const filter = audio.createBiquadFilter();
         filter.type = type;
@@ -59,11 +131,12 @@ class Deck {
         chain.connect(filter);
         chain = filter;
         Object.assign(range,{min:-18,max:12,step:1,value:0});
-        range.oninput = () => filter.gain.setTargetAtTime(+range.value,audio.currentTime,.02);
+        dragNumber(range, value => filter.gain.setTargetAtTime(value,audio.currentTime,.02));
       } else {
-        Object.assign(range,{min:0,max:1,step:.01,value:.8});
+        wrap.textContent = 'Level %';
+        Object.assign(range,{min:0,max:100,step:1,value:80});
         this.gain.gain.value = .8;
-        range.oninput = () => this.gain.gain.setTargetAtTime(+range.value,audio.currentTime,.02);
+        dragNumber(range, value => this.gain.gain.setTargetAtTime(value/100,audio.currentTime,.02), 2);
       }
       wrap.append(range);
       this.get('.eq').append(wrap);
@@ -101,12 +174,13 @@ class Deck {
       const action = e.target.closest('button')?.dataset.act;
       if (action) this.action(action);
     };
-    this.seek.oninput = () => this.jump(this.player.duration * this.seek.value / 1000);
-    this.tempo.oninput = () => {
-      this.rate(+this.tempo.value);
+    this.showPosition = dragNumber(this.seek, value => this.jump(value), 2);
+    this.showTempo = dragNumber(this.tempo, value => {
+      this.rate(value);
       const other = decks[1-this.index];
       if (autoSync && !this.player.paused && !other.player.paused) other.sync(this);
-    };
+    }, 2);
+    dragNumber(this.bpm, () => this.bpm.dispatchEvent(new Event('change')), 2);
     this.bpm.onchange = () => { if (autoSync) syncPlayingDecks(); };
     this.player.onplay = this.player.onpause = this.player.onended = () => this.refresh();
     this.player.onloadedmetadata = () => this.refresh();
@@ -179,14 +253,15 @@ class Deck {
   refresh() {
     this.playButton.textContent = this.player.paused ? 'Play' : 'Pause';
     this.root.classList.toggle('playing',!this.player.paused);
-    this.seek.value = this.player.duration ? this.player.currentTime / this.player.duration * 1000 : 0;
+    this.seek.disabled = !Number.isFinite(this.player.duration);
+    if (!this.seek.disabled) this.seek.max = this.player.duration;
+    this.showPosition(this.seek.disabled ? 0 : this.player.currentTime);
     this.get('.time').textContent = clock(this.player.currentTime)+' / '+clock(this.player.duration)+' · Cue '+clock(this.cue);
   }
   rate(percent) {
-    this.tempo.value = percent;
-    const actual = +this.tempo.value;
+    const actual = Math.round(Math.max(-50,Math.min(100,percent))*10)/10;
+    this.showTempo(actual);
     this.player.playbackRate = 1+actual/100;
-    this.get('.pct').textContent = (actual>0?'+':'')+actual+'%';
   }
   async action(action) {
     if (action === 'play') {
@@ -338,16 +413,44 @@ for (const sample of crate) {
   row.append(name,buttons);
   $('crate').append(row);
 }
-function mix() {
-  const pan = +$('cross').value;
-  $('blend').textContent = pan===.5 ? 'Center' : Math.round(Math.abs(pan-.5)*200)+'% toward '+(pan<.5?'A':'B');
+const pad = $('mix-pad');
+const dot = pad.querySelector('.pad-dot');
+let blend = 50;
+let volume = 80;
+const showBlend = dragNumber($('cross'), value => mix(value, volume), 2);
+const showVolume = dragNumber($('master'), value => mix(blend, value), 2);
+function mix(x, y) {
+  blend = Math.round(Math.max(0, Math.min(100, x)));
+  volume = Math.round(Math.max(0, Math.min(100, y)));
+  const pan = blend / 100;
+  showBlend(blend);
+  showVolume(volume);
+  dot.style.left = blend+'%';
+  dot.style.top = (100-volume)+'%';
   decks[0].fade.gain.setTargetAtTime(Math.cos(pan*Math.PI/2),audio.currentTime,.02);
   decks[1].fade.gain.setTargetAtTime(Math.sin(pan*Math.PI/2),audio.currentTime,.02);
-  master.gain.setTargetAtTime(+$('master').value,audio.currentTime,.02);
+  master.gain.setTargetAtTime(volume/100,audio.currentTime,.02);
 }
-$('cross').oninput = $('master').oninput = mix;
-$('center').onclick = () => { $('cross').value = .5; mix(); };
-mix();
+function pointMix(event) {
+  const rect = pad.getBoundingClientRect();
+  mix((event.clientX-rect.left)/rect.width*100, (rect.bottom-event.clientY)/rect.height*100);
+}
+pad.onpointerdown = (event) => {
+  if (!event.isPrimary || event.button !== 0) return;
+  pad.setPointerCapture(event.pointerId);
+  pointMix(event);
+};
+pad.onpointermove = (event) => {
+  if (pad.hasPointerCapture(event.pointerId)) pointMix(event);
+};
+pad.onkeydown = (event) => {
+  const delta = {ArrowLeft:[-5,0],ArrowRight:[5,0],ArrowUp:[0,5],ArrowDown:[0,-5]}[event.key];
+  if (!delta) return;
+  event.preventDefault();
+  mix(blend+delta[0],volume+delta[1]);
+};
+$('center').onclick = () => mix(50,volume);
+mix(blend,volume);
 function stop() { decks.forEach((deck) => { if (deck.scratch) deck.scratch.resume = false; deck.player.pause(); deck.jump(0); }); }
 $('stop').onclick = stop;
 document.addEventListener('keydown',(e) => {
