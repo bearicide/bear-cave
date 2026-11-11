@@ -568,6 +568,7 @@ async function crateTrack({name, url, file, sample}) {
     button.onclick = () => {
       stopPreview();
       if (file) deck.local(file,detectedBpm || ''); else deck.starter(sample);
+      $('track-load-status').textContent = 'Loading '+name+' on Deck '+'AB'[i]+'…';
     };
     buttons.append(button);
     return button;
@@ -846,6 +847,24 @@ const lightBins = new Uint8Array(lightAnalyser.frequencyBinCount);
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
 let lightFrame = 0;
 let lightEnergy = 0;
+const lightPalettes = {
+  lime:[82,102,65,175,132,49],
+  lemon:[52,60,37,74,46,170],
+  orange:[27,324,284,185,307,76]
+};
+const themePicker = $('live-theme');
+try {
+  const saved = localStorage.getItem('citrus-live-theme');
+  if (Object.hasOwn(lightPalettes,saved)) themePicker.value = saved;
+} catch {}
+function applyLiveTheme() {
+  document.body.dataset.liveTheme = themePicker.value;
+}
+themePicker.onchange = () => {
+  applyLiveTheme();
+  try { localStorage.setItem('citrus-live-theme',themePicker.value); } catch {}
+};
+applyLiveTheme();
 
 function drawLiveLights(time) {
   const width = innerWidth;
@@ -867,14 +886,25 @@ function drawLiveLights(time) {
   const still = reduceMotion.matches;
   const phase = still ? 0 : time/2500;
   const energy = still ? .14 : lightEnergy;
+  const palette = lightPalettes[themePicker.value];
   ctx.globalCompositeOperation = 'screen';
+  for (const [position,hue] of [[.27,palette[0]],[.73,palette[3]]]) {
+    const x = width*position;
+    const y = height*.37;
+    const glow = ctx.createRadialGradient(x,y,0,x,y,spread*.38);
+    glow.addColorStop(0,'hsla('+hue+',100%,57%,'+(.24+energy*.48)+')');
+    glow.addColorStop(.5,'hsla('+hue+',100%,50%,'+(.13+energy*.21)+')');
+    glow.addColorStop(1,'transparent');
+    ctx.fillStyle = glow;
+    ctx.fillRect(0,0,width,height);
+  }
   for (let i=0;i<6;i++) {
     const x = width*(.16+.136*i);
-    const y = height*.46;
+    const y = height*.60;
     const tilt = Math.sin(phase+i*1.25)*.56;
     const beam = ctx.createLinearGradient(0,y,0,y-spread*.72);
-    const hue = [27,324,284,185,307,76][i];
-    beam.addColorStop(0,'hsla('+hue+',100%,61%,'+(.12+energy*.44)+')');
+    const hue = palette[i];
+    beam.addColorStop(0,'hsla('+hue+',100%,61%,'+(.24+energy*.51)+')');
     beam.addColorStop(1,'transparent');
     ctx.fillStyle = beam;
     ctx.beginPath();
@@ -884,6 +914,16 @@ function drawLiveLights(time) {
     ctx.lineTo(x+5,y);
     ctx.fill();
   }
+  for (let i=0;i<5;i++) {
+    const x = width*(.17+i*.165);
+    const y = height*(.70+.045*i);
+    ctx.strokeStyle = 'hsla('+palette[(i+1)%palette.length]+',100%,66%,'+(.08+energy*.28)+')';
+    ctx.lineWidth = 1+i%2;
+    ctx.beginPath();
+    ctx.moveTo(width*.5,height*.5);
+    ctx.lineTo(x+Math.sin(phase+i)*width*.14,y);
+    ctx.stroke();
+  }
   ctx.globalCompositeOperation = 'source-over';
   const edge = ctx.createRadialGradient(width*.5,height*.39,Math.min(width,height)*.16,width*.5,height*.46,spread*.62);
   edge.addColorStop(0,'transparent');
@@ -892,6 +932,12 @@ function drawLiveLights(time) {
   ctx.fillRect(0,0,width,height);
   lightFrame = requestAnimationFrame(drawLiveLights);
 }
+$('live-tracks').onclick = () => {
+  const expanded = document.body.classList.toggle('live-tracks-open');
+  $('live-tracks').setAttribute('aria-expanded',String(expanded));
+  $('live-tracks').textContent = expanded ? 'Hide tracks' : 'Load tracks';
+  if (expanded) $('add-your-music').scrollIntoView({block:'nearest'});
+};
 function showLiveView(enabled) {
   document.body.classList.toggle('live-view',enabled);
   liveCanvas.hidden = !enabled;
