@@ -309,36 +309,84 @@ class Deck {
     this.player.onplay = this.player.onpause = this.player.onended = () => this.refresh();
     this.player.onloadedmetadata = () => this.refresh();
     this.player.onerror = () => this.message('This audio could not be opened.');
-    this.canvas.onpointerdown = (event) => {
-      if (this.loading || !event.isPrimary || event.button !== 0 || !Number.isFinite(this.player.duration)) return;
-      const rect = this.canvas.getBoundingClientRect();
-      this.scratch = { id: event.pointerId, rect, resume: !this.player.paused, x: event.clientX };
-      this.canvas.setPointerCapture(event.pointerId);
+    this.bindScratch(this.canvas, false);
+    const vinyl = this.get('.vinyl');
+    vinyl.setAttribute('aria-label','Deck '+(index === 0 ? 'A' : 'B')+' record. Drag to scratch.');
+    this.bindScratch(vinyl, true);
+  }
+  bindScratch(surface, isVinyl) {
+    surface.onpointerdown = event => {
+      if (this.loading || this.scratch || !event.isPrimary || event.button !== 0 ||
+          !Number.isFinite(this.player.duration)) return;
+      const rect = surface.getBoundingClientRect();
+      const dx = event.clientX-rect.left-rect.width/2;
+      const dy = event.clientY-rect.top-rect.height/2;
+      const transform = isVinyl ? getComputedStyle(surface).transform : 'none';
+      const matrix = transform === 'none' ? null : new DOMMatrixReadOnly(transform);
+      this.scratch = {
+        id:event.pointerId, surface, rect, resume:!this.player.paused,
+        x:event.clientX, y:event.clientY, time:this.player.currentTime,
+        angle:Math.atan2(dy,dx), rotation:matrix ? Math.atan2(matrix.b,matrix.a) : 0
+      };
+      this.playRequest = null;
+      surface.setPointerCapture(event.pointerId);
       this.player.pause();
       audio.resume().catch(() => {});
-      this.jump((event.clientX-rect.left)/rect.width*this.player.duration);
       this.root.classList.add('scratching');
+      if (isVinyl) {
+        surface.style.setProperty('--scratch-angle',this.scratch.rotation+'rad');
+        surface.classList.add('vinyl-grabbed');
+      } else {
+        this.jump((event.clientX-rect.left)/rect.width*this.player.duration);
+      }
     };
-    this.canvas.onpointermove = (event) => {
+    surface.onpointermove = event => {
       const scratch = this.scratch;
-      if (!scratch || event.pointerId !== scratch.id) return;
-      const delta = event.clientX-scratch.x;
-      if (delta === 0) return;
+      if (!scratch || event.pointerId !== scratch.id || scratch.surface !== surface) return;
+      const {rect} = scratch;
+      let delta = event.clientX-scratch.x;
+      if (isVinyl) {
+        const dx = event.clientX-rect.left-rect.width/2;
+        const dy = event.clientY-rect.top-rect.height/2;
+        const angle = Math.atan2(dy,dx);
+        const sweep = angle-scratch.angle;
+        const turn = Math.hypot(dx,dy) > rect.width*.16
+          ? Math.atan2(Math.sin(sweep),Math.cos(sweep))
+          : (delta-(event.clientY-scratch.y))/Math.max(1,rect.width*.45);
+        scratch.angle = angle;
+        scratch.rotation += turn;
+        surface.style.setProperty('--scratch-angle',scratch.rotation+'rad');
+        scratch.time = this.scratchPosition(scratch.time+turn*.32);
+        delta = turn*rect.width*.45;
+      } else {
+        scratch.time = this.scratchPosition((event.clientX-rect.left)/rect.width*this.player.duration);
+      }
       scratch.x = event.clientX;
-      const time = Math.max(0, Math.min(this.player.duration,
-        (event.clientX-scratch.rect.left)/scratch.rect.width*this.player.duration));
-      this.jump(time);
-      this.scratchGrain(time, delta);
+      scratch.y = event.clientY;
+      if (Math.abs(delta) < .01) return;
+      this.jump(scratch.time);
+      this.scratchGrain(scratch.time,delta);
     };
-    const finishScratch = (event) => {
-      if (event.pointerId !== this.scratch?.id) return;
-      const { resume } = this.scratch;
-      this.scratch = null;
-      this.root.classList.remove('scratching');
+    const finish = event => {
+      if (event.pointerId !== this.scratch?.id || this.scratch.surface !== surface) return;
+      const {resume} = this.scratch;
+      this.clearScratch();
       if (resume) this.player.play().catch(() => this.message('Press Play to resume.'));
     };
-    this.canvas.onpointerup = this.canvas.onpointercancel =
-      this.canvas.onlostpointercapture = finishScratch;
+    surface.onpointerup = surface.onpointercancel = surface.onlostpointercapture = finish;
+  }
+  scratchPosition(time) {
+    const duration = this.player.duration;
+    if (this.player.loop && duration > 0) return ((time%duration)+duration)%duration;
+    return Math.max(0,Math.min(duration,time));
+  }
+  clearScratch() {
+    if (!this.scratch) return;
+    const {surface,id} = this.scratch;
+    this.scratch = null;
+    surface.classList.remove('vinyl-grabbed');
+    this.root.classList.remove('scratching');
+    if (surface.hasPointerCapture(id)) surface.releasePointerCapture(id);
   }
   scratchGrain(time, delta) {
     const buffer = this.decoded;
@@ -352,7 +400,8 @@ class Deck {
       const source = buffer.getChannelData(channel);
       const output = clip.getChannelData(channel);
       for (let i=0;i<output.length;i++) {
-        const index = start+i*direction;
+        let index = start+i*direction;
+        if (this.player.loop) index = ((index%source.length)+source.length)%source.length;
         output[i] = source[index] || 0;
       }
     }
@@ -445,6 +494,7 @@ class Deck {
   }
   async load(url,title,bpm,owned=false,loop=false,file) {
     const generation = ++this.generation;
+    this.clearScratch();
     this.playRequest = null;
     this.loading = true;
     this.playButton.disabled = true;
@@ -898,8 +948,7 @@ function stop() {
   stopPreview();
   for (const deck of decks) {
     deck.playRequest = null;
-    deck.scratch = null;
-    deck.root.classList.remove('scratching');
+    deck.clearScratch();
     for (const grain of deck.scratchGrains) grain.stop();
     deck.scratchGrains.clear();
     deck.player.pause();

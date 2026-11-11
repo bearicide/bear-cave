@@ -838,3 +838,6 @@ body:not(.live-view) .console .fx-zone{border-color:var(--citrus-divider)}
 .console :is(#mix-pad,#light-aim,.fx-pad){border-color:#ccb255}
 .console :is(.mixer,.fx-board,.library,.light-board,.oneshot-board) h2,
 .console .light-board summary{color:#ffe98c}
+
+.vinyl{touch-action:none;cursor:grab;user-select:none}
+.vinyl.vinyl-grabbed{cursor:grabbing;animation:none;transform:rotate(var(--scratch-angle,0rad));border-color:#fff1ae}
