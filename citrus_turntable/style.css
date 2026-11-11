@@ -375,3 +375,10 @@ body.live-view{background:#07030f}
 #fixture-bank button[aria-pressed=true]{background:hsl(calc(var(--fixture-index) * 17deg + 45deg),80%,68%);color:#22132d}
 .light-blackout #fixture-bank button[aria-pressed=true]{background:#584262;color:#fff}
 #fixture-help{margin:0;color:#f4dbee;font-size:.9rem}
+
+#fixture-preview{position:absolute;inset:0;width:100%;height:100%;background:transparent;opacity:.82;pointer-events:none}
+.fixture-head{position:absolute;z-index:2;translate:-50% -50%;width:44px;min-height:44px;padding:0;border:2px solid #e2fc91;border-radius:50%;background:#291a33;color:#f1ffbf;box-shadow:0 0 10px #c0f35580;cursor:grab;touch-action:none}
+.fixture-head:hover{background:#4c384a}
+.fixture-head:active{cursor:grabbing}
+.fixture-head.fixture-off{border-color:#88738c;color:#b8a6be;box-shadow:none}
+@media(max-width:420px){.fixture-head{width:38px;min-height:38px}}
