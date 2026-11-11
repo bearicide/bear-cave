@@ -610,20 +610,27 @@ document.addEventListener('keydown',(e) => {
 $('remote').onsubmit = async (e) => {
   e.preventDefault();
   const deck = decks[+(e.submitter?.value || 0)];
-  const url = new URL($('url').value);
-  if (!['http:','https:'].includes(url.protocol)) return deck.message('Use an HTTP or HTTPS audio link.');
+  const status = $('link-status');
+  let url;
+  try {
+    url = new URL($('url').value.trim());
+  } catch {
+    return status.textContent = 'Paste a link to an audio file, like an MP3.';
+  }
+  if (!['http:','https:'].includes(url.protocol)) return status.textContent = 'Paste a link to an audio file, like an MP3.';
   const generation = deck.generation;
   const attempt = (deck.importAttempt || 0)+1;
   deck.importAttempt = attempt;
-  deck.message('Importing audio…');
+  status.textContent = 'Getting your track…';
   try {
     const response = await fetch(url);
     if (!response.ok || /text\/html/i.test(response.headers.get('content-type') || '')) throw Error('Invalid audio response');
     const blob = await response.blob();
     if (generation !== deck.generation || attempt !== deck.importAttempt) return;
+    status.textContent = 'Sent to Deck '+'AB'[deck.index]+'.';
     deck.load(URL.createObjectURL(blob),decodeURIComponent(url.pathname.split('/').pop() || 'Online audio'),'',true,false,blob);
   } catch {
-    if (generation===deck.generation && attempt===deck.importAttempt) deck.message('Import failed. Download the audio and use Choose file.');
+    if (generation===deck.generation && attempt===deck.importAttempt) status.textContent = 'That link didn’t load. Download the song first, then choose Add music from your device.';
   }
 };
 $('record').onclick = async () => {
