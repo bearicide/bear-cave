@@ -452,3 +452,21 @@ h2,.light-board summary{font-weight:700;letter-spacing:.035em}
   text-transform:none;
 }
 @media(max-height:540px) and (orientation:landscape){.live-heading h1{font-size:clamp(2.5rem,5.2vw,3.6rem)}}
+
+.live-view button,.live-view .live-actions a,.live-view .crate-upload{
+  font-family:'Sedgwick Ave Display',cursive;
+  font-size:1.15rem;
+  font-weight:400;
+  letter-spacing:.015em;
+  line-height:1.1;
+}
+.live-view #play-all,.live-view .controls button[data-act=play]{
+  font-family:'Rubik Wet Paint',cursive;
+  font-size:clamp(.94rem,1vw + .55rem,1.24rem);
+  letter-spacing:0;
+}
+.live-view .fixture-head,.live-view #fixture-bank button{
+  font-family:var(--readout-font);
+  font-size:1rem;
+  font-weight:700;
+}
