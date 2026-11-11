@@ -257,7 +257,7 @@ class Deck {
       wrap.append(range);
       this.get('.eq').append(wrap);
     }
-    chain.connect(this.analyser).connect(this.gain).connect(this.fade).connect(master);
+    chain.connect(this.analyser).connect(this.gain).connect(this.fade).connect(mixerEffects.input);
     this.playButton = this.get('[data-act=play]');
     this.seek = this.get('.seek');
     this.bpm = this.get('.bpm');
@@ -524,6 +524,136 @@ class Deck {
     }
   }
 }
+
+function initMixerEffects() {
+  const input = audio.createGain();
+  const dry = audio.createGain();
+  const filter = audio.createBiquadFilter();
+  filter.type = 'lowpass';
+  const filtered = audio.createGain();
+  input.connect(dry).connect(master);
+  input.connect(filter).connect(filtered).connect(master);
+
+  const delay = audio.createDelay(1);
+  const feedback = audio.createGain();
+  delay.connect(feedback).connect(delay);
+  const reverb = audio.createConvolver();
+  const impulse = audio.createBuffer(2,Math.round(audio.sampleRate*1.9),audio.sampleRate);
+  for (let channel=0;channel<impulse.numberOfChannels;channel++) {
+    const samples = impulse.getChannelData(channel);
+    for (let i=0;i<samples.length;i++) samples[i] = (Math.random()*2-1)*(1-i/samples.length)**3;
+  }
+  reverb.buffer = impulse;
+  const drive = audio.createWaveShaper();
+  drive.oversample = '2x';
+  const driveTone = audio.createBiquadFilter();
+  driveTone.type = 'lowpass';
+  drive.connect(driveTone);
+  function wetPath(processor, output = processor) {
+    const send = audio.createGain();
+    const level = audio.createGain();
+    input.connect(send).connect(processor);
+    output.connect(level).connect(master);
+    return {send,level};
+  }
+  const echo = wetPath(delay);
+  const roomDamping = audio.createBiquadFilter();
+  roomDamping.type = 'lowpass';
+  reverb.connect(roomDamping);
+  const room = wetPath(reverb,roomDamping);
+  const grit = wetPath(drive,driveTone);
+  const ramp = (param,value) => param.setTargetAtTime(value,audio.currentTime,.018);
+  function wet(path, amount) {
+    ramp(path.send.gain,amount > 0 ? 1 : 0);
+    ramp(path.level.gain,amount);
+  }
+  const effects = [
+    {id:'filter',name:'Filter',axes:'Tone ↔ · Mix ↑',x:.78,y:.75,update(x,y){
+      ramp(filter.frequency,90*155**x);
+      ramp(filter.Q,.72+x*2);
+      ramp(dry.gain,1-y);
+      ramp(filtered.gain,y);
+    }},
+    {id:'echo',name:'Echo',axes:'Delay time ↔ · Mix ↑',x:.44,y:.56,update(x,y){
+      ramp(delay.delayTime,.055+x*.62);
+      ramp(feedback.gain,y > 0 ? .12+x*.43 : 0);
+      wet(echo,y*.68);
+    }},
+    {id:'room',name:'Room',axes:'Damping ↔ · Mix ↑',x:.54,y:.57,update(x,y){
+      ramp(roomDamping.frequency,450*28**x);
+      wet(room,y*.68);
+    }},
+    {id:'drive',name:'Drive',axes:'Grit ↔ · Mix ↑',x:.40,y:.49,update(x,y){
+      if (driveX !== x) {
+        driveX = x;
+        const strength = 1+x*15;
+        drive.curve = Float32Array.from({length:1024},(_,i) => Math.tanh((i/511.5-1)*strength)/Math.tanh(strength));
+      }
+      ramp(driveTone.frequency,900+7800*x);
+      wet(grit,y*.48);
+    }},
+  ];
+  let driveX;
+  filtered.gain.value = 0;
+  for (const path of [echo,room,grit]) path.send.gain.value = path.level.gain.value = 0;
+
+  const cards = effects.map(effect => {
+    const card = $('fx-zone').content.firstElementChild.cloneNode(true);
+    const button = card.querySelector('button');
+    const pad = card.querySelector('.fx-pad');
+    const dot = card.querySelector('.fx-dot');
+    const readout = card.querySelector('output');
+    let enabled = false;
+    card.dataset.effect = effect.id;
+    card.querySelector('h3').textContent = effect.name;
+    card.querySelector('.fx-axes').textContent = effect.axes;
+    button.setAttribute('aria-label',effect.name);
+    pad.setAttribute('aria-label',effect.name+' control. '+effect.axes);
+    function apply() {
+      button.setAttribute('aria-pressed',String(enabled));
+      button.textContent = enabled ? 'On' : 'Off';
+      card.classList.toggle('fx-on',enabled);
+      dot.style.left = effect.x*100+'%';
+      dot.style.top = (1-effect.y)*100+'%';
+      readout.textContent = Math.round(effect.y*100)+'% mix';
+      effect.update(effect.x,enabled ? effect.y : 0);
+    }
+    function move(x,y) {
+      effect.x = Math.max(0,Math.min(1,x));
+      effect.y = Math.max(0,Math.min(1,y));
+      enabled = true;
+      apply();
+    }
+    function pointer(event) {
+      const rect = pad.getBoundingClientRect();
+      move((event.clientX-rect.left)/rect.width,(rect.bottom-event.clientY)/rect.height);
+    }
+    button.onclick = () => { enabled = !enabled; apply(); };
+    pad.onpointerdown = event => {
+      if (!event.isPrimary || event.button !== 0) return;
+      pad.focus({preventScroll:true});
+      pad.setPointerCapture(event.pointerId);
+      pointer(event);
+    };
+    pad.onpointermove = event => {
+      if (pad.hasPointerCapture(event.pointerId)) pointer(event);
+    };
+    pad.onkeydown = event => {
+      const step = {ArrowLeft:[-.05,0],ArrowRight:[.05,0],ArrowUp:[0,.05],ArrowDown:[0,-.05]}[event.key];
+      if (!step) return;
+      event.preventDefault();
+      move(effect.x+step[0],effect.y+step[1]);
+    };
+    $('fx-zones').append(card);
+    apply();
+    return () => { enabled = false; apply(); };
+  });
+  const bypass = () => cards.forEach(disable => disable());
+  $('fx-bypass').onclick = bypass;
+  return {input,bypass};
+}
+
+const mixerEffects = initMixerEffects();
 const decks = [new Deck(0),new Deck(1)];
 decks.forEach((deck,i) => deck.starter(crate[i]));
 const preview = new Audio();
@@ -680,6 +810,7 @@ pad.onkeydown = (event) => {
 $('center').onclick = () => mix(50,volume);
 mix(blend,volume);
 function stop() {
+  mixerEffects.bypass();
   stopPreview();
   for (const deck of decks) {
     deck.playRequest = null;
