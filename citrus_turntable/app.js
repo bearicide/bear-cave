@@ -769,11 +769,13 @@ $('record').onclick = async () => {
       status.replaceChildren(link);
       link.onclick = () => setTimeout(() => URL.revokeObjectURL(url),60000);
       $('record').textContent = '● Record';
+      $('record').setAttribute('aria-pressed','false');
       recording = null;
     };
     recorder.start();
     recording = recorder;
     $('record').textContent = '■ Finish recording';
+    $('record').setAttribute('aria-pressed','true');
     status.textContent = 'Recording the master output…';
   } catch { status.textContent = 'Recording is unavailable in this browser.'; }
 };

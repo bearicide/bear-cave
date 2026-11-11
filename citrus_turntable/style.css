@@ -228,3 +228,10 @@ kbd{display:inline-block;padding:0 .35em;border:1px solid #87577e;border-bottom-
 @media(prefers-reduced-motion:reduce){
   .song-title{white-space:normal;overflow-wrap:anywhere}
 }
+
+body{background:#10071e}
+button[aria-pressed=false]{background:#261934;border-color:#775b89;color:#f5e9ff}
+button[aria-pressed=false]:hover{background:#3b294c;border-color:#b99acc}
+button[aria-pressed=true],#autosync[aria-pressed=true]{background:#d7fb75;border-color:#efffb5;color:#191229;box-shadow:0 0 0 1px #d7fb7540,0 0 12px #d7fb7533}
+.playing button[data-act=play]{background:#ff83bf;border-color:#ffd1e8;color:#25132c}
+#record[aria-pressed=true]{background:#ff83bf;border-color:#ffd1e8;color:#25132c}
