@@ -95,20 +95,31 @@ function dragNumber(input, onChange, pixelsPerStep = 5) {
     if (drag?.id !== event.pointerId) return;
     const dx = event.clientX-drag.x;
     const dy = drag.y-event.clientY;
-    const delta = Math.abs(dx) > Math.abs(dy) ? dx : dy;
-    if (Math.abs(delta) >= pixelsPerStep) drag.moved = true;
-    if (drag.moved) set(drag.value + Math.round(delta/pixelsPerStep)*step,true);
+    if (!drag.axis) {
+      const threshold = event.pointerType === 'touch' ? Math.max(6,pixelsPerStep) : pixelsPerStep;
+      if (Math.max(Math.abs(dx),Math.abs(dy)) < threshold) return;
+      drag.axis = Math.abs(dx) >= Math.abs(dy) ? 'x' : 'y';
+    }
+    const delta = drag.axis === 'x' ? dx : dy;
+    set(drag.value + Math.round(delta/pixelsPerStep)*step,true);
   };
   let lastTap = null;
   input.onpointerup = (event) => {
     if (drag?.id !== event.pointerId) return;
-    if (event.pointerType === 'touch' && !drag.moved) {
+    if (event.pointerType === 'touch' && !drag.axis) {
       if (lastTap !== null && event.timeStamp-lastTap < 400) { edit(); lastTap = null; }
       else lastTap = event.timeStamp;
     } else lastTap = null;
     drag = null;
   };
-  input.onpointercancel = input.onlostpointercapture = () => { drag = null; };
+  input.onpointercancel = event => {
+    if (drag?.id !== event.pointerId) return;
+    lastTap = null;
+    drag = null;
+  };
+  input.onlostpointercapture = event => {
+    if (drag?.id === event.pointerId) drag = null;
+  };
   return set;
 }
 
@@ -336,7 +347,7 @@ class Deck {
   }
   bindScratch(surface, isVinyl) {
     surface.onpointerdown = event => {
-      if (this.loading || this.scratch || !event.isPrimary || event.button !== 0 ||
+      if (this.loading || this.scratch || event.button !== 0 ||
           !Number.isFinite(this.player.duration)) return;
       const rect = surface.getBoundingClientRect();
       const dx = event.clientX-rect.left-rect.width/2;
@@ -344,7 +355,7 @@ class Deck {
       const transform = isVinyl ? getComputedStyle(surface).transform : 'none';
       const matrix = transform === 'none' ? null : new DOMMatrixReadOnly(transform);
       this.scratch = {
-        id:event.pointerId, surface, rect, resume:!this.player.paused,
+        id:event.pointerId, surface, resume:!this.player.paused,
         x:event.clientX, y:event.clientY, time:this.player.currentTime,
         angle:Math.atan2(dy,dx), rotation:matrix ? Math.atan2(matrix.b,matrix.a) : 0
       };
@@ -363,21 +374,22 @@ class Deck {
     surface.onpointermove = event => {
       const scratch = this.scratch;
       if (!scratch || event.pointerId !== scratch.id || scratch.surface !== surface) return;
-      const {rect} = scratch;
+      const rect = surface.getBoundingClientRect();
       let delta = event.clientX-scratch.x;
       if (isVinyl) {
         const dx = event.clientX-rect.left-rect.width/2;
         const dy = event.clientY-rect.top-rect.height/2;
         const angle = Math.atan2(dy,dx);
         const sweep = angle-scratch.angle;
-        const turn = Math.hypot(dx,dy) > rect.width*.16
+        const diameter = surface.offsetWidth;
+        const turn = Math.hypot(dx,dy) > diameter*.16
           ? Math.atan2(Math.sin(sweep),Math.cos(sweep))
-          : (delta-(event.clientY-scratch.y))/Math.max(1,rect.width*.45);
+          : (delta-(event.clientY-scratch.y))/Math.max(1,diameter*.45);
         scratch.angle = angle;
         scratch.rotation += turn;
         surface.style.setProperty('--scratch-angle',scratch.rotation+'rad');
         scratch.time = this.scratchPosition(scratch.time+turn*.32);
-        delta = turn*rect.width*.45;
+        delta = turn*diameter*.45;
       } else {
         scratch.time = this.scratchPosition((event.clientX-rect.left)/rect.width*this.player.duration);
       }
@@ -888,13 +900,19 @@ function pointMix(event) {
   const rect = pad.getBoundingClientRect();
   mix((event.clientX-rect.left)/rect.width*100, (rect.bottom-event.clientY)/rect.height*100);
 }
+let mixPointer = null;
 pad.onpointerdown = (event) => {
-  if (!event.isPrimary || event.button !== 0) return;
+  if (event.button !== 0 || mixPointer !== null) return;
+  mixPointer = event.pointerId;
+  pad.focus({preventScroll:true});
   pad.setPointerCapture(event.pointerId);
   pointMix(event);
 };
 pad.onpointermove = (event) => {
-  if (pad.hasPointerCapture(event.pointerId)) pointMix(event);
+  if (mixPointer === event.pointerId && pad.hasPointerCapture(event.pointerId)) pointMix(event);
+};
+pad.onlostpointercapture = event => {
+  if (mixPointer === event.pointerId) mixPointer = null;
 };
 pad.onkeydown = (event) => {
   const delta = {ArrowLeft:[-5,0],ArrowRight:[5,0],ArrowUp:[0,5],ArrowDown:[0,-5]}[event.key];
@@ -1010,8 +1028,14 @@ function moveFxPad(x, y) {
   const right = rect.right - fxPadX;
   const top = rect.top - fxPadY;
   const bottom = rect.bottom - fxPadY;
-  fxPadX = Math.max(4-left, Math.min(x, document.documentElement.clientWidth-4-right));
-  fxPadY = Math.max(4-top, Math.min(y, document.documentElement.clientHeight-4-bottom));
+  const viewport = window.visualViewport;
+  const viewportX = viewport?.offsetLeft ?? 0;
+  const viewportY = viewport?.offsetTop ?? 0;
+  const width = viewport?.width ?? document.documentElement.clientWidth;
+  const height = viewport?.height ?? document.documentElement.clientHeight;
+  fxPadX = Math.max(viewportX+4-left, Math.min(x,viewportX+width-4-right));
+  // On a very short viewport, keep the dock controls reachable.
+  fxPadY = Math.min(viewportY+height-4-bottom, Math.max(y,viewportY+4-top));
   fxPadDock.style.translate = fxPadX+'px '+fxPadY+'px';
 }
 
@@ -1033,8 +1057,13 @@ fxPadHandle.addEventListener('keydown', event => {
   event.preventDefault();
   moveFxPad(...(step ? [fxPadX+step[0], fxPadY+step[1]] : [0,0]));
 });
-window.addEventListener('resize', () => moveFxPad(fxPadX, fxPadY));
-new ResizeObserver(() => moveFxPad(fxPadX, fxPadY)).observe(fxPadDock);
+function keepFxPadVisible() {
+  moveFxPad(fxPadX, fxPadY);
+}
+window.addEventListener('resize',keepFxPadVisible);
+window.visualViewport?.addEventListener('resize',keepFxPadVisible);
+window.visualViewport?.addEventListener('scroll',keepFxPadVisible);
+new ResizeObserver(keepFxPadVisible).observe(fxPadDock);
 function setFxPadOpen(open) {
   $('oneshot-board').hidden = !open;
   fxPadToggle.setAttribute('aria-expanded', String(open));
@@ -1671,7 +1700,7 @@ function drawLiveLights(time) {
   edge.addColorStop(1,'#06020feb');
   ctx.fillStyle = edge;
   ctx.fillRect(0,0,width,height);
-  if (lightingBoard.open) {
+  if (lightingBoard.open && !performanceMode) {
     fixturePreview.clearRect(0,0,480,120);
     fixturePreview.drawImage(liveCanvas,0,0,480,120);
   }

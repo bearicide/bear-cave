@@ -1234,3 +1234,57 @@ body:not(.live-view) .console .fx-zone{border-color:var(--citrus-divider)}
 @media(max-width:440px){
   #oneshot-move .shortcut-key{display:none}
 }
+
+@media (orientation:landscape) and (max-height:560px) and (max-width:1100px){
+  .live-view main,
+  .live-view.performance-view main{
+    padding:8px max(8px,env(safe-area-inset-right)) 66px max(8px,env(safe-area-inset-left));
+    gap:8px;
+  }
+  .live-view.performance-view main{row-gap:clamp(52px,17svh,92px)}
+  .live-view .live-heading h1{font-size:clamp(1.45rem,4.6vw,2.4rem)}
+  .live-view .live-heading{gap:4px 8px}
+  .live-actions{gap:4px 6px}
+  .live-view .live-actions :is(button,a){min-height:44px;padding:4px 8px;font-size:.86rem}
+  .live-heading>.social-links{gap:4px}
+  .live-heading>.social-links a{min-height:34px;padding:3px 7px}
+  .live-view .live-table{gap:7px;padding:7px}
+  .live-view .live-table .deck,
+  .live-view .live-table .mixer{padding:7px;gap:5px}
+  .live-view .live-table .deck .platter{width:min(100%,38svh,200px);padding:3px}
+  .live-view.performance-view .live-table .deck .platter{width:min(100%,32svh,176px)}
+  .live-view .deck .controls{margin:0}
+  .live-view .deck .live-wave{padding:4px;gap:3px}
+  .live-view .deck .live-wave canvas{height:44px;min-height:44px}
+  .live-view .live-wave-hint{display:none}
+  .live-view .live-table .mixer{margin:0;align-content:start}
+  .live-view .live-table #mix-pad{min-height:74px;aspect-ratio:1.65}
+  .live-view .live-table .mixer-transport{grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}
+  .live-view .live-table .mixer-transport button{min-height:44px;padding:4px;font-size:.85rem}
+  .live-view .light-board{margin:0}
+  .live-view .light-board .fixture-head{width:44px;min-height:44px}
+  .live-view .oneshot-dock .oneshot-board{max-height:calc(100dvh - 68px);padding:6px}
+  .live-view .oneshot-dock #oneshot-pads button{min-height:44px}
+  .live-view .oneshot-settings{gap:4px}
+  .live-view .oneshot-settings button{font-size:.84rem;padding:4px 6px}
+  body:not(.live-view) main>header{min-height:0;padding:14px}
+  body:not(.live-view) main>header h1{margin-top:12px}
+  body:not(.live-view) .console .fx-pad{height:86px}
+}
+@media (orientation:landscape) and (max-height:560px) and (min-width:560px) and (max-width:1100px){
+  .live-view .live-table,
+  .live-view.performance-view .live-table{
+    grid-template-columns:minmax(0,1fr) minmax(145px,.7fr) minmax(0,1fr);
+  }
+  .live-view .live-table #deck-b{grid-area:1/3}
+  .live-view .live-table .mixer{grid-area:1/2;grid-template-columns:minmax(0,1fr)}
+  .live-view .live-table .deck-slot{margin-bottom:0}
+  .live-view .live-table .live-inputs{inset:42% -6px auto;justify-content:space-between}
+  .live-view .live-table .deck-slot>.patch-jack{top:42%;bottom:auto;translate:none}
+  .live-view .live-table #patch-out-a{left:auto;right:-5px}
+  .live-view .live-table #patch-out-b{left:-5px}
+  .oneshot-dock{width:min(495px,calc(100vw - 26px))}
+  .live-view .oneshot-dock #oneshot-pads{grid-template-columns:repeat(5,minmax(0,1fr))}
+  .live-view .oneshot-dock #oneshot-pads button{grid-template-columns:20px minmax(0,1fr);font-size:.8rem}
+  .oneshot-icon{width:20px}
+}
