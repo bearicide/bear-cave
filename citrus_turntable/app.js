@@ -1264,7 +1264,7 @@ setLightAim(aim,beamSpread);
 
 const patchCanvas = $('live-patch');
 const patchPaint = patchCanvas.getContext('2d');
-const patchMain = patchCanvas.closest('main');
+const patchTable = patchCanvas.closest('.live-table');
 const patchMeters = ['level-a','level-b','level-main'].map($);
 const patchAnalysers = [...decks.map(deck => deck.analyser),lightAnalyser];
 const patchSamples = patchAnalysers.map(analyser => new Float32Array(analyser.fftSize));
@@ -1277,18 +1277,17 @@ function measurePatch() {
   patchLayout = null;
 }
 const patchResize = new ResizeObserver(measurePatch);
-[patchMain,$('deck-a'),$('deck-b'),document.querySelector('.mixer')].forEach(node => patchResize.observe(node));
+[patchTable,$('deck-a'),$('deck-b'),document.querySelector('.mixer')].forEach(node => patchResize.observe(node));
 window.addEventListener('resize',measurePatch);
 function drawPatch(time) {
   if (!patchLayout) {
-    const bounds = patchMain.getBoundingClientRect();
-    const mixer = document.querySelector('.mixer').getBoundingClientRect();
+    const bounds = patchTable.getBoundingClientRect();
     const scale = Math.min(devicePixelRatio || 1,1.5);
-    const height = Math.ceil(mixer.top-bounds.top+16);
+    const height = Math.ceil(bounds.height);
     patchCanvas.width = Math.round(bounds.width*scale);
     patchCanvas.height = Math.round(height*scale);
     patchCanvas.style.height = height+'px';
-    patchLayout = {scale,lines:patchPorts.map(pair => pair.map(port => {
+    patchLayout = {scale,horizontal:matchMedia('(min-width: 650px)').matches,lines:patchPorts.map(pair => pair.map(port => {
       const r = port.getBoundingClientRect();
       return {x:r.left-bounds.left+r.width/2,y:r.top-bounds.top+r.height/2};
     }))};
@@ -1303,15 +1302,20 @@ function drawPatch(time) {
     patchLevels[i] = Math.max(signal,patchLevels[i]*.88);
     patchMeters[i].style.transform = 'scaleX('+patchLevels[i]+')';
   });
-  const {scale,lines} = patchLayout;
+  const {scale,lines,horizontal} = patchLayout;
   const ctx = patchPaint;
   ctx.setTransform(scale,0,0,scale,0,0);
   ctx.clearRect(0,0,patchCanvas.width/scale,patchCanvas.height/scale);
   lines.forEach(([from,to],i) => {
-    const middle = (from.y+to.y)/2;
     ctx.beginPath();
     ctx.moveTo(from.x,from.y);
-    ctx.bezierCurveTo(from.x,middle,to.x,middle,to.x,to.y);
+    if (horizontal) {
+      const middle = (from.x+to.x)/2;
+      ctx.bezierCurveTo(middle,from.y+13,middle,to.y+13,to.x,to.y);
+    } else {
+      const middle = (from.y+to.y)/2;
+      ctx.bezierCurveTo(from.x,middle,to.x,middle,to.x,to.y);
+    }
     ctx.lineCap = 'round';
     ctx.setLineDash([]);
     ctx.strokeStyle = '#09060f';
