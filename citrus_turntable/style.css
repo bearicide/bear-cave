@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Fahkwang:ital,wght@0,600;0,700;1,700&family=Geist:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fahkwang:ital,wght@0,600;0,700;1,700&family=Geist:wght@400;600;700;800&family=Rubik+Wet+Paint&family=Sedgwick+Ave+Display&family=Space+Mono:wght@400;700&display=swap');
 
 :root {
   --display-font: 'Fahkwang', 'Arial Narrow', system-ui, sans-serif;
@@ -420,3 +420,35 @@ h2,.light-board summary{font-weight:700;letter-spacing:.035em}
 .site-bar strong,.site-footer strong{font-weight:700}
 #play-all,.controls button[data-act=play]{font-weight:700;font-size:1.18rem}
 @media(max-width:460px){header h1{font-size:clamp(1.85rem,8.5vw,2.55rem)}}
+
+.live-heading h1{
+  display:flex;
+  align-items:baseline;
+  flex-wrap:wrap;
+  gap:.06em .23em;
+  padding:.12em .1em .13em 0;
+  font-family:'Sedgwick Ave Display',cursive;
+  font-size:clamp(2.7rem,7vw,5.8rem);
+  font-weight:400;
+  line-height:.86;
+  letter-spacing:-.035em;
+  text-transform:none;
+  color:#fff3df;
+  text-shadow:2px 3px #411436,0 0 18px #ff63aa88;
+}
+.live-heading h1 em{
+  display:inline-block;
+  font:normal 400 .64em 'Rubik Wet Paint',cursive;
+  text-transform:uppercase;
+  letter-spacing:.02em;
+  color:var(--live-heading,#d7fb75);
+  transform:rotate(-7deg);
+  text-shadow:2px 3px #210c27,0 0 22px var(--live-glow,#b7f342);
+}
+.live-view .deck h2,.live-view .light-board summary{
+  font-family:'Sedgwick Ave Display',cursive;
+  font-weight:400;
+  letter-spacing:.015em;
+  text-transform:none;
+}
+@media(max-height:540px) and (orientation:landscape){.live-heading h1{font-size:clamp(2.5rem,5.2vw,3.6rem)}}
