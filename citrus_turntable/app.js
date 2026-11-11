@@ -841,12 +841,26 @@ setInterval(() => decks.forEach((deck) => deck.draw()),65);
 const liveCanvas = $('live-lights');
 const livePaint = liveCanvas.getContext('2d');
 const lightAnalyser = audio.createAnalyser();
-lightAnalyser.fftSize = 512;
+lightAnalyser.fftSize = 1024;
+lightAnalyser.smoothingTimeConstant = .35;
 limiter.connect(lightAnalyser);
 const lightBins = new Uint8Array(lightAnalyser.frequencyBinCount);
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
 let lightFrame = 0;
-let lightEnergy = 0;
+let beatSensitivity = .6;
+let beatEnvelope = 0;
+const beatDetector = {average:0,previous:0,last:-Infinity};
+const beatMeter = $('beat-meter');
+function detectLightBeat(detector,bass,time,sensitivity) {
+  const lift = bass-detector.average;
+  const rise = bass-detector.previous;
+  detector.average += (bass-detector.average)*.08;
+  detector.previous = bass;
+  if (bass < .13 || lift < .17-sensitivity*.11 || rise < .055-sensitivity*.025 || time-detector.last < 350) return false;
+  detector.last = time;
+  return true;
+}
+dragNumber($('beat-sensitivity'),value => { beatSensitivity = value/100; },4);
 let lightLevel = .85;
 let lightSpeed = 1;
 let lightPhase = 0;
@@ -907,8 +921,8 @@ function drawLiveLights(time) {
     liveCanvas.height = canvasHeight;
   }
   lightAnalyser.getByteFrequencyData(lightBins);
-  const bass = lightBins.slice(1,5).reduce((sum,value) => sum+value,0)/1020;
-  lightEnergy += (bass-lightEnergy)*.12;
+  const bass = (lightBins[1]*.42+lightBins[2]*.38+lightBins[3]*.20)/255;
+  const hit = detectLightBeat(beatDetector,bass,time,beatSensitivity);
   const ctx = livePaint;
   ctx.setTransform(scale,0,0,scale,0,0);
   ctx.clearRect(0,0,width,height);
@@ -916,9 +930,12 @@ function drawLiveLights(time) {
   const still = reduceMotion.matches;
   const elapsed = lastLightTime ? Math.min(40,time-lastLightTime) : 0;
   lastLightTime = time;
-  if (!still && lightScene === 'chase') lightPhase += elapsed*lightSpeed/1900;
-  const phase = still || lightScene !== 'chase' ? 0 : lightPhase;
-  const energy = still || !beatSync ? .15 : lightEnergy;
+  const moving = ['chase','prism','laser'].includes(lightScene);
+  if (!still && moving) lightPhase += elapsed*lightSpeed/1500;
+  const phase = still || !moving ? 0 : lightPhase;
+  beatEnvelope = hit ? 1 : beatEnvelope*Math.exp(-elapsed/135);
+  const energy = still || !beatSync ? .16 : .08+beatEnvelope*.88;
+  beatMeter.style.transform = 'scaleX('+(!blackout && beatSync ? (still ? .15 : energy) : 0)+')';
   const brightness = blackout ? 0 : lightLevel;
   const palette = lightPalettes[themePicker.value];
   ctx.globalAlpha = brightness;
@@ -933,7 +950,7 @@ function drawLiveLights(time) {
     ctx.fillStyle = glow;
     ctx.fillRect(0,0,width,height);
   }
-  for (let i=0;lightScene !== 'wash' && i<6;i++) {
+  for (let i=0;lightScene !== 'wash' && lightScene !== 'prism' && i<6;i++) {
     const x = width*(.16+.136*i);
     const y = height*.60;
     const tilt = Math.sin(phase+i*1.25)*.56;
@@ -949,15 +966,28 @@ function drawLiveLights(time) {
     ctx.lineTo(x+5,y);
     ctx.fill();
   }
-  for (let i=0;lightScene === 'chase' && i<5;i++) {
-    const x = width*(.17+i*.165);
-    const y = height*(.70+.045*i);
-    ctx.strokeStyle = 'hsla('+palette[(i+1)%palette.length]+',100%,66%,'+(.08+energy*.28)+')';
+  for (let i=0;(lightScene === 'chase' || lightScene === 'laser') && i<(lightScene === 'laser' ? 18 : 5);i++) {
+    const x = width*(lightScene === 'laser' ? i/17 : .17+i*.165);
+    const y = height*(lightScene === 'laser' ? .98 : .70+.045*i);
+    ctx.strokeStyle = 'hsla('+palette[(i+1)%palette.length]+',100%,66%,'+(.22+energy*.52)+')';
     ctx.lineWidth = 1+i%2;
     ctx.beginPath();
     ctx.moveTo(width*.5,height*.5);
     ctx.lineTo(x+Math.sin(phase+i)*width*.14,y);
     ctx.stroke();
+  }
+  if (lightScene === 'prism') {
+    for (let i=0;i<8;i++) {
+      const angle = phase*.8+i*Math.PI/4;
+      const x = width*.5+Math.cos(angle)*width*.34;
+      const y = height*.46+Math.sin(angle)*height*.28;
+      const radius = Math.min(width,height)*(.09+energy*.08);
+      ctx.strokeStyle = 'hsla('+palette[i%palette.length]+',100%,66%,'+(.35+energy*.5)+')';
+      ctx.lineWidth = 2+energy*4;
+      ctx.beginPath();
+      ctx.arc(x,y,radius,0,Math.PI*2);
+      ctx.stroke();
+    }
   }
   if (!still && time < bumpUntil) {
     ctx.globalAlpha = brightness*Math.min(.36,(bumpUntil-time)/950);
