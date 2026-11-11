@@ -446,22 +446,22 @@ h2,.light-board summary{font-weight:700;letter-spacing:.035em}
   text-shadow:2px 3px #210c27,0 0 22px var(--live-glow,#b7f342);
 }
 .live-view .deck h2,.live-view .light-board summary{
-  font-family:'Sedgwick Ave Display',cursive;
-  font-weight:400;
+  font-family:var(--display-font);
+  font-weight:700;
   letter-spacing:.015em;
   text-transform:none;
 }
 @media(max-height:540px) and (orientation:landscape){.live-heading h1{font-size:clamp(2.5rem,5.2vw,3.6rem)}}
 
 .live-view button,.live-view .live-actions a,.live-view .crate-upload{
-  font-family:'Sedgwick Ave Display',cursive;
-  font-size:1.15rem;
-  font-weight:400;
+  font-family:var(--body-font);
+  font-size:1.125rem;
+  font-weight:600;
   letter-spacing:.015em;
   line-height:1.1;
 }
 .live-view #play-all,.live-view .controls button[data-act=play]{
-  font-family:'Rubik Wet Paint',cursive;
+  font-family:var(--body-font);
   font-size:clamp(.94rem,1vw + .55rem,1.24rem);
   letter-spacing:0;
 }
@@ -678,7 +678,7 @@ body:not(.live-view) .value-box>span{font-weight:600}
 .live-view.live-tracks-open .library{grid-area:6/1/7/3}
 .oneshot-heading,.oneshot-settings{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
 .oneshot-heading{margin-bottom:10px}
-.live-view .oneshot-heading h2{font:400 1.65rem/1 'Sedgwick Ave Display',cursive;color:var(--live-heading,#d7fb75)}
+.live-view .oneshot-heading h2{font:700 1.55rem/1.05 var(--display-font);color:var(--live-heading,#d7fb75)}
 .oneshot-settings{align-items:end}
 .oneshot-settings .value-box{width:94px}
 #oneshot-pads{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
@@ -780,3 +780,44 @@ body:not(.live-view) .console button{white-space:normal;overflow-wrap:anywhere}
   .live-view #crate .crate-track{grid-template-columns:minmax(0,1fr)}
   .live-view #crate .crate-track>.crate-actions{grid-column:1;grid-row:auto;justify-content:start}
 }
+
+
+/* Shared type scale for the performance and editing controls. */
+.console :is(h2,h3),.light-board summary{
+  font-family:var(--display-font);
+  font-weight:700;
+  letter-spacing:.025em;
+}
+.console h2,.light-board summary,.live-view .oneshot-heading h2{font-size:1.55rem;line-height:1.08}
+.console :is(button,.upload),.live-actions :is(button,a),.start-actions :is(button,a),
+body:not(.live-view) .console :is(button,.upload),
+.live-view .console :is(button,.upload),.live-view .library .crate-upload{
+  font-family:var(--body-font);
+  font-size:1.125rem;
+  font-weight:600;
+  line-height:1.2;
+  letter-spacing:0;
+  min-height:48px;
+  text-wrap:balance;
+}
+body:not(.live-view) .console :is(#play-all,button[data-act=play]),
+.live-view .console :is(#play-all,button[data-act=play]){
+  font-family:var(--body-font);
+  font-size:1.25rem;
+  font-weight:800;
+  min-height:52px;
+}
+.live-view .light-cues button,.live-view #oneshot-pads button,.live-view .library button{
+  font-family:var(--body-font);
+  font-size:1.125rem;
+  font-weight:600;
+  line-height:1.2;
+  min-height:48px;
+}
+.live-view #fixture-bank button,.live-view button.fixture-head{
+  font:700 1rem/1 var(--readout-font);
+}
+.live-view button.fixture-head{min-height:0}
+.console .value-box>span,.light-board .live-theme{font:600 .88rem/1.2 var(--body-font)}
+.console .value-box input,.console .time,.console kbd{font-family:var(--readout-font)}
+.live-view .library .crate-actions{flex-wrap:wrap}
