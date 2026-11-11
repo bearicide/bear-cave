@@ -7,6 +7,9 @@ const crate = [
   ['Funky One',121,'funky_one','USUAN1100222'],
   ['Disco con Tutti',115,'disco_con_tutti','USUAN1200091'],
   ['Local Forecast – Elevator',82,'local_forecast_elevator','USUAN1300012'],
+  ['Melodica ft. Ketsa',154,'melodica','https://freemusicarchive.org/music/1000-handz/cc-by-free-to-use-dancehouse-instrumentals/melodica-ft-ketsa/','House','1000 Handz',true],
+  ['Griphop',90,'griphop','USUAN1100413','Hip Hop'],
+  ['Soul Sync',100,'soul_sync','https://freemusicarchive.org/music/Ketsa/cc-by-free-to-use-for-anything/soul-sync/','Soul','Ketsa',true],
 ];
 const audio = new AudioContext();
 const master = audio.createGain();
@@ -721,8 +724,8 @@ async function crateTrack({name, url, file, sample}) {
   row.append(title,waveform,status,buttons);
   if (sample) {
     const source = document.createElement('a');
-    source.href = 'https://incompetech.com/music/royalty-free/index.html?isrc='+sample[3];
-    source.textContent = 'Original track';
+    source.href = sample[3].startsWith('https://') ? sample[3] : 'https://incompetech.com/music/royalty-free/index.html?isrc='+sample[3];
+    source.textContent = (sample[5] || 'Kevin MacLeod')+' · Source';
     source.target = '_blank';
     source.rel = 'noopener';
     row.append(source);
@@ -743,7 +746,7 @@ async function crateTrack({name, url, file, sample}) {
       ctx.fillRect(x,(waveform.height-height)/2,1,height);
     });
     detectedBpm = sample ? sample[1] : estimateBpm(buffer);
-    status.textContent = clock(buffer.duration)+(detectedBpm ? ' · '+(sample ? '' : 'About ')+detectedBpm+' BPM' : ' · BPM unknown');
+    status.textContent = clock(buffer.duration)+(detectedBpm ? ' · '+(sample && !sample[6] ? '' : 'About ')+detectedBpm+' BPM'+(sample?.[4] ? ' · '+sample[4] : '') : ' · BPM unknown');
     listen.disabled = false;
     loads.forEach(button => { button.disabled = false; });
     listen.onclick = async () => {
