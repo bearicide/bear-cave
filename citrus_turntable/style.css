@@ -470,3 +470,35 @@ h2,.light-board summary{font-weight:700;letter-spacing:.035em}
   font-size:1rem;
   font-weight:700;
 }
+
+/* Live control lettering scales with its panel, including the narrow lighting column. */
+.live-view .light-board,.live-view .mixer,.live-view .deck{container-type:inline-size}
+.live-view button,.live-view .live-actions a,.live-view .crate-upload{
+  min-block-size:44px;
+  line-height:1.16;
+  letter-spacing:.005em;
+  text-wrap:balance;
+}
+.live-view .light-cues{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,96px),1fr));gap:6px}
+.live-view .light-cues button{
+  min-width:0;
+  min-block-size:48px;
+  padding:6px 5px;
+  font-size:clamp(1rem,4.2cqi,1.18rem);
+}
+.live-view .light-cues button:active{border-bottom-width:4px}
+.live-view .mixer-transport button{
+  padding:7px 9px;
+  font-size:clamp(1rem,2.7cqi,1.18rem);
+}
+.live-view #play-all,.live-view .controls button[data-act=play]{
+  font-size:clamp(.98rem,3.9cqi,1.22rem);
+  letter-spacing:.015em;
+  min-block-size:48px;
+}
+.live-view .fixture-head{
+  min-block-size:0;
+  aspect-ratio:1;
+  line-height:1;
+}
+.live-view #fixture-bank button{min-block-size:44px}
