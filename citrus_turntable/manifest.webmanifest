@@ -1,0 +1,25 @@
+{
+  "id": "./",
+  "name": "Citrus Turntable LIVE",
+  "short_name": "Citrus LIVE",
+  "description": "Mix, scratch, and perform with two turntables.",
+  "start_url": "./?view=live",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#171027",
+  "theme_color": "#171027",
+  "icons": [
+    {
+      "src": "icons/app_192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/app_512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

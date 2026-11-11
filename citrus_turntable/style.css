@@ -1378,3 +1378,6 @@ body:not(.live-view) .console .fx-zone{border-color:var(--citrus-divider)}
 
 .live-first-steps{margin:5px 0 0;color:#fff0db;font-size:.88rem}
 .performance-view .live-first-steps{display:none}
+
+.install-status{flex-basis:100%;margin:4px 0;color:#ffe7b5;font-size:.88rem}
+.install-status:empty,.performance-view [data-citrus-install],.performance-view .install-status{display:none}
