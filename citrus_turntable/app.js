@@ -156,6 +156,7 @@ class Deck {
     this.analyser = audio.createAnalyser();
     this.analyser.fftSize = 1024;
     this.samples = new Uint8Array(this.analyser.fftSize);
+    this.scratchGrains = new Set();
     this.normalization = audio.createGain();
     audio.createMediaElementSource(this.player).connect(this.normalization);
     let chain = this.normalization;
@@ -286,7 +287,8 @@ class Deck {
     envelope.gain.linearRampToValueAtTime(.65,now+.005);
     envelope.gain.linearRampToValueAtTime(0,end);
     grain.connect(envelope).connect(this.normalization);
-    grain.onended = () => { grain.disconnect(); envelope.disconnect(); };
+    this.scratchGrains.add(grain);
+    grain.onended = () => { this.scratchGrains.delete(grain); grain.disconnect(); envelope.disconnect(); };
     grain.start(now);
   }
   message(value) { this.get('.status').textContent = value; }
@@ -312,8 +314,12 @@ class Deck {
     if (action === 'play') {
       if (this.loading) return;
       if (!this.player.paused) return this.player.pause();
+      if (this.playRequest) return;
+      const request = {};
+      this.playRequest = request;
       try {
         await audio.resume();
+        if (this.playRequest !== request) return;
         const other = reference || decks[1-this.index];
         if (autoSync && other !== this && (reference || !other.player.paused) && this.sync(other) && this.player.currentTime <= this.cue + .08) {
           const sourceBeat = 60 / Number(other.bpm.value);
@@ -323,7 +329,11 @@ class Deck {
           this.jump(this.cue + phase*beat);
         }
         await this.player.play();
-      } catch { this.message('Playback failed. Try another audio file.'); }
+      } catch {
+        if (this.playRequest === request) this.message('Playback failed. Try another audio file.');
+      } finally {
+        if (this.playRequest === request) this.playRequest = null;
+      }
     }
     if (action === 'cue') this.jump(this.cue);
     if (action === 'mark') this.cue = this.player.currentTime;
@@ -357,6 +367,7 @@ class Deck {
   }
   async load(url,title,bpm,owned=false,loop=false,file) {
     const generation = ++this.generation;
+    this.playRequest = null;
     this.loading = true;
     this.playButton.disabled = true;
     this.normalization.gain.value = 1;
@@ -590,7 +601,18 @@ pad.onkeydown = (event) => {
 };
 $('center').onclick = () => mix(50,volume);
 mix(blend,volume);
-function stop() { stopPreview(); decks.forEach((deck) => { if (deck.scratch) deck.scratch.resume = false; deck.player.pause(); deck.jump(0); }); }
+function stop() {
+  stopPreview();
+  for (const deck of decks) {
+    deck.playRequest = null;
+    deck.scratch = null;
+    deck.root.classList.remove('scratching');
+    for (const grain of deck.scratchGrains) grain.stop();
+    deck.scratchGrains.clear();
+    deck.player.pause();
+    deck.jump(0);
+  }
+}
 $('stop').onclick = stop;
 function playAll() {
   const ready = decks.filter(deck => !deck.loading && Number.isFinite(deck.player.duration));
@@ -601,10 +623,16 @@ function playAll() {
 }
 $('play-all').onclick = playAll;
 document.addEventListener('keydown',(e) => {
-  if (e.repeat || e.altKey || e.ctrlKey || e.metaKey || e.target.closest('input,textarea,button,[contenteditable]')) return;
+  if (e.repeat || e.altKey || e.ctrlKey || e.metaKey || e.target.closest('input,textarea,select,[contenteditable]')) return;
   const key = e.key.toLowerCase();
   if (key==='escape') stop();
-  if (e.code==='Space' && !e.target.closest('a,summary')) { e.preventDefault(); playAll(); }
+  if (e.code==='Space') {
+    e.preventDefault();
+    if (activePreview || decks.some(deck => !deck.player.paused || deck.scratch || deck.playRequest)) stop();
+    else playAll();
+    return;
+  }
+  if (e.target.closest('button')) return;
   if ('alqp'.includes(key) && key.length===1) decks['lp'.includes(key)?1:0].action('al'.includes(key)?'play':'cue');
 });
 $('remote').onsubmit = async (e) => {
