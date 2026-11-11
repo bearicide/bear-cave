@@ -10,6 +10,7 @@ const crate = [
   ['Melodica ft. Ketsa',154,'melodica','https://freemusicarchive.org/music/1000-handz/cc-by-free-to-use-dancehouse-instrumentals/melodica-ft-ketsa/','House','1000 Handz',true],
   ['Griphop',90,'griphop','USUAN1100413','Hip Hop'],
   ['Soul Sync',100,'soul_sync','https://freemusicarchive.org/music/Ketsa/cc-by-free-to-use-for-anything/soul-sync/','Soul','Ketsa',true],
+  ['Cut Trance',110,'cut_trance','USUAN1100273','Trance / Techno'],
 ];
 const audio = new AudioContext();
 const master = audio.createGain();

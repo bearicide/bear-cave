@@ -822,3 +822,19 @@ body:not(.live-view) .console :is(#play-all,button[data-act=play]),
 .console .value-box>span,.light-board .live-theme{font:600 .88rem/1.2 var(--body-font)}
 .console .value-box input,.console .time,.console kbd{font-family:var(--readout-font)}
 .live-view .library .crate-actions{flex-wrap:wrap}
+
+:root{--citrus-outline:#f0d75d;--citrus-divider:#a88c43}
+body:not(.live-view) .console{
+  border-color:var(--citrus-outline);
+  box-shadow:0 0 0 1px #130c16,0 5px 0 1px #0b0611,0 13px 26px #050208b8,0 0 20px #e2bb3535;
+}
+body:not(.live-view) .console .mixer{border-color:var(--citrus-divider)}
+body:not(.live-view) .console :is(.fx-board,.library){border-top-color:var(--citrus-divider)}
+body:not(.live-view) .console .fx-zone{border-color:var(--citrus-divider)}
+.live-view :is(.deck,.mixer,.light-board,.oneshot-board,.library){
+  border-color:var(--citrus-outline);
+  box-shadow:inset 0 1px #f9eaa34d,0 3px 0 #07040d,5px 7px 0 #06030caa,0 0 15px #e2bb3538;
+}
+.console :is(#mix-pad,#light-aim,.fx-pad){border-color:#ccb255}
+.console :is(.mixer,.fx-board,.library,.light-board,.oneshot-board) h2,
+.console .light-board summary{color:#ffe98c}
