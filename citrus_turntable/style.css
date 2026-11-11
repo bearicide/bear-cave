@@ -198,3 +198,13 @@ kbd{display:inline-block;padding:0 .35em;border:1px solid #87577e;border-bottom-
 #music-results{list-style:none;padding:0;max-height:300px;overflow:auto}
 #music-results li{display:grid;gap:6px;padding:8px 0;border-bottom:1px solid #6b426c;overflow-wrap:anywhere}
 #music-results a{font-size:.88rem}
+
+.deck-help{grid-column:1/-1;padding:14px}
+.deck-help p{margin:8px 0}
+.deck-help details{margin:8px 0}
+.library>details:first-of-type{margin-top:10px}
+@media(min-width:681px) and (max-width:1119px){
+  .deck-help{grid-row:4}
+  .library{grid-row:5}
+}
+@media(min-width:1120px){.deck-help{grid-column:1/4;grid-row:4}}
