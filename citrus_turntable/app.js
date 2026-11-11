@@ -103,6 +103,17 @@ function dragNumber(input, onChange, pixelsPerStep = 5) {
   return set;
 }
 
+function waveformPeaks(buffer, columns = 256) {
+  const channel = buffer.getChannelData(0);
+  return Array.from({length:columns}, (_, i) => {
+    let peak = 0;
+    const start = Math.floor(i*channel.length/columns);
+    const end = Math.floor((i+1)*channel.length/columns);
+    for (let n=start;n<end;n++) peak = Math.max(peak,Math.abs(channel[n]));
+    return peak;
+  });
+}
+
 function normalizationGain(buffer) {
   const channels = Array.from({length:buffer.numberOfChannels}, (_, index) => buffer.getChannelData(index));
   const blockSize = Math.round(buffer.sampleRate*.4);
@@ -371,14 +382,7 @@ class Deck {
       const gain = normalizationGain(buffer);
       this.normalization.gain.value = gain;
       this.decoded = buffer;
-      const channel = buffer.getChannelData(0);
-      this.wave = Array.from({length:256},(_,i) => {
-        let peak = 0;
-        const start = Math.floor(i*channel.length/256);
-        const end = Math.floor((i+1)*channel.length/256);
-        for (let n=start;n<end;n++) peak = Math.max(peak,Math.abs(channel[n]));
-        return peak;
-      });
+      this.wave = waveformPeaks(buffer);
       this.message('Normalized · '+(gain > 1 ? '+' : '')+(20*Math.log10(gain)).toFixed(1)+' dB');
     } catch {
       if (generation === this.generation) this.message('Normalization unavailable for this file.');
@@ -437,28 +441,117 @@ class Deck {
 }
 const decks = [new Deck(0),new Deck(1)];
 decks.forEach((deck,i) => deck.starter(crate[i]));
-for (const sample of crate) {
+const preview = new Audio();
+const previewGain = audio.createGain();
+audio.createMediaElementSource(preview).connect(previewGain).connect(audio.destination);
+let activePreview;
+function stopPreview() {
+  preview.pause();
+  preview.removeAttribute('src');
+  preview.load();
+  if (activePreview) activePreview.textContent = '▶ Preview';
+  activePreview = null;
+}
+preview.onended = stopPreview;
+preview.onerror = stopPreview;
+
+async function crateTrack({name, url, file, sample}) {
   const row = document.createElement('div');
-  row.className = 'row';
-  const name = document.createElement('span');
-  name.textContent = sample[0]+' · '+sample[1]+' BPM';
-  const buttons = document.createElement('span');
-  decks.forEach((deck,i) => {
+  row.className = 'crate-track';
+  const title = document.createElement('strong');
+  title.textContent = name;
+  const waveform = document.createElement('canvas');
+  waveform.width = 144;
+  waveform.height = 36;
+  waveform.setAttribute('aria-hidden','true');
+  const status = document.createElement('small');
+  status.textContent = 'Reading audio…';
+  status.setAttribute('role','status');
+  const buttons = document.createElement('div');
+  buttons.className = 'crate-actions';
+  const listen = document.createElement('button');
+  listen.textContent = '▶ Preview';
+  listen.disabled = true;
+  buttons.append(listen);
+  const loads = decks.map((deck,i) => {
     const button = document.createElement('button');
     button.textContent = 'Load '+'AB'[i];
-    button.setAttribute('aria-label', 'Load '+sample[0]+' on deck '+'AB'[i]);
-    button.onclick = () => deck.starter(sample);
+    button.setAttribute('aria-label','Load '+name+' on deck '+'AB'[i]);
+    button.disabled = true;
+    button.onclick = () => {
+      stopPreview();
+      if (file) deck.local(file); else deck.starter(sample);
+    };
     buttons.append(button);
+    return button;
   });
-  const source = document.createElement('a');
-  source.href = 'https://incompetech.com/music/royalty-free/index.html?isrc='+sample[3];
-  source.textContent = 'Original track';
-  source.target = '_blank';
-  source.rel = 'noopener';
-  name.append(document.createElement('br'),source);
-  row.append(name,buttons);
+  if (file) {
+    const remove = document.createElement('button');
+    remove.textContent = 'Remove';
+    remove.setAttribute('aria-label','Remove '+name+' from crate');
+    remove.onclick = () => {
+      if (activePreview === listen) stopPreview();
+      URL.revokeObjectURL(url);
+      row.remove();
+    };
+    buttons.append(remove);
+  }
+  row.append(title,waveform,status,buttons);
+  if (sample) {
+    const source = document.createElement('a');
+    source.href = 'https://incompetech.com/music/royalty-free/index.html?isrc='+sample[3];
+    source.textContent = 'Original track';
+    source.target = '_blank';
+    source.rel = 'noopener';
+    row.append(source);
+  }
   $('crate').append(row);
+  try {
+    const bytes = file ? await file.arrayBuffer() : await (await fetch(url)).arrayBuffer();
+    if (!row.isConnected) return;
+    const buffer = await audio.decodeAudioData(bytes);
+    if (!row.isConnected) return;
+    const gain = normalizationGain(buffer);
+    const ctx = waveform.getContext('2d');
+    const peaks = waveformPeaks(buffer,waveform.width);
+    const max = Math.max(...peaks) || 1;
+    ctx.fillStyle = file ? '#d7fb75' : '#ffac60';
+    peaks.forEach((peak,x) => {
+      const height = Math.max(1,peak/max*(waveform.height-4));
+      ctx.fillRect(x,(waveform.height-height)/2,1,height);
+    });
+    status.textContent = clock(buffer.duration)+(sample ? ' · '+sample[1]+' BPM' : ' · Local file');
+    listen.disabled = false;
+    loads.forEach(button => { button.disabled = false; });
+    listen.onclick = async () => {
+      if (activePreview === listen) return stopPreview();
+      stopPreview();
+      activePreview = listen;
+      listen.textContent = '■ Stop preview';
+      previewGain.gain.value = gain*.65;
+      preview.src = url;
+      try {
+        await audio.resume();
+        if (activePreview === listen) await preview.play();
+      } catch {
+        if (activePreview === listen) stopPreview();
+      }
+    };
+  } catch {
+    if (row.isConnected) status.textContent = 'Could not read this audio file.';
+  }
 }
+
+for (const sample of crate) {
+  crateTrack({name:sample[0],url:'assets/'+sample[2]+'.mp3',sample});
+}
+$('crate-files').onchange = async event => {
+  const files = Array.from(event.target.files);
+  event.target.value = '';
+  for (const file of files) {
+    await crateTrack({name:file.name,url:URL.createObjectURL(file),file});
+  }
+};
 const pad = $('mix-pad');
 const dot = pad.querySelector('.pad-dot');
 let blend = 50;
@@ -497,7 +590,7 @@ pad.onkeydown = (event) => {
 };
 $('center').onclick = () => mix(50,volume);
 mix(blend,volume);
-function stop() { decks.forEach((deck) => { if (deck.scratch) deck.scratch.resume = false; deck.player.pause(); deck.jump(0); }); }
+function stop() { stopPreview(); decks.forEach((deck) => { if (deck.scratch) deck.scratch.resume = false; deck.player.pause(); deck.jump(0); }); }
 $('stop').onclick = stop;
 function playAll() {
   const ready = decks.filter(deck => !deck.loading && Number.isFinite(deck.player.duration));

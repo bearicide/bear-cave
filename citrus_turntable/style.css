@@ -147,3 +147,10 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
 #play-all{grid-column:1/-1;background:#ffac60;color:#25132c;border-color:#ffd491;font-size:1.16rem}
 #play-all:hover{background:#ffcb83}
 #stop,#record{padding-inline:6px}
+
+.crate-upload{margin:10px 0;color:#d7fb75}
+#crate .crate-track{display:grid;gap:6px;padding:10px 0;overflow-wrap:anywhere}
+.crate-track canvas{height:36px}
+.crate-track small{color:#e6c7df}
+.crate-actions{display:flex;flex-wrap:wrap;gap:5px}
+.crate-actions button:disabled{opacity:.55}
