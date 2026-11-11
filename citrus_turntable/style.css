@@ -1043,3 +1043,13 @@ body:not(.live-view) .console .fx-zone{border-color:var(--citrus-divider)}
   cursor:ew-resize;
   touch-action:none;
 }
+
+.live-view #live-start-both{
+  min-height:48px;
+  padding-inline:18px;
+  background:var(--live-heading,#d7fb75);
+  border-color:#f2ffbf;
+  color:#211326;
+}
+.live-view #live-start-both:hover{filter:brightness(1.1)}
+.live-view #oneshot-load-tracks{min-height:44px}

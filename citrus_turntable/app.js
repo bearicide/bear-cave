@@ -1055,7 +1055,7 @@ function playAll() {
     if (deck.player.paused && !deck.scratch) deck.action('play', lead);
   }
 }
-$('play-all').onclick = playAll;
+$('play-all').onclick = $('live-start-both').onclick = playAll;
 $('try-mixer').onclick = () => {
   playAll();
   $('play-all').focus();
@@ -1645,12 +1645,17 @@ function drawLiveLights(time) {
   }
   lightFrame = requestAnimationFrame(drawLiveLights);
 }
-$('live-tracks').onclick = () => {
-  const expanded = document.body.classList.toggle('live-tracks-open');
-  $('live-tracks').setAttribute('aria-expanded',String(expanded));
-  $('live-tracks').textContent = expanded ? 'Hide tracks' : 'Load tracks';
-  if (expanded) $('add-your-music').scrollIntoView({block:'nearest'});
-};
+const liveTrackButtons = [$('live-tracks'), $('oneshot-load-tracks')];
+for (const button of liveTrackButtons) {
+  button.onclick = () => {
+    const expanded = document.body.classList.toggle('live-tracks-open');
+    for (const control of liveTrackButtons) {
+      control.setAttribute('aria-expanded', String(expanded));
+      control.textContent = expanded ? 'Hide Tracks' : 'Load Tracks';
+    }
+    if (expanded) $('add-your-music').scrollIntoView({block:'start'});
+  };
+}
 function showLiveView(enabled) {
   measurePatch();
   if (enabled) oneShots.preload();
