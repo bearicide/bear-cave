@@ -95,3 +95,31 @@ main{grid-template-columns:minmax(0,1fr) minmax(190px,.65fr) minmax(0,1fr);align
 .now-playing .vinyl{width:100%;max-width:104px}
 .deck .spectrum{height:54px;cursor:default;touch-action:auto;border-color:#684263;background:#191022}
 .scratching .spectrum{cursor:default;border-color:#684263}
+
+.site-bar,.site-footer{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:10px 20px;flex-wrap:wrap;padding:10px 14px;background:#251731;border-bottom:2px solid #ff79ac;border-radius:0 0 14px 14px}
+.site-bar .brand{display:grid;line-height:1.15;text-decoration:none;color:#ffca72}
+.site-bar strong,.site-footer strong{font-family:'Archivo Black',system-ui,sans-serif;letter-spacing:.06em}
+.site-bar .brand span,.site-footer span{font-size:.78rem;color:#efd2e7}
+.site-bar nav,.site-footer nav{display:flex;flex-wrap:wrap;gap:4px 8px}
+.site-bar nav a,.site-footer nav a,.link-grid a{display:inline-flex;align-items:center;min-height:44px;padding:6px 10px;border-radius:8px;text-decoration:none}
+.site-bar nav a[aria-current=page],.site-bar nav a:hover,.site-footer nav a:hover{background:#4b294e;color:#fff}
+.site-footer{justify-content:flex-start;text-align:left;border-bottom:0;border-top:1px solid #8e5980;border-radius:14px 14px 0 0;margin-top:12px}
+.site-footer>div{display:grid;margin-right:auto;color:#ffca72}
+.info-page{display:flex;flex-direction:column;max-width:970px}
+.info-page header{padding:22px clamp(16px,5vw,42px)}
+.info-page header p{max-width:52ch}
+.info-content{background:#241931;border:1px solid #69446d;border-radius:16px;padding:clamp(14px,4vw,28px);line-height:1.55}
+.info-content h2:not(:first-child){margin-top:24px}
+.link-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(190px,100%),1fr));gap:8px;margin-top:12px}
+.link-grid a{background:#352344;border:1px solid #69446d}
+.link-grid a:hover{background:#4b294e}
+.steps{padding-left:1.5em;margin-top:0}
+.steps li{padding-left:.25em;margin-bottom:12px}
+@media(max-width:460px){.site-bar{gap:4px;padding:8px}.site-bar nav{gap:0}.site-bar nav a{padding-inline:7px}}
+@media(min-width:681px){
+  main>.site-bar{grid-row:1}
+  main>header{grid-row:2}
+  #deck-a,.mixer,#deck-b{grid-row:3}
+  .library{grid-row:4}
+}
+@media(min-width:1120px){.library{grid-row:3}}
