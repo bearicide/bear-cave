@@ -277,10 +277,10 @@ class Deck {
     this.spectrumPaint = this.spectrum.getContext('2d');
     this.spectrumBins = new Uint8Array(this.analyser.frequencyBinCount);
     this.paint = this.canvas.getContext('2d');
-    const letter = 'ab'[index];
-    this.liveWave = $('live-wave-'+letter);
+    this.liveWave = this.get('.live-wave-surface');
+    this.liveWave.setAttribute('aria-label', 'Deck '+'AB'[index]+' waveform. Tap to jump, drag to scratch, or use the arrow keys to move one second.');
     this.liveWavePaint = this.liveWave.getContext('2d');
-    this.liveWaveTime = $('live-wave-time-'+letter);
+    this.liveWaveTime = this.get('.live-wave-time');
     this.bindScratch(this.liveWave, false);
     this.liveWave.onkeydown = event => {
       if (!['ArrowLeft','ArrowRight'].includes(event.key) || !Number.isFinite(this.player.duration)) return;
@@ -569,7 +569,7 @@ class Deck {
   draw() {
     this.drawSpectrum();
     this.refresh();
-    if ($('live-waveforms').hidden) {
+    if (!document.body.classList.contains('live-view')) {
       this.drawWave(this.paint);
     } else {
       this.drawWave(this.liveWavePaint, true);
@@ -1657,7 +1657,6 @@ function showLiveView(enabled) {
   document.body.classList.toggle('live-view',enabled);
   fxPadDock.hidden = !enabled;
   $('mic-controls').hidden = !enabled;
-  $('live-waveforms').hidden = !enabled;
   if (!enabled) disableMic();
   if (enabled) moveFxPad(fxPadX, fxPadY);
   else setFxPadOpen(false);
