@@ -871,11 +871,14 @@ mix(blend,volume);
 function initOneShots() {
   const sounds = [
     ['DJ Horn','dj_horn',0,1.85,.68],
-    ['Vinyl Scratch','vinyl_scratch',0,1.12,.83],
-    ['Crowd Reaction','crowd_reaction',0,1.05,.73],
+    ['Scratch','vinyl_scratch',0,1.12,.83],
+    ['Crowd','crowd_reaction',0,1.05,.73],
     ['Handclap','handclap',0,.23,.88],
     ['Cymbal Hit','cymbal_hit',0,.83,.76],
     ['Cymbal Rise','cymbal_rise',.10,1.37,.72],
+    ['Whistle','whistle',0,.85,.65],
+    ['Cowbell','cowbell',0,.30,.78],
+    ['Laser Zap','laser',0,.70,.72],
   ];
   const level = audio.createGain();
   level.gain.value = .7;
@@ -929,6 +932,10 @@ function initOneShots() {
   }
   const buttons = sounds.map(([name],index) => {
     const button = document.createElement('button');
+    const icon = document.createElement('i');
+    icon.className = 'oneshot-icon';
+    icon.setAttribute('aria-hidden','true');
+    icon.style.backgroundPosition = (index%3)*50+'% '+Math.floor(index/3)*50+'%';
     const key = document.createElement('kbd');
     const label = document.createElement('span');
     button.type = 'button';
@@ -936,7 +943,7 @@ function initOneShots() {
     key.textContent = index+1;
     key.setAttribute('aria-hidden','true');
     label.textContent = name;
-    button.append(key,label);
+    button.append(icon,key,label);
     button.onclick = () => trigger(index);
     $('oneshot-pads').append(button);
     return button;
@@ -988,7 +995,7 @@ document.addEventListener('keydown',(e) => {
     else playAll();
     return;
   }
-  if (document.body.classList.contains('live-view') && /^[1-6]$/.test(key)) {
+  if (document.body.classList.contains('live-view') && /^[1-9]$/.test(key)) {
     e.preventDefault();
     oneShots.trigger(Number(key)-1);
     return;

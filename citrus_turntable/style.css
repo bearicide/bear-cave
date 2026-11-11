@@ -928,3 +928,24 @@ body:not(.live-view) .console .fx-zone{border-color:var(--citrus-divider)}
 }
 .live-view #oneshot-pads kbd{align-self:center}
 .live-view .oneshot-credits{margin-top:6px}
+
+.live-view .live-table .oneshot-board{padding:6px 8px}
+.live-view .oneshot-heading{margin-bottom:4px}
+.live-view .oneshot-settings .value-box{display:flex;align-items:center;width:auto;gap:5px}
+.live-view .oneshot-settings .value-box input{width:58px}
+.live-view .oneshot-heading h2{font-size:1.35rem}
+#oneshot-pads{grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}
+.live-view #oneshot-pads button{
+  position:relative;
+  grid-template-columns:27px minmax(0,1fr);
+  gap:4px;
+  min-height:44px;
+  padding:3px 13px 3px 4px;
+  font-size:.96rem;
+  line-height:1.05;
+  text-wrap:balance;
+}
+.oneshot-icon{display:block;width:27px;aspect-ratio:1;border-radius:3px;background:url(assets/oneshot_icons.webp) no-repeat;background-size:300% 300%}
+.live-view #oneshot-pads kbd{position:absolute;right:3px;top:2px;font-size:.62rem;border:0;padding:0}
+.live-view .oneshot-credits{margin-top:4px}
+@media(min-width:980px){#oneshot-pads{grid-template-columns:repeat(9,minmax(0,1fr))}}
