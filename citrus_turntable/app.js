@@ -524,7 +524,11 @@ class Deck {
   starter([title,bpm,slug]) {
     this.load('assets/'+slug+'.mp3',title,bpm,false,true);
   }
-  async load(url,title,bpm,owned=false,loop=false,file) {
+  load(...args) {
+    this.loadCompletion = this.loadTrack(...args);
+    return this.loadCompletion;
+  }
+  async loadTrack(url,title,bpm,owned=false,loop=false,file) {
     const generation = ++this.generation;
     this.clearScratch();
     this.playRequest = null;
@@ -1082,7 +1086,9 @@ function setFxPadOpen(open) {
   moveFxPad(fxPadX, fxPadY);
 }
 fxPadToggle.onclick = () => setFxPadOpen($('oneshot-board').hidden);
+let startBothRequest;
 function stop() {
+  startBothRequest = null;
   disableMic();
   oneShots.stopAll();
   mixerEffects.bypass();
@@ -1097,8 +1103,23 @@ function stop() {
   }
 }
 $('stop').onclick = stop;
-function playAll() {
-  const ready = decks.filter(deck => !deck.loading && Number.isFinite(deck.player.duration));
+async function playAll() {
+  if (startBothRequest) return;
+  const request = {};
+  startBothRequest = request;
+  try {
+    await Promise.all([audio.resume(), ...decks.map(deck => deck.loadCompletion)]);
+    while (startBothRequest === request && decks.some(deck => deck.loading)) {
+      await Promise.all(decks.map(deck => deck.loadCompletion));
+    }
+  } catch {
+    if (startBothRequest === request) startBothRequest = null;
+    return;
+  }
+  if (startBothRequest !== request) return;
+  startBothRequest = null;
+  const ready = decks.filter(deck => !deck.loading && !deck.player.error &&
+    (deck.decoded || Number.isFinite(deck.player.duration)));
   const lead = ready.find(deck => !deck.player.paused) || ready[0];
   for (const deck of ready) {
     if (deck.player.paused && !deck.scratch) deck.action('play', lead);
@@ -1116,7 +1137,7 @@ document.addEventListener('keydown',(e) => {
   if (key==='escape') stop();
   if (e.code==='Space') {
     e.preventDefault();
-    if (oneShots.isPlaying() || activePreview || decks.some(deck => !deck.player.paused || deck.scratch || deck.playRequest)) stop();
+    if (startBothRequest || oneShots.isPlaying() || activePreview || decks.some(deck => !deck.player.paused || deck.scratch || deck.playRequest)) stop();
     else playAll();
     return;
   }
@@ -1125,7 +1146,6 @@ document.addEventListener('keydown',(e) => {
     oneShots.trigger(Number(key)-1);
     return;
   }
-  if (e.target.closest('button')) return;
   if ('alqp'.includes(key) && key.length===1) decks['lp'.includes(key)?1:0].action('al'.includes(key)?'play':'cue');
 });
 let musicSearch;

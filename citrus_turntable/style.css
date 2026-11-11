@@ -1375,3 +1375,6 @@ body:not(.live-view) .console .fx-zone{border-color:var(--citrus-divider)}
 @container (max-width:155px){
   .performance-cue-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
+
+.live-first-steps{margin:5px 0 0;color:#fff0db;font-size:.88rem}
+.performance-view .live-first-steps{display:none}
