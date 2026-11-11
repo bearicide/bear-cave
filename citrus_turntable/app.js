@@ -103,6 +103,26 @@ function dragNumber(input, onChange, pixelsPerStep = 5) {
   return set;
 }
 
+function measureSongTitle(label) {
+  const distance = Math.max(0, label.firstElementChild.scrollWidth-label.clientWidth);
+  label.classList.toggle('song-title-overflow', distance > 1);
+  label.style.setProperty('--title-travel', -distance+'px');
+  label.style.setProperty('--title-duration', Math.max(6,distance/32+3)+'s');
+}
+function measureSongTitles() {
+  document.querySelectorAll('.song-title').forEach(measureSongTitle);
+}
+function setSongTitle(label, name) {
+  const text = document.createElement('span');
+  text.textContent = name;
+  label.classList.add('song-title');
+  label.title = name;
+  label.replaceChildren(text);
+  requestAnimationFrame(() => { if (label.isConnected) measureSongTitle(label); });
+}
+window.addEventListener('resize',measureSongTitles);
+document.fonts?.ready.then(measureSongTitles);
+
 function waveformPeaks(buffer, columns = 256) {
   const channel = buffer.getChannelData(0);
   return Array.from({length:columns}, (_, i) => {
@@ -382,7 +402,7 @@ class Deck {
     this.cue = 0;
     this.bpm.value = bpm;
     this.rate(0);
-    this.get('.title').textContent = title;
+    setSongTitle(this.get('.title'),title);
     this.message('Normalizing track…');
     this.refresh();
     try {
@@ -470,7 +490,7 @@ async function crateTrack({name, url, file, sample}) {
   const row = document.createElement('div');
   row.className = 'crate-track';
   const title = document.createElement('strong');
-  title.textContent = name;
+  setSongTitle(title,name);
   const waveform = document.createElement('canvas');
   waveform.width = 144;
   waveform.height = 36;
@@ -671,7 +691,7 @@ $('music-search').onsubmit = async event => {
           !info.descriptionurl?.startsWith('https://commons.wikimedia.org/')) continue;
       const row = document.createElement('li');
       const title = document.createElement('strong');
-      title.textContent = page.title.replace(/^File:/,'').replace(/\.[^.]+$/,'').replaceAll('_',' ');
+      setSongTitle(title,page.title.replace(/^File:/,'').replace(/\.[^.]+$/,'').replaceAll('_',' '));
       const source = document.createElement('a');
       source.href = info.descriptionurl;
       source.target = '_blank';

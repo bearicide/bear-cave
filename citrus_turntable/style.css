@@ -214,3 +214,17 @@ kbd{display:inline-block;padding:0 .35em;border:1px solid #87577e;border-bottom-
 .start-actions a{display:inline-flex;align-items:center;min-height:44px;font-weight:800}
 #add-your-music{scroll-margin-top:12px}
 .track-help{margin:6px 0;font-size:.9rem}
+
+#crate .crate-track,#music-results li{grid-template-columns:minmax(0,1fr)}
+.song-title{display:block;min-width:0;max-width:100%;overflow:hidden;white-space:nowrap}
+.song-title>span{display:inline-block;white-space:inherit}
+@media(prefers-reduced-motion:no-preference){
+  .song-title-overflow>span{animation:scroll-song-title var(--title-duration) ease-in-out infinite alternate}
+}
+@keyframes scroll-song-title{
+  0%,18%{transform:translateX(0)}
+  82%,100%{transform:translateX(var(--title-travel))}
+}
+@media(prefers-reduced-motion:reduce){
+  .song-title{white-space:normal;overflow-wrap:anywhere}
+}
