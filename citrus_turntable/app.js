@@ -958,6 +958,13 @@ function initOneShots() {
   return {trigger,stopAll,preload:() => sounds.forEach((_,index) => load(index).catch(() => {})),isPlaying:() => active.size > 0};
 }
 const oneShots = initOneShots();
+const fxPadToggle = $('oneshot-toggle');
+function setFxPadOpen(open) {
+  $('oneshot-board').hidden = !open;
+  fxPadToggle.setAttribute('aria-expanded', String(open));
+  fxPadToggle.textContent = open ? 'Hide FX Pad' : 'Open FX Pad';
+}
+fxPadToggle.onclick = () => setFxPadOpen($('oneshot-board').hidden);
 function stop() {
   oneShots.stopAll();
   mixerEffects.bypass();
@@ -1471,6 +1478,8 @@ function showLiveView(enabled) {
   measurePatch();
   if (enabled) oneShots.preload();
   document.body.classList.toggle('live-view',enabled);
+  fxPadToggle.closest('.oneshot-dock').hidden = !enabled;
+  if (!enabled) setFxPadOpen(false);
   liveCanvas.hidden = !enabled;
   document.querySelector('.live-heading').hidden = !enabled;
   if (enabled && !lightFrame) lightFrame = requestAnimationFrame(drawLiveLights);
