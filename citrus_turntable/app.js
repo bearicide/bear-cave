@@ -150,7 +150,13 @@ class Deck {
     let chain = this.normalization;
     for (const [label,type,frequency] of [['Low','lowshelf',200],['Mid','peaking',1100],['High','highshelf',4200],['Level']]) {
       const wrap = document.createElement('label');
-      wrap.textContent = label;
+      wrap.className = 'value-box';
+      const caption = document.createElement('span');
+      caption.textContent = ({Low:'Bass',Mid:'Mids',High:'Treble',Level:'Level'})[label]+' ';
+      const unit = document.createElement('small');
+      unit.textContent = type ? 'dB' : '%';
+      caption.append(unit);
+      wrap.append(caption);
       const range = document.createElement('input');
       range.type = 'number';
       if (type) {
@@ -162,7 +168,6 @@ class Deck {
         Object.assign(range,{min:-18,max:12,step:1,value:0});
         dragNumber(range, value => filter.gain.setTargetAtTime(value,audio.currentTime,.02));
       } else {
-        wrap.textContent = 'Level %';
         Object.assign(range,{min:0,max:100,step:1,value:80});
         this.gain.gain.value = .8;
         dragNumber(range, value => this.gain.gain.setTargetAtTime(value/100,audio.currentTime,.02), 2);
@@ -292,14 +297,14 @@ class Deck {
     this.showTempo(actual);
     this.player.playbackRate = 1+actual/100;
   }
-  async action(action) {
+  async action(action, reference) {
     if (action === 'play') {
       if (this.loading) return;
       if (!this.player.paused) return this.player.pause();
       try {
         await audio.resume();
-        const other = decks[1-this.index];
-        if (autoSync && !other.player.paused && this.sync(other) && this.player.currentTime <= this.cue + .08) {
+        const other = reference || decks[1-this.index];
+        if (autoSync && other !== this && (reference || !other.player.paused) && this.sync(other) && this.player.currentTime <= this.cue + .08) {
           const sourceBeat = 60 / Number(other.bpm.value);
           const beat = 60 / Number(this.bpm.value);
           const elapsed = (other.player.currentTime-other.cue)/sourceBeat;
@@ -494,10 +499,19 @@ $('center').onclick = () => mix(50,volume);
 mix(blend,volume);
 function stop() { decks.forEach((deck) => { if (deck.scratch) deck.scratch.resume = false; deck.player.pause(); deck.jump(0); }); }
 $('stop').onclick = stop;
+function playAll() {
+  const ready = decks.filter(deck => !deck.loading && Number.isFinite(deck.player.duration));
+  const lead = ready.find(deck => !deck.player.paused) || ready[0];
+  for (const deck of ready) {
+    if (deck.player.paused && !deck.scratch) deck.action('play', lead);
+  }
+}
+$('play-all').onclick = playAll;
 document.addEventListener('keydown',(e) => {
   if (e.repeat || e.altKey || e.ctrlKey || e.metaKey || e.target.closest('input,textarea,button,[contenteditable]')) return;
   const key = e.key.toLowerCase();
   if (key==='escape') stop();
+  if (e.code==='Space' && !e.target.closest('a,summary')) { e.preventDefault(); playAll(); }
   if ('alqp'.includes(key) && key.length===1) decks['lp'.includes(key)?1:0].action('al'.includes(key)?'play':'cue');
 });
 $('remote').onsubmit = async (e) => {
