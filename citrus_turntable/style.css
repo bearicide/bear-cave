@@ -703,3 +703,10 @@ body:not(.live-view) .value-box>span{font-weight:600}
 
 #oneshot-status:empty{display:none}
 .oneshot-credits{margin-top:10px;font-size:.84rem}
+
+/* Reading text uses the arrow. Keep typing and interaction cursors on controls. */
+body{cursor:default}
+input:is([type=text],[type=search],[type=url],[type=email],[type=password],[type=tel]):not([readonly]):not(:disabled),
+textarea:not([readonly]):not(:disabled),
+[contenteditable=true]{cursor:text}
+a[href],select:not(:disabled){cursor:pointer}
