@@ -1307,6 +1307,21 @@ setInterval(() => {
   micMeter.value = peak;
 },65);
 
+const performanceButton = $('live-performance');
+const liveCrowd = $('live-crowd');
+let performanceMode = false;
+let crowdEnergy = 0;
+
+function setPerformanceMode(enabled) {
+  performanceMode = enabled;
+  document.body.classList.toggle('performance-view', enabled);
+  performanceButton.setAttribute('aria-pressed', String(enabled));
+  performanceButton.textContent = enabled ? 'Exit Performance' : 'Performance';
+  if (enabled) window.scrollTo(0, 0);
+}
+
+performanceButton.onclick = () => setPerformanceMode(!performanceMode);
+
 const liveCanvas = $('live-lights');
 const livePaint = liveCanvas.getContext('2d');
 const lightAnalyser = audio.createAnalyser();
@@ -1565,6 +1580,11 @@ function drawLiveLights(time) {
   lightingBoard.style.setProperty('--console-light',String(blackout ? 0 : lightLevel*(.5+energy*.5)));
   beatMeter.style.transform = 'scaleX('+(!blackout && beatSync ? (still ? .15 : energy) : 0)+')';
   const brightness = blackout ? 0 : lightLevel;
+  if (performanceMode) {
+    const response = still || !beatSync ? 0 : Math.min(1,bass*.5+beatEnvelope*.5);
+    crowdEnergy += (response-crowdEnergy)*Math.min(1,elapsed/80);
+    liveCrowd.style.setProperty('--crowd-energy', (brightness*crowdEnergy).toFixed(3));
+  }
   const palette = lightPalettes[themePicker.value];
   ctx.globalAlpha = brightness;
   ctx.globalCompositeOperation = 'screen';
@@ -1662,7 +1682,10 @@ function showLiveView(enabled) {
   document.body.classList.toggle('live-view',enabled);
   fxPadDock.hidden = !enabled;
   $('mic-controls').hidden = !enabled;
-  if (!enabled) disableMic();
+  if (!enabled) {
+    setPerformanceMode(false);
+    disableMic();
+  }
   if (enabled) moveFxPad(fxPadX, fxPadY);
   else setFxPadOpen(false);
   liveCanvas.hidden = !enabled;

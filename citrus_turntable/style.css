@@ -1053,3 +1053,64 @@ body:not(.live-view) .console .fx-zone{border-color:var(--citrus-divider)}
 }
 .live-view #live-start-both:hover{filter:brightness(1.1)}
 .live-view #oneshot-load-tracks{min-height:44px}
+
+.live-view #live-performance{
+  min-height:48px;
+  padding-inline:18px;
+  border-color:#f79acb;
+  background:#55214e;
+  color:#fff3fb;
+}
+.live-view #live-performance:hover{background:#722961}
+
+.performance-view #live-crowd::before{
+  background:
+    linear-gradient(180deg,#10051b38 0%,#10051b12 50%,#08051075 100%),
+    url(assets/live_audience.webp) center 65%/cover;
+  opacity:1;
+  filter:brightness(calc(.87 + var(--crowd-energy,0)*.32)) saturate(1.18);
+}
+.performance-view #live-crowd::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(ellipse at 50% 47%,transparent 21%,#0c04189c 69%,#05020bef 100%),
+    radial-gradient(ellipse at 50% 64%,#ffd38080,transparent 65%);
+  background-blend-mode:multiply;
+}
+.performance-view.light-blackout #live-crowd::before{opacity:.25}
+.performance-view #live-lights{opacity:.83}
+.live-view.performance-view main{
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  grid-template-rows:auto auto;
+  align-content:start;
+  max-width:1440px;
+  min-height:100svh;
+  padding:clamp(10px,2.2vw,28px);
+  gap:clamp(12px,4vh,38px);
+}
+.live-view.performance-view .live-heading{
+  grid-area:1/1;
+}
+.performance-view .live-heading h1{font-size:clamp(1.8rem,5vw,3.8rem)}
+.live-view.performance-view :is(.light-board,.library,.oneshot-dock,#live-tracks,#leave-live,#mic-controls,#record,#mixStatus){display:none}
+.live-view.performance-view .live-table{
+  grid-area:2/1;
+  align-self:start;
+  border-color:#c6a66e;
+  background:
+    linear-gradient(180deg,#11092254,#11092285),
+    url(assets/live_dj_table.webp) center/100% 100% no-repeat,#211526;
+  box-shadow:0 18px 65px #030107,0 0 38px #ffb46233;
+}
+.live-view.performance-view .live-table .deck .platter{
+  width:min(100%,41svh,420px);
+}
+.live-view.performance-view .live-wave{flex:0}
+.live-view.performance-view .live-wave canvas{height:48px;min-height:48px}
+.performance-view .live-wave-hint{display:none}
+@media(min-width:650px){
+  .live-view.performance-view .live-table{grid-template-columns:minmax(0,1fr) minmax(160px,.48fr) minmax(0,1fr)}
+}
