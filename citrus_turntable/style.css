@@ -479,10 +479,11 @@ h2,.light-board summary{font-weight:700;letter-spacing:.035em}
   letter-spacing:.005em;
   text-wrap:balance;
 }
-.live-view .light-cues{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,96px),1fr));gap:6px}
+.live-view .light-cues{display:flex;flex-wrap:wrap;gap:6px}
 .live-view .light-cues button{
   min-width:0;
   min-block-size:48px;
+  flex:1 1 76px;
   padding:6px 5px;
   font-size:clamp(1rem,4.2cqi,1.18rem);
 }
