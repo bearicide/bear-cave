@@ -134,6 +134,56 @@ function waveformPeaks(buffer, columns = 256) {
   });
 }
 
+function estimateBpm(buffer) {
+  if (buffer.duration < 4) return null;
+  const channels = Array.from({length:Math.min(2,buffer.numberOfChannels)},(_,i) => buffer.getChannelData(i));
+  const frame = Math.round(buffer.sampleRate/100);
+  const hop = Math.max(1,Math.round(buffer.sampleRate/6000));
+  const frames = Math.floor(Math.min(buffer.length,buffer.sampleRate*75)/frame);
+  const onsets = new Float64Array(frames);
+  const smoothing = 1-Math.exp(-2*Math.PI*170*hop/buffer.sampleRate);
+  const low = channels.map(() => 0);
+  let previous = 0;
+  for (let j=0;j<frames;j++) {
+    let power = 0;
+    for (let i=j*frame;i<(j+1)*frame;i+=hop) {
+      channels.forEach((samples,k) => {
+        const value = samples[i];
+        low[k] += smoothing*(value-low[k]);
+        power += value*value*.35+low[k]*low[k]*.65;
+      });
+    }
+    const energy = Math.log1p(100*Math.sqrt(power*hop/(frame*channels.length)));
+    onsets[j] = Math.max(0,energy-previous);
+    previous = energy;
+  }
+  if (onsets.reduce((sum,value) => sum+(value>.05),0) < 6) return null;
+  const mean = onsets.reduce((sum,value) => sum+value,0)/frames;
+  const minLag = Math.floor(60*buffer.sampleRate/frame/190);
+  const maxLag = Math.ceil(60*buffer.sampleRate/frame/65);
+  const scores = [];
+  for (let lag=minLag-1;lag<=maxLag+1;lag++) {
+    let product = 0, left = 0, right = 0;
+    for (let i=lag;i<frames;i++) {
+      const a = onsets[i]-mean;
+      const b = onsets[i-lag]-mean;
+      product += a*b;
+      left += a*a;
+      right += b*b;
+    }
+    scores[lag] = product/(Math.sqrt(left*right) || 1);
+  }
+  let best = 0;
+  for (let lag=minLag;lag<=maxLag;lag++) {
+    if (scores[lag] < scores[lag-1] || scores[lag] < scores[lag+1]) continue;
+    if (!best || scores[lag] > scores[best]+.04) best = lag;
+  }
+  if (!best || scores[best] < .27) return null;
+  const left = scores[best-1], center = scores[best], right = scores[best+1];
+  const offset = left+right === 2*center ? 0 : .5*(left-right)/(left-2*center+right);
+  return Math.round(600*buffer.sampleRate/frame/(best+offset))/10;
+}
+
 function normalizationGain(buffer) {
   const channels = Array.from({length:buffer.numberOfChannels}, (_, index) => buffer.getChannelData(index));
   const blockSize = Math.round(buffer.sampleRate*.4);
@@ -379,8 +429,8 @@ class Deck {
     this.rate(target);
     return true;
   }
-  local(file) {
-    if (file) this.load(URL.createObjectURL(file),file.name,'',true,false,file);
+  local(file, bpm = '') {
+    if (file) this.load(URL.createObjectURL(file),file.name,bpm,true,false,file);
   }
   starter([title,bpm,slug]) {
     this.load('assets/'+slug+'.mp3',title,bpm,false,true);
@@ -414,7 +464,11 @@ class Deck {
       this.normalization.gain.value = gain;
       this.decoded = buffer;
       this.wave = waveformPeaks(buffer);
-      this.message('Normalized · '+(gain > 1 ? '+' : '')+(20*Math.log10(gain)).toFixed(1)+' dB');
+      const detected = bpm || estimateBpm(buffer);
+      if (!this.bpm.value && detected) this.bpm.value = detected;
+      this.message('Normalized · '+(gain > 1 ? '+' : '')+(20*Math.log10(gain)).toFixed(1)+' dB'
+        +(bpm ? '' : detected ? ' · Estimated '+detected+' BPM' : ' · Enter BPM manually'));
+
     } catch {
       if (generation === this.generation) this.message('Normalization unavailable for this file.');
     } finally {
@@ -505,6 +559,7 @@ async function crateTrack({name, url, file, sample}) {
   listen.setAttribute('aria-label','Preview '+name);
   listen.disabled = true;
   buttons.append(listen);
+  let detectedBpm;
   const loads = decks.map((deck,i) => {
     const button = document.createElement('button');
     button.textContent = 'Load '+'AB'[i];
@@ -512,7 +567,7 @@ async function crateTrack({name, url, file, sample}) {
     button.disabled = true;
     button.onclick = () => {
       stopPreview();
-      if (file) deck.local(file); else deck.starter(sample);
+      if (file) deck.local(file,detectedBpm || ''); else deck.starter(sample);
     };
     buttons.append(button);
     return button;
@@ -552,7 +607,8 @@ async function crateTrack({name, url, file, sample}) {
       const height = Math.max(1,peak/max*(waveform.height-4));
       ctx.fillRect(x,(waveform.height-height)/2,1,height);
     });
-    status.textContent = clock(buffer.duration)+(sample ? ' · '+sample[1]+' BPM' : ' · Local file');
+    detectedBpm = sample ? sample[1] : estimateBpm(buffer);
+    status.textContent = clock(buffer.duration)+(detectedBpm ? ' · '+(sample ? '' : 'About ')+detectedBpm+' BPM' : ' · BPM unknown');
     listen.disabled = false;
     loads.forEach(button => { button.disabled = false; });
     listen.onclick = async () => {
