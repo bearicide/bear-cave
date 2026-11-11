@@ -268,6 +268,15 @@ class Deck {
     }
     chain.connect(this.analyser).connect(this.gain).connect(this.fade).connect(mixerEffects.input);
     this.playButton = this.get('[data-act=play]');
+    this.playLabel = this.get('.deck-play-label');
+    for (const [button, key] of [[this.playButton,'AL'[index]],[this.get('[data-act=cue]'),'QP'[index]]]) {
+      const badge = document.createElement('kbd');
+      badge.className = 'shortcut-key';
+      badge.setAttribute('aria-hidden', 'true');
+      badge.textContent = key;
+      button.append(' ',badge);
+      button.setAttribute('aria-keyshortcuts',key);
+    }
     this.seek = this.get('.seek');
     this.bpm = this.get('.bpm');
     this.tempo = this.get('.tempo');
@@ -436,7 +445,7 @@ class Deck {
     }
   }
   refresh() {
-    this.playButton.textContent = this.player.paused ? 'Play' : 'Pause';
+    this.playLabel.textContent = this.player.paused ? 'Play' : 'Pause';
     this.root.classList.toggle('playing',!this.player.paused);
     this.seek.disabled = !Number.isFinite(this.player.duration);
     if (!this.seek.disabled) this.seek.max = this.player.duration;
@@ -1317,7 +1326,10 @@ function setPerformanceMode(enabled) {
   document.body.classList.toggle('performance-view', enabled);
   performanceButton.setAttribute('aria-pressed', String(enabled));
   performanceButton.textContent = enabled ? 'Exit Performance' : 'Performance';
-  if (enabled) window.scrollTo(0, 0);
+  if (enabled) {
+    setFxPadOpen(true);
+    window.scrollTo(0, 0);
+  }
 }
 
 performanceButton.onclick = () => setPerformanceMode(!performanceMode);

@@ -1202,3 +1202,35 @@ body:not(.live-view) .console .fx-zone{border-color:var(--citrus-divider)}
   .performance-view .performance-intro{display:none}
   .performance-view .live-table{animation:none}
 }
+
+.shortcut-key{
+  display:inline-block;
+  vertical-align:middle;
+  padding:2px 4px;
+  border:1px solid currentColor;
+  border-radius:2px;
+  font:700 .7em/1.1 var(--readout-font);
+  white-space:nowrap;
+}
+.social-links{display:flex;flex-wrap:wrap;gap:4px 6px}
+.site-bar .social-links,.site-footer .social-links{flex-basis:100%}
+.social-links a{
+  display:inline-flex;
+  align-items:center;
+  min-height:44px;
+  padding:4px 8px;
+  border:1px solid #80547d;
+  border-radius:3px;
+  background:#2e1939;
+  color:#fff0fa;
+  font:700 .86rem var(--body-font);
+  text-decoration:none;
+}
+.social-links a:hover{background:#583050}
+.live-view main>.site-footer{display:flex;grid-column:1/-1}
+.live-heading>.social-links{flex-basis:100%}
+.live-heading>.social-links a{min-height:36px}
+#oneshot-move .shortcut-key{font-size:.62em}
+@media(max-width:440px){
+  #oneshot-move .shortcut-key{display:none}
+}
