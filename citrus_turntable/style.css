@@ -89,3 +89,9 @@ main{grid-template-columns:minmax(0,1fr) minmax(190px,.65fr) minmax(0,1fr);align
   main{grid-template-columns:minmax(0,1fr)}
   #deck-a,.mixer,#deck-b,.library{grid-column:1;grid-row:auto}
 }
+
+.now-playing{grid-template-columns:clamp(70px,8vw,104px) minmax(0,1fr);gap:6px 10px}
+.now-playing .title{grid-column:1/-1}
+.now-playing .vinyl{width:100%;max-width:104px}
+.deck .spectrum{height:54px;cursor:default;touch-action:auto;border-color:#684263;background:#191022}
+.scratching .spectrum{cursor:default;border-color:#684263}

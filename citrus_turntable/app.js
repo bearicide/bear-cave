@@ -74,7 +74,10 @@ class Deck {
     this.bpm = this.get('.bpm');
     this.tempo = this.get('.tempo');
     this.loop = this.get('[data-act=loop]');
-    this.canvas = this.get('canvas');
+    this.canvas = this.get('.waveform');
+    this.spectrum = this.get('.spectrum');
+    this.spectrumPaint = this.spectrum.getContext('2d');
+    this.spectrumBins = new Uint8Array(this.analyser.frequencyBinCount);
     this.paint = this.canvas.getContext('2d');
     this.cue = 0;
     this.generation = 0;
@@ -265,7 +268,27 @@ class Deck {
       // The media element can still play formats that the decoder cannot inspect.
     }
   }
+  drawSpectrum() {
+    const {width, height} = this.spectrum;
+    const ctx = this.spectrumPaint;
+    const binHz = audio.sampleRate / this.analyser.fftSize;
+    this.analyser.getByteFrequencyData(this.spectrumBins);
+    ctx.clearRect(0, 0, width, height);
+    for (let band=0; band<10; band++) {
+      const low = Math.max(1, Math.floor(55 * 1.65**band / binHz));
+      const high = Math.min(this.spectrumBins.length, Math.max(low+1, Math.ceil(55 * 1.65**(band+1) / binHz)));
+      let peak = 0;
+      for (let bin=low; bin<high; bin++) peak = Math.max(peak, this.spectrumBins[bin]);
+      const bar = peak / 255 * (height-5);
+      const x = band * width / 10 + 2;
+      ctx.fillStyle = '#684263';
+      ctx.fillRect(x, height-3, width/10-4, 2);
+      ctx.fillStyle = this.index ? '#d7fb75' : '#ffac60';
+      ctx.fillRect(x, height-5-bar, width/10-4, bar);
+    }
+  }
   draw() {
+    this.drawSpectrum();
     this.refresh();
     const {width:w,height:h} = this.canvas;
     const ctx = this.paint;
