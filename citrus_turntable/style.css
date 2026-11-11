@@ -382,3 +382,33 @@ body.live-view{background:#07030f}
 .fixture-head:active{cursor:grabbing}
 .fixture-head.fixture-off{border-color:#88738c;color:#b8a6be;box-shadow:none}
 @media(max-width:420px){.fixture-head{width:38px;min-height:38px}}
+
+@media (min-width: 760px) and (orientation: landscape){
+  .live-view main{
+    max-width:1680px;
+    grid-template-columns:repeat(2,minmax(0,1fr)) minmax(260px,1.18fr);
+    gap:10px clamp(8px,1.2vw,20px);
+    padding:10px clamp(10px,2vw,32px);
+  }
+  .live-view .live-heading{grid-area:1/1/2/4}
+  .live-view #deck-a{grid-area:2/1}
+  .live-view #deck-b{grid-area:2/2}
+  .live-view .mixer{grid-area:3/1/4/3}
+  .live-view .light-board{grid-area:2/3/4/4;align-self:stretch}
+  .live-view.live-tracks-open .library{grid-area:4/1/5/4}
+  .live-view .deck .platter{width:min(100%,42vh,420px)}
+  .live-view .deck{padding:clamp(8px,1.3vw,18px)}
+  .live-view .light-board .light-controls{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .live-view #light-aim{min-height:clamp(106px,20vh,175px)}
+  .live-view .fixture-head{width:clamp(32px,3vw,44px);min-height:clamp(32px,3vw,44px)}
+  .live-view .light-cues{gap:5px}
+  .live-view .light-cues button{flex-basis:70px;padding-inline:6px}
+}
+@media (min-width: 760px) and (max-height: 540px) and (orientation: landscape){
+  .live-view .live-heading h1{font-size:2.6rem}
+  .live-view .deck .platter{width:min(100%,40vh)}
+  .live-view .mixer{grid-template-columns:minmax(72px,1fr) minmax(0,1.25fr) minmax(84px,1fr)}
+  .live-view .mixer h2{grid-column:auto}
+  .live-view .mixer-transport{grid-column:1/-1;grid-template-columns:repeat(2,minmax(0,1fr))}
+  .live-view #play-all{grid-column:auto}
+}
