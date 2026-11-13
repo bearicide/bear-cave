@@ -1,1 +1,44 @@
-const CACHE='spectral-lab-v1';self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(['./','index.html','manifest.webmanifest','icon.svg']))));self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k))))));self.addEventListener('fetch',e=>{if(e.request.method==='GET'&&new URL(e.request.url).origin===self.location.origin)e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)))})
+const cachePrefix = 'spectral-lab-v';
+const cacheName = cachePrefix + '2';
+const scope = new URL(self.registration.scope);
+const appShell = new URL('index.html', scope).href;
+const assetUrls = new Set(
+  [appShell, ...["manifest.webmanifest", "icon.svg"].map(path => new URL(path, scope).href)]
+);
+
+self.addEventListener('install', event => {
+  event.waitUntil((async () => {
+    const cache = await caches.open(cacheName);
+    await cache.addAll([...assetUrls].map(url => new Request(url, {cache: 'reload'})));
+    await self.skipWaiting();
+  })());
+});
+
+self.addEventListener('activate', event => {
+  event.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(keys.filter(key =>
+      key.startsWith(cachePrefix) && key !== cacheName
+    ).map(key => caches.delete(key)));
+    await self.clients.claim();
+  })());
+});
+
+self.addEventListener('fetch', event => {
+  const request = event.request;
+  if (request.method !== 'GET') return;
+  const url = new URL(request.url);
+  if (url.origin !== scope.origin) return;
+
+  if (request.mode === 'navigate' && (url.pathname === scope.pathname ||
+      url.pathname === new URL(appShell).pathname)) {
+    event.respondWith(fetch(request).catch(async () =>
+      (await (await caches.open(cacheName)).match(appShell)) || Response.error()
+    ));
+  } else if (assetUrls.has(url.href)) {
+    event.respondWith((async () => {
+      const cache = await caches.open(cacheName);
+      return (await cache.match(request)) || fetch(request);
+    })());
+  }
+});

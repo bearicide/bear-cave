@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b0d16">
+  <meta name="description" content="Play the latest MATTBEAR projects in development at Bear Cave.">
+  <title>NEW! In-Progress! | Bear Cave</title>
+  <style>
+    :root { color-scheme: dark; font: 16px system-ui, sans-serif; }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: #eff2ff; background: radial-gradient(ellipse at 80% 0%, #30204c, transparent 54%), #0b0d16; min-height: 100vh; }
+    header, main { width: min(1080px, 100% - 2rem); margin: auto; }
+    header { padding: 1.25rem 0; border-bottom: 1px solid #3a3552; }
+    header a { color: #c6f9f4; text-underline-offset: .3em; }
+    main { padding: clamp(1.5rem, 5vw, 4rem) 0; }
+    h1 { margin: 0 0 .75rem; font-size: clamp(2.25rem, 8vw, 5.5rem); line-height: 1; letter-spacing: -.045em; }
+    h1 span { color: #8ef3ed; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr)); gap: .9rem; margin-top: 1.5rem; }
+    .card { padding: 1.25rem; border: 1px solid #51476b; border-radius: 1rem; background: #161829; color: inherit; text-decoration: none; }
+    a.card:hover, a.card:focus-visible { border-color: #8ef3ed; background: #202238; }
+    :focus-visible { outline: 2px solid #8ef3ed; outline-offset: 3px; }
+    .card h2 { margin: 0 0 .5rem; font-size: 1.2rem; }
+    .card p { margin: 0; color: #c5cbe0; line-height: 1.5; }
+    .pending { border-style: dashed; }
+  </style>
+</head>
+<body>
+  <header><a href="../">← MATTBEAR / THE BEAR CAVE</a></header>
+  <main>
+    <h1><span>NEW!</span> In-Progress!</h1>
+    <div class="grid">
+      <a class="card" href="https://beat-bear-v1.mattbear86.chatgpt.site/"><h2>Beat Bear ↗</h2><p>Four-lane rhythm arcade with keyboard and touch controls.</p></a>
+      <a class="card" href="../bearbeats.html"><h2>BearBeats ↗</h2><p>Play the Ethereal and Prismatic audiovisual instruments.</p></a>
+      <a class="card" href="../spectral-lab/"><h2>Spectral Lab ↗</h2><p>The original audio-reactive visualizer.</p></a>
+      <a class="card" href="../spectral-lab-milkdrop/"><h2>Spectral Lab MilkDrop ↗</h2><p>Twelve reactive presets and edge-to-edge fullscreen in a standalone app.</p></a>
+      <a class="card" href="../citrus_turntable/?view=live"><h2>Citrus Live ↗</h2><p>Open the DJ turntables in Live mode.</p></a>
+      <section class="card pending"><h2>BearBox</h2><p>Two versions. Launch links pending.</p></section>
+    </div>
+  </main>
+</body>
+</html>
