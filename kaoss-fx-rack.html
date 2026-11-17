@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<meta name="theme-color" content="#07040d"><title>MATTBEAR Microphone Fiend</title><script src="cave-shell.js" defer></script>
+<meta name="theme-color" content="#07040d"><title>Kaoss FX Rack | MATTBEAR</title><script src="cave-shell.js" defer></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Bungee&family=DM+Sans:wght@600;800&display=swap');
 :root{--pink:#ff2b93;--cyan:#22edff;--gold:#ffd52f;--purple:#7424ff;--ink:#08050d;--panel:#151020;--x:50%;--y:50%}
@@ -13,17 +13,17 @@ button,select,input{font:inherit}.rack{border:4px solid var(--gold);border-radiu
 </style>
 </head>
 <body><main class="app">
- <header class="top"><div class="brand"><b>MATTBEAR</b> MICROPHONE FIEND</div><div id="status" class="status">INPUT OFF</div></header>
+ <header class="top"><h1 class="brand" style="margin:0"><b>MATTBEAR</b> KAOSS FX RACK</h1><div id="status" class="status">INPUT OFF</div></header>
  <section class="rack">
   <div class="warning">⚠ HEADPHONES REQUIRED — SPEAKERS CAN CREATE VIOLENT FEEDBACK</div>
   <div class="io"><select id="device" aria-label="Audio input"><option value="">DEFAULT AUDIO INPUT</option></select><button id="start" class="on">START INPUT</button><button id="midi">MIDI XY</button><button id="kill" class="danger">KILL</button></div>
   <div class="main">
    <div id="xy" class="xy" aria-label="XY effect pad"><div class="xyRead"><span id="cutRead">6.0kHz</span> / <span id="delayRead">35%</span></div><div class="orb"></div></div>
    <div class="side">
-    <section class="module"><h2>Input</h2><div class="knobrow"><div class="knob"><label>GAIN <span id="inVal">75%</span></label><input id="inputGain" type="range" min="0" max="150" value="75"></div><div class="knob"><label>OUTPUT <span id="outVal">70%</span></label><input id="outputGain" type="range" min="0" max="100" value="70"></div></div><div class="meter"><i id="meter"></i></div></section>
-    <section class="module"><h2>Filter + Dirt</h2><div class="knobrow"><div class="knob"><label>RESONANCE <span id="resVal">35%</span></label><input id="res" type="range" min="0" max="100" value="35"></div><div class="knob"><label>DRIVE <span id="driveVal">22%</span></label><input id="drive" type="range" min="0" max="100" value="22"></div></div><div class="buttons"><button id="filterOn" class="on">FILTER ON</button><button id="driveOn" class="on">DRIVE ON</button></div></section>
-    <section class="module"><h2>Space + Damage</h2><div class="knobrow"><div class="knob"><label>DELAY TIME <span id="timeVal">3/16</span></label><input id="delayTime" type="range" min="0" max="5" value="3"></div><div class="knob"><label>REVERB <span id="verbVal">24%</span></label><input id="reverb" type="range" min="0" max="100" value="24"></div></div><div class="buttons"><button id="freeze">FREEZE</button><button id="dub">DUB THROW</button></div></section>
-    <section class="module"><h2>Modulation Lab</h2><div class="knobrow"><div class="knob"><label>BIT CRUSH <span id="crushVal">0%</span></label><input id="crush" type="range" min="0" max="100" value="0"></div><div class="knob"><label>RING MOD <span id="ringVal">0%</span></label><input id="ring" type="range" min="0" max="100" value="0"></div><div class="knob"><label>TREMOLO <span id="tremVal">0%</span></label><input id="trem" type="range" min="0" max="100" value="0"></div><div class="knob"><label>MOD RATE <span id="rateVal">4.0Hz</span></label><input id="rate" type="range" min="1" max="120" value="32"></div></div><div class="buttons"><button id="flange">FLANGER</button><button id="robot">ROBOT VOICE</button></div></section>
+    <section class="module"><h2>Input</h2><div class="knobrow"><div class="knob"><label for="inputGain">GAIN <span id="inVal">75%</span></label><input id="inputGain" type="range" min="0" max="150" value="75"></div><div class="knob"><label for="outputGain">OUTPUT <span id="outVal">70%</span></label><input id="outputGain" type="range" min="0" max="100" value="70"></div></div><div class="meter"><i id="meter"></i></div></section>
+    <section class="module"><h2>Filter + Dirt</h2><div class="knobrow"><div class="knob"><label for="res">RESONANCE <span id="resVal">35%</span></label><input id="res" type="range" min="0" max="100" value="35"></div><div class="knob"><label for="drive">DRIVE <span id="driveVal">22%</span></label><input id="drive" type="range" min="0" max="100" value="22"></div></div><div class="buttons"><button id="filterOn" class="on">FILTER ON</button><button id="driveOn" class="on">DRIVE ON</button></div></section>
+    <section class="module"><h2>Space + Damage</h2><div class="knobrow"><div class="knob"><label for="delayTime">DELAY TIME <span id="timeVal">3/16</span></label><input id="delayTime" type="range" min="0" max="5" value="3"></div><div class="knob"><label for="reverb">REVERB <span id="verbVal">24%</span></label><input id="reverb" type="range" min="0" max="100" value="24"></div></div><div class="buttons"><button id="freeze">FREEZE</button><button id="dub">DUB THROW</button></div></section>
+    <section class="module"><h2>Modulation Lab</h2><div class="knobrow"><div class="knob"><label for="crush">BIT CRUSH <span id="crushVal">0%</span></label><input id="crush" type="range" min="0" max="100" value="0"></div><div class="knob"><label for="ring">RING MOD <span id="ringVal">0%</span></label><input id="ring" type="range" min="0" max="100" value="0"></div><div class="knob"><label for="trem">TREMOLO <span id="tremVal">0%</span></label><input id="trem" type="range" min="0" max="100" value="0"></div><div class="knob"><label for="rate">MOD RATE <span id="rateVal">4.0Hz</span></label><input id="rate" type="range" min="1" max="120" value="32"></div></div><div class="buttons"><button id="flange">FLANGER</button><button id="robot">ROBOT VOICE</button></div></section>
    </div>
   </div>
   <div class="presets"><button data-p="clean">CLEAN</button><button data-p="acid">ACID MELT</button><button data-p="space">SPACE CAVE</button><button data-p="destroy">DESTROY</button></div>

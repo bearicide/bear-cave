@@ -13,14 +13,14 @@
 </head>
 <body>
 <div id='splash' class='splash'><div class='splashbox'><div class='brand'>NOISEGENERATOR</div><p>7 waveforms · hold controls · expanded FX rack · industrial browser chaos</p><button class='btn' id='enterBtn'>ENTER THE NOISE</button></div></div>
-<div class='wrap'>
-<div class='brand'>NOISEGENERATOR</div>
+<main class='wrap'>
+<h1 class='brand' aria-label='Noise Generator' style='margin:0'>NOISEGENERATOR</h1>
 <div class='panel'><canvas id='scope' width='1200' height='240'></canvas></div>
 <section class='grid' id='oscGrid'></section>
 <section class='panel'><h2>FX RACK</h2><div class='fxgrid' id='fxGrid'></div></section>
 <section class='panel'><h2>SAMPLES</h2><div class='samplegrid' id='sampleGrid'></div></section>
 <div class='footer'>bearicide.github.io · MATTBEAR</div>
-</div>
+</main>
 <script>
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(console.error))}
 const waveforms=['sine','square','sawtooth','triangle','pulse','noise','metal'];

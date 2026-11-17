@@ -12,16 +12,16 @@
 </head>
 <body>
 <div class="scan"></div>
-<div class="wrap">
+<main class="wrap">
   <header class="top">
-    <div><div class="brand">Retrocade Admin</div><p class="note">Local save controls, mini-player setup, cabinet QA, and quick launch panel.</p></div>
+    <div><h1 class="brand" style="margin:0">Retrocade Admin</h1><p class="note">Local save controls, mini-player setup, cabinet QA, and quick launch panel.</p></div>
     <nav class="controls"><a href="index.html">Arcade</a><a href="https://bearicide.github.io/MATTBEARCADE/">MATTBEARCADE</a><a href="https://github.com/bearicide/retrocade-">Source</a></nav>
   </header>
 
   <section class="panel">
     <h2>Mini-Player Control</h2>
     <iframe id="scPlayer" class="player-frame" title="Admin SoundCloud mini-player preview" allow="autoplay" src=""></iframe>
-    <div class="admin-row"><input id="trackUrl" placeholder="Paste SoundCloud track, playlist, or profile URL"><button type="button" onclick="saveTrack()">Save Track</button></div>
+    <div class="admin-row"><input id="trackUrl" aria-label="SoundCloud track, playlist, or profile URL" placeholder="Paste SoundCloud track, playlist, or profile URL"><button type="button" onclick="saveTrack()">Save Track</button></div>
     <p class="note">Sets the same <code>retrocadeMiniPlayerUrl</code> used by the public lobby mini-player on this browser/device. Backend upload can connect here later.</p>
   </section>
 
@@ -44,7 +44,7 @@
   <section class="panel"><h2>Cabinet Launch + QA</h2><div id="cabinetList"></div></section>
 
   <section class="panel"><h2>Current Push Notes</h2><ul class="note"><li><b>Admin added:</b> mini-player setting, quick QA, save-data reset, and direct cabinet launch.</li><li><b>Control target:</b> keyboard, WASD, swipe, large touch buttons, and help overlay remain the default standard.</li><li><b>Next safe pass:</b> inspect each cabinet one by one, patch broken controls, then add cabinet preview assets.</li></ul></section>
-</div>
+</main>
 <script>
 const DEFAULT_SC='https://soundcloud.com/mattbear86';
 const defaults={coins:500,tickets:0,xp:0,plays:0,wins:0,cabinets:{}};

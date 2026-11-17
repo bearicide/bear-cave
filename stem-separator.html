@@ -99,7 +99,7 @@ select{width:100%;background:#11161b;color:var(--text);border:1px solid var(--li
       <div class="kicker">1 · Import audio</div>
       <h1>Separate.<br>Mix. Chop.</h1>
       <p>Import one song, choose a local quality mode, then create vocals, drums, bass, and other stems. Files stay in your browser.</p>
-      <input id="file" type="file" accept="audio/*" hidden>
+      <input id="file" aria-label="Load an audio file" type="file" accept="audio/*" hidden>
       <div class="row">
         <button id="choose" class="btn primary">IMPORT AUDIO</button>
         <button id="demoInfo" class="btn">SUPPORTED FILES</button>
@@ -142,7 +142,7 @@ select{width:100%;background:#11161b;color:var(--text);border:1px solid var(--li
         <button id="play" class="btn primary">▶ PLAY</button>
         <button id="stop" class="btn">■ STOP</button>
         <button id="compare" class="btn">A/B: STEM MIX</button>
-        <div class="timelineWrap"><input id="timeline" class="timeline" type="range" min="0" max="1000" value="0"></div>
+        <div class="timelineWrap"><input id="timeline" aria-label="Playback position" class="timeline" type="range" min="0" max="1000" value="0"></div>
         <div id="time" class="time">0:00 / 0:00</div>
       </div>
       <div class="waveWrap">
@@ -151,8 +151,8 @@ select{width:100%;background:#11161b;color:var(--text);border:1px solid var(--li
       </div>
       <div class="toolbar">
         <button id="loopBtn" class="btn">LOOP OFF</button>
-        <div class="field"><label>Loop start</label><input id="loopStart" type="range" min="0" max="1000" value="0"></div>
-        <div class="field"><label>Loop end</label><input id="loopEnd" type="range" min="0" max="1000" value="1000"></div>
+        <div class="field"><label for="loopStart">Loop start</label><input id="loopStart" type="range" min="0" max="1000" value="0"></div>
+        <div class="field"><label for="loopEnd">Loop end</label><input id="loopEnd" type="range" min="0" max="1000" value="1000"></div>
         <button id="vocalOnly" class="btn">VOCALS ONLY</button>
         <button id="instrumental" class="btn">INSTRUMENTAL</button>
         <button id="allOn" class="btn">ALL STEMS</button>
@@ -177,7 +177,7 @@ select{width:100%;background:#11161b;color:var(--text);border:1px solid var(--li
         <p>Select a stem, detect transient-based slices, then click the pads or play MIDI notes 36–43. Launchkey Mini pads commonly send drum notes in this area depending on pad mode.</p>
         <div class="row">
           <div class="field">
-            <label>Source stem</label>
+            <label for="chopStem">Source stem</label>
             <select id="chopStem"><option value="vocals">Vocals</option><option value="drums" selected>Drums</option><option value="bass">Bass</option><option value="other">Other</option></select>
           </div>
           <button id="detectChops" class="btn alt">DETECT 8 CHOPS</button>

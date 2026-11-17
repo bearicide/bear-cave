@@ -1,5 +1,5 @@
 const cachePrefix = 'spectral-lab-v';
-const cacheName = cachePrefix + '2';
+const cacheName = cachePrefix + '3';
 const scope = new URL(self.registration.scope);
 const appShell = new URL('index.html', scope).href;
 const assetUrls = new Set(
