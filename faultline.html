@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101013">
+<title>FAULTLINE — MATTBEAR</title>
+<style>
+:root{color-scheme:dark;--ground:#101013;--panel:#19191e;--line:#3b363d;--cream:#f5ece2;--dim:#b4a9ad;--acid:#ecfb65;--rust:#ff7658;font-family:"IBM Plex Mono","Courier New",monospace}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 68% -18%,#422327,transparent 49%),var(--ground);color:var(--cream)}
+button,a{touch-action:manipulation}button{font:inherit;color:inherit;cursor:pointer}button:focus-visible,a:focus-visible{outline:2px solid var(--acid);outline-offset:3px}a{color:inherit;text-underline-offset:4px}
+header,main,footer{width:min(1120px,calc(100% - 32px));margin:auto}header,footer{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:19px 0;font-size:.8rem;letter-spacing:.11em}header strong{color:var(--acid)}footer{color:var(--dim);border-top:1px solid var(--line);margin-top:28px}
+.hero{position:relative;isolation:isolate;overflow:hidden;min-height:210px;padding:32px clamp(16px,4vw,46px);display:grid;align-content:center;border:1px solid #78413b;background:#171216}
+.hero canvas{position:absolute;inset:0;width:100%;height:100%;z-index:-1}.kicker{font-size:.8rem;letter-spacing:.16em;color:var(--acid);margin:0}
+h1{font:900 clamp(2.45rem,9vw,7rem)/.96 "Archivo Black","Arial Black",Impact,sans-serif;letter-spacing:-.055em;margin:10px 0;color:#fff0e3;text-shadow:3px 3px #440f17}
+.hero p:last-child{margin:4px 0 0;font-size:.83rem;color:#f0c9bd}
+.transport,.presets,.fx{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:12px 0}
+button{min-height:42px;border:1px solid var(--line);background:#222127;padding:8px 13px;user-select:none}
+button:hover{border-color:var(--cream)}button[aria-pressed=true]{border-color:var(--acid);color:var(--acid)}
+#play{background:var(--acid);color:#191a0b;font-weight:bold;min-width:104px}#panic{border-color:#a64c41;color:#ff9b85}
+.readout{display:inline-flex;align-items:center;border:1px solid var(--line);min-height:42px;background:#131317}.readout button{border:0;background:transparent;min-width:39px;padding:0 8px}.readout output{text-align:center;min-width:70px;color:var(--acid)}.readout span{display:block;font-size:.61rem;color:var(--dim)}
+.status{color:var(--dim);font-size:.78rem;margin-left:auto}
+.sequencer{padding:10px;border:1px solid var(--line);background:var(--panel)}
+.grid{display:grid;grid-template-columns:75px repeat(4,minmax(0,1fr));gap:7px;align-items:center}.group{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
+.marker{text-align:center;color:var(--dim);font-size:.7rem}.marker.current{color:var(--acid);font-weight:bold}
+.track{width:100%;min-height:39px;text-align:left;font-weight:bold;color:var(--tone);font-size:.75rem;padding:5px 6px}.track small{display:block;color:var(--dim);font-size:.61rem}.track[aria-pressed=true]{color:var(--dim);border-color:#85544d;background:#312226}.track[aria-pressed=true] small{color:#ffac9b}
+.cell{width:100%;min-width:0;min-height:39px;padding:0;background:#25232b;border:1px solid #413b45;touch-action:none}.cell.beat{background:#302b34}.cell[data-value="1"]{background:color-mix(in srgb,var(--tone) 62%,#272029);border-color:var(--tone)}.cell[data-value="2"]{background:var(--tone);border-color:var(--tone)}.cell[data-value="2"]::after{content:"";display:block;margin:auto;width:35%;height:3px;background:#19161e}.cell.current{box-shadow:inset 0 -4px #fff2ca}
+h2{font-size:.8rem;letter-spacing:.12em;margin:0 8px 0 0;color:var(--dim)}.hint{font-size:.76rem;color:var(--dim);line-height:1.5;margin:12px 0}kbd{color:var(--cream)}
+@media(max-width:620px){header,main,footer{width:calc(100% - 20px)}.hero{min-height:170px}.grid{grid-template-columns:55px repeat(2,minmax(0,1fr));gap:5px}.group{gap:3px}.row-start{grid-column:2}.group:nth-child(5){grid-column:auto}.track{grid-row:span 2;min-height:74px}.marker-row .group:nth-child(n+4){display:none}.marker-row{display:none}.cell{min-height:34px}.status{margin-left:0}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<header><strong>MATTBEAR / BEAR CAVE</strong><a href="https://bearicide.github.io/bear-cave/">Bear Cave ↗</a></header>
+<main>
+<section class="hero" aria-labelledby="title"><canvas id="scope" aria-hidden="true"></canvas><p class="kicker">BEAR CAVE / INDUSTRIAL SEQUENCER</p><h1 id="title">FAULTLINE</h1><p>Sub pressure. Serrated mids. Concrete drums.</p></section>
+<div class="transport" aria-label="Transport">
+<button id="play" type="button" aria-keyshortcuts="Enter">▶ Play</button><button id="panic" type="button" aria-keyshortcuts="Space">■ Panic</button>
+<div class="readout" role="group" aria-label="Tempo"><button id="slower" aria-label="Lower tempo">−</button><output id="tempo"></output><button id="faster" aria-label="Raise tempo">+</button></div>
+<div class="readout" role="group" aria-label="Master volume"><button id="quieter" aria-label="Lower volume">−</button><output id="volume"></output><button id="louder" aria-label="Raise volume">+</button></div>
+<span id="status" class="status" role="status">Ready · headphones at low volume</span>
+</div>
+<div class="presets" aria-label="Pattern controls"><h2>Patterns</h2><button data-preset="bunker">Bunker</button><button data-preset="fracture">Fracture</button><button data-preset="sinkhole">Sinkhole</button><button id="accent" aria-pressed="false">Accent paint</button><button id="mutate">Mutate</button><button id="clear">Clear</button></div>
+<section class="sequencer" aria-label="Six-track step sequencer"><div id="grid"></div></section>
+<p class="hint">Tap or drag to paint. Switch on Accent paint for stronger hits, hold <kbd>Shift</kbd> while painting, or press <kbd>A</kbd> on a focused step. Track labels mute. <kbd>Enter</kbd> plays or stops from the page. <kbd>Space</kbd> triggers Panic from outside controls.</p>
+<div class="fx" aria-label="Effects"><h2>Drive & timing</h2><button id="crush" aria-pressed="false">Crush</button><button id="swing" aria-pressed="false">Swing</button><button id="half" aria-pressed="false">Half-time</button></div>
+</main>
+<footer><span>FAULTLINE / MATTBEAR</span><a href="https://bearicide.github.io/bear-cave/">Back to the Cave ↗</a></footer>
+<script>
+"use strict";
+const tracks = [
+  {name:"SUB", color:"#edfc68", description:"Sine sub"},
+  {name:"GRIND", color:"#ff835e", description:"Distorted reese"},
+  {name:"KICK", color:"#ff5274", description:"Punch kick"},
+  {name:"SNARE", color:"#dca5ff", description:"Noise and body snare"},
+  {name:"HAT", color:"#76e0d2", description:"Closed metallic hat"},
+  {name:"STEEL", color:"#ffca82", description:"Metal percussion"}
+];
+const patterns = {
+  bunker: ["2000100200101000","0001001002000010","2000001010000001","0000200000002000","1010101110101011","0000010000010000"],
+  fracture: ["2001001020010020","0100100100100102","2001000020100010","0000200100002001","1110210110112110","0010000200100010"],
+  sinkhole: ["2000000020000010","0000100000020000","2000000020000001","0000000020000000","0010001000100110","0001000000000200"]
+};
+const $ = selector => document.querySelector(selector);
+const storageKey = "bearbeats-faultline-v1";
+const patternFrom = name => patterns[name].map(row => Array.from(row, Number));
+const state = {pattern:patternFrom("bunker"), preset:"bunker", muted:tracks.map(() => false), bpm:134, volume:40, crush:false, swing:false, half:false};
+try {
+  const saved = JSON.parse(localStorage.getItem(storageKey));
+  if (saved?.pattern?.length === tracks.length && saved.pattern.every(row =>
+    Array.isArray(row) && row.length === 16 && row.every(value => [0,1,2].includes(value)))) {
+    state.pattern = saved.pattern;
+    state.preset = Object.hasOwn(patterns, saved.preset) &&
+      saved.pattern.every((row, i) => row.join("") === patterns[saved.preset][i]) ? saved.preset : "";
+    if (Array.isArray(saved.muted) && saved.muted.length === tracks.length) state.muted = saved.muted.map(Boolean);
+    if (Number.isInteger(saved.bpm) && saved.bpm >= 65 && saved.bpm <= 180) state.bpm = saved.bpm;
+    if (Number.isInteger(saved.volume) && saved.volume >= 0 && saved.volume <= 80) state.volume = saved.volume;
+    for (const key of ["crush","swing","half"]) state[key] = saved[key] === true;
+  }
+} catch {}
+function save() {
+  try { localStorage.setItem(storageKey, JSON.stringify(state)); } catch {}
+}
+const cells = [], markers = [], labels = [];
+function addGroups(row, addStep) {
+  for (let group = 0; group < 4; group++) {
+    const wrap = document.createElement("div");
+    wrap.className = "group" + (group === 2 ? " row-start" : "");
+    for (let column = 0; column < 4; column++) wrap.append(addStep(group * 4 + column));
+    row.append(wrap);
+  }
+}
+const markerRow = document.createElement("div");
+markerRow.className = "grid marker-row";
+markerRow.setAttribute("aria-hidden", "true");
+markerRow.append(document.createElement("span"));
+addGroups(markerRow, step => {
+  const el = document.createElement("span");
+  el.className = "marker";
+  el.textContent = String(step + 1).padStart(2,"0");
+  markers.push(el);
+  return el;
+});
+$("#grid").append(markerRow);
+for (const [lane, track] of tracks.entries()) {
+  const row = document.createElement("div");
+  row.className = "grid";
+  row.style.marginTop = "6px";
+  row.style.setProperty("--tone",track.color);
+  const label = document.createElement("button");
+  label.className = "track";
+  label.title = track.description;
+  label.addEventListener("click", () => {
+    state.muted[lane] = !state.muted[lane];
+    update();
+    save();
+    if (audio) audio.lanes[lane].gain.setTargetAtTime(state.muted[lane] ? 0 : 1, audio.ctx.currentTime, .006);
+  });
+  labels.push(label);
+  row.append(label);
+  cells[lane] = [];
+  addGroups(row, step => {
+    const button = document.createElement("button");
+    button.className = "cell" + (step % 4 === 0 ? " beat" : "");
+    button.dataset.lane = lane;
+    button.dataset.step = step;
+    cells[lane].push(button);
+    return button;
+  });
+  $("#grid").append(row);
+}
+const steps = $("#grid");
+function edit(cell, value) {
+  state.pattern[Number(cell.dataset.lane)][Number(cell.dataset.step)] = value;
+  state.preset = "";
+  update();
+  save();
+}
+function getValue(cell) {
+  return state.pattern[Number(cell.dataset.lane)][Number(cell.dataset.step)];
+}
+let stroke = null;
+let accentPaint = false;
+$("#accent").onclick = () => {
+  accentPaint = !accentPaint;
+  $("#accent").setAttribute("aria-pressed",String(accentPaint));
+};
+steps.addEventListener("pointerdown", event => {
+  const cell = event.target.closest(".cell");
+  if (!cell || event.button !== 0 || stroke) return;
+  const value = (accentPaint || event.shiftKey) ? (getValue(cell) === 2 ? 1 : 2) : Number(getValue(cell) === 0);
+  stroke = {pointer:event.pointerId, value, visited:new Set([cell])};
+  steps.setPointerCapture(event.pointerId);
+  edit(cell,value);
+});
+steps.addEventListener("pointermove", event => {
+  if (stroke?.pointer !== event.pointerId) return;
+  const cell = document.elementFromPoint(event.clientX,event.clientY)?.closest(".cell");
+  if (cell && !stroke.visited.has(cell)) {
+    stroke.visited.add(cell);
+    edit(cell,stroke.value);
+  }
+});
+for (const type of ["pointerup","pointercancel","lostpointercapture"]) {
+  steps.addEventListener(type,event => { if (stroke?.pointer === event.pointerId) stroke = null; });
+}
+steps.addEventListener("click", event => {
+  const cell = event.target.closest(".cell");
+  if (cell && event.detail === 0) edit(cell, accentPaint ? (getValue(cell) === 2 ? 1 : 2) : Number(getValue(cell) === 0));
+});
+steps.addEventListener("keydown", event => {
+  const cell = event.target.closest(".cell");
+  if (!cell) return;
+  if (event.key.toLowerCase() === "a") { edit(cell,getValue(cell) === 2 ? 1 : 2); return; }
+  const direction = {ArrowUp:[-1,0],ArrowDown:[1,0],ArrowLeft:[0,-1],ArrowRight:[0,1]}[event.key];
+  if (!direction) return;
+  event.preventDefault();
+  cells[(Number(cell.dataset.lane) + direction[0] + tracks.length) % tracks.length]
+    [(Number(cell.dataset.step) + direction[1] + 16) % 16].focus();
+});
+function update() {
+  $("#tempo").innerHTML = state.bpm + "<span>BPM</span>";
+  $("#volume").innerHTML = state.volume + "%<span>LEVEL</span>";
+  for (const key of ["crush","swing","half"]) $("#" + key).setAttribute("aria-pressed",String(state[key]));
+  document.querySelectorAll("[data-preset]").forEach(button => button.setAttribute("aria-pressed",String(button.dataset.preset === state.preset)));
+  for (const [lane, row] of cells.entries()) {
+    const muted = state.muted[lane];
+    labels[lane].innerHTML = tracks[lane].name + "<small>" + (muted ? "MUTED" : "MUTE") + "</small>";
+    labels[lane].setAttribute("aria-label","Mute " + tracks[lane].name);
+    labels[lane].setAttribute("aria-pressed",String(muted));
+    for (const [step, cell] of row.entries()) {
+      const value = state.pattern[lane][step];
+      cell.dataset.value = value;
+      cell.setAttribute("aria-pressed",String(value > 0));
+      cell.setAttribute("aria-label",tracks[lane].name + " step " + (step + 1) + (value === 2 ? " accented" : ""));
+    }
+  }
+}
+for (const button of document.querySelectorAll("[data-preset]")) {
+  button.onclick = () => { state.preset = button.dataset.preset; state.pattern = patternFrom(state.preset); update(); save(); };
+}
+$("#clear").onclick = () => { state.pattern = tracks.map(() => Array(16).fill(0)); state.preset = ""; update(); save(); };
+$("#mutate").onclick = () => {
+  for (const row of state.pattern) {
+    const step = Math.floor(Math.random()*16);
+    row[step] = row[step] ? 0 : 1 + Number(Math.random() < .22);
+  }
+  state.preset = ""; update(); save();
+};
+for (const key of ["crush","swing","half"]) $("#" + key).onclick = () => {state[key] = !state[key]; update(); save();};
+for (const [id,key,delta,min,max] of [
+  ["slower","bpm",-2,65,180],["faster","bpm",2,65,180],["quieter","volume",-5,0,80],["louder","volume",5,0,80]
+]) {
+  $("#" + id).onclick = () => {
+    state[key] = Math.max(min,Math.min(max,state[key]+delta));
+    if (audio) audio.master.gain.setTargetAtTime(state.volume / 100,audio.ctx.currentTime,.015);
+    update(); save();
+  };
+}
+update();
+let audio, running = false, transportVersion = 0, timer, nextTime, stepIndex;
+const playheads = [];
+function initAudio() {
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  const ctx = new AudioContext();
+  const bus = ctx.createGain();
+  const limiter = ctx.createDynamicsCompressor();
+  limiter.threshold.value = -12; limiter.knee.value = 5; limiter.ratio.value = 14;
+  limiter.attack.value = .003; limiter.release.value = .13;
+  const master = ctx.createGain(); master.gain.value = state.volume/100;
+  const gate = ctx.createGain(); gate.gain.value = 0;
+  const analyzer = ctx.createAnalyser(); analyzer.fftSize = 1024;
+  bus.connect(limiter).connect(master).connect(gate).connect(analyzer).connect(ctx.destination);
+  const lanes = tracks.map((_, i) => {
+    const channel = ctx.createGain();
+    channel.gain.value = state.muted[i] ? 0 : 1;
+    channel.connect(bus);
+    return channel;
+  });
+  const noise = ctx.createBuffer(1,ctx.sampleRate,ctx.sampleRate);
+  const data = noise.getChannelData(0);
+  for (let i = 0; i < data.length; i++) data[i] = Math.random()*2-1;
+  const curve = strength => Float32Array.from({length:4097}, (_, i) => {
+    const x = i / 2048 - 1;
+    const saturated = Math.tanh(x * strength);
+    return strength > 6 ? Math.round(saturated * 19) / 19 : saturated;
+  });
+  return {ctx, lanes, master, gate, analyzer, noise, sources:new Set(), drive:curve(3.8), crush:curve(12)};
+}
+function oscillator(type, hz, time, end, target, endHz = hz, bend = end - time) {
+  const {ctx,sources} = audio;
+  const osc = ctx.createOscillator();
+  osc.type = type;
+  osc.frequency.setValueAtTime(hz,time);
+  osc.frequency.exponentialRampToValueAtTime(endHz,time + bend);
+  osc.connect(target);
+  sources.add(osc);
+  osc.onended = () => sources.delete(osc);
+  osc.start(time); osc.stop(end);
+}
+function envelope(time, duration, level, target, attack = .004) {
+  const amp = audio.ctx.createGain();
+  amp.gain.setValueAtTime(.0001,time);
+  amp.gain.exponentialRampToValueAtTime(level,time+attack);
+  amp.gain.exponentialRampToValueAtTime(.0001,time+duration);
+  amp.connect(target);
+  return amp;
+}
+function noiseHit(time,duration,level,frequency,type,target) {
+  const {ctx,noise,sources} = audio;
+  const source = ctx.createBufferSource();
+  source.buffer = noise;
+  const filter = ctx.createBiquadFilter();
+  filter.type = type;
+  filter.frequency.value = frequency;
+  source.connect(filter).connect(envelope(time,duration,level,target,.002));
+  sources.add(source);
+  source.onended = () => sources.delete(source);
+  source.start(time,Math.random()*.6,duration);
+}
+function trigger(lane, step, time, duration, value) {
+  const {ctx,lanes} = audio;
+  const target = lanes[lane];
+  const accent = value === 2 ? 1.22 : 1;
+  const notes = [0,0,0,3,0,0,-2,0,0,6,0,3,0,-2,0,-5];
+  const hz = 43.65 * 2 ** (notes[step]/12);
+  if (lane === 0) {
+    const length = Math.min(.35,duration * 1.46);
+    const amp = envelope(time,length,.49*accent,target,.012);
+    oscillator("sine",hz*1.12,time,time+length,amp,hz,.048);
+    oscillator("triangle",hz,time,time+length,envelope(time,length,.11*accent,target,.011));
+  } else if (lane === 1) {
+    const length = Math.min(.3,duration*1.34);
+    const filter = ctx.createBiquadFilter();
+    filter.type = "lowpass"; filter.Q.value = 4.6;
+    filter.frequency.setValueAtTime(state.crush ? 3400 : 1590,time);
+    filter.frequency.exponentialRampToValueAtTime(180,time+length);
+    const shaper = ctx.createWaveShaper();
+    shaper.curve = state.crush ? audio.crush : audio.drive;
+    shaper.oversample = "2x";
+    filter.connect(shaper).connect(envelope(time,length,.31*accent,target,.008));
+    oscillator("sawtooth",hz*2,time,time+length,filter);
+    oscillator("sawtooth",hz*2.028,time,time+length,filter);
+  } else if (lane === 2) {
+    oscillator("sine",143,time,time+.27,envelope(time,.27,.72*accent,target,.003),36,.082);
+    noiseHit(time,.023,.14*accent,2750,"highpass",target);
+  } else if (lane === 3) {
+    noiseHit(time,.19,.32*accent,1700,"bandpass",target);
+    oscillator("triangle",162,time,time+.12,envelope(time,.12,.23*accent,target),91,.06);
+  } else if (lane === 4) {
+    noiseHit(time,value === 2 ? .1 : .059,.17*accent,7400,"highpass",target);
+  } else {
+    for (const pitch of [307,641,947]) {
+      oscillator("square",pitch,time,time+.145,envelope(time,.145,.065*accent,target),pitch*.72,.09);
+    }
+    noiseHit(time,.084,.09*accent,2500,"bandpass",target);
+  }
+}
+function tick() {
+  const now = audio.ctx.currentTime;
+  if (nextTime < now - .18) nextTime = now + .024;
+  while (nextTime < now + .105) {
+    const beat = 60/state.bpm/4*(state.half ? 2 : 1);
+    const swing = state.swing ? .24 : 0;
+    const duration = beat * (1+(stepIndex % 2 ? -swing : swing));
+    for (const [lane,row] of state.pattern.entries()) {
+      if (row[stepIndex] && !state.muted[lane]) trigger(lane,stepIndex,nextTime,duration,row[stepIndex]);
+    }
+    playheads.push({step:stepIndex,time:nextTime});
+    stepIndex = (stepIndex + 1) % 16;
+    nextTime += duration;
+  }
+}
+async function play() {
+  const version = ++transportVersion;
+  try {
+    audio ||= initAudio();
+    await audio.ctx.resume();
+    if (version !== transportVersion) return;
+    if (audio.ctx.state !== "running") throw new Error("Audio suspended");
+    const now = audio.ctx.currentTime;
+    audio.gate.gain.cancelScheduledValues(now);
+    audio.gate.gain.setValueAtTime(1,now);
+    nextTime = now + .035;
+    stepIndex = 0;
+    running = true;
+    $("#play").textContent = "■ Stop";
+    $("#status").textContent = "Playing";
+    tick();
+    timer = setInterval(tick,25);
+  } catch {
+    if (version === transportVersion) stop("Audio unavailable · try Play again");
+  }
+}
+let current = -1;
+function showStep(step) {
+  if (current >= 0) {
+    markers[current].classList.remove("current");
+    cells.forEach(row => row[current].classList.remove("current"));
+  }
+  current = step;
+  if (step >= 0) {
+    markers[step].classList.add("current");
+    cells.forEach(row => row[step].classList.add("current"));
+  }
+}
+function stop(message) {
+  ++transportVersion;
+  clearInterval(timer);
+  if (audio) {
+    const now = audio.ctx.currentTime;
+    audio.gate.gain.cancelScheduledValues(now);
+    audio.gate.gain.setValueAtTime(0,now);
+    for (const source of audio.sources) source.stop(now);
+    audio.sources.clear();
+  }
+  running = false;
+  playheads.length = 0;
+  showStep(-1);
+  $("#play").textContent = "▶ Play";
+  $("#status").textContent = message;
+}
+function toggle() { if (running) stop("Stopped"); else play(); }
+$("#play").onclick = toggle;
+$("#panic").onclick = () => stop("Panic · audio stopped");
+document.addEventListener("keydown",event => {
+  if (event.repeat || event.altKey || event.ctrlKey || event.metaKey) return;
+  if (event.code === "Space" && !event.target.closest("button,a,input,textarea,select,[contenteditable]")) {
+    event.preventDefault(); stop("Panic · audio stopped");
+  }
+  if (event.key === "Enter" && !event.target.closest("button,a,input,textarea,select,[contenteditable]")) toggle();
+});
+window.addEventListener("pagehide",() => stop("Stopped"));
+const canvas = $("#scope");
+const paint = canvas.getContext("2d");
+const waveform = new Uint8Array(1024);
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)");
+let width, height, texture;
+function resizeScope() {
+  const rect = canvas.getBoundingClientRect();
+  const ratio = Math.min(devicePixelRatio,2);
+  width = rect.width; height = rect.height;
+  canvas.width = Math.round(width*ratio); canvas.height = Math.round(height*ratio);
+  paint.setTransform(ratio,0,0,ratio,0,0);
+  texture = document.createElement("canvas");
+  texture.width = canvas.width; texture.height = canvas.height;
+  const brush = texture.getContext("2d");
+  brush.scale(ratio,ratio);
+  const gradient = brush.createLinearGradient(0,0,width,height);
+  gradient.addColorStop(0,"#171216"); gradient.addColorStop(.47,"#26171c"); gradient.addColorStop(1,"#723d34");
+  brush.fillStyle = gradient; brush.fillRect(0,0,width,height);
+  for (let i = 0; i < 2200; i++) {
+    const x = Math.random()*width, y = Math.random()*height;
+    brush.fillStyle = i%3 ? "#fff1db10" : "#05020743";
+    brush.fillRect(x,y,1+Math.random()*2,1);
+  }
+  for (let i = -20; i <= width; i += 13) {
+    brush.strokeStyle = "#ff937b1e";
+    brush.beginPath(); brush.moveTo(i + height*.75,0); brush.lineTo(i,height); brush.stroke();
+  }
+  drawScope();
+}
+function drawScope() {
+  if (!texture) return;
+  paint.drawImage(texture,0,0,width,height);
+  const start = width*.43;
+  const live = running && !reduceMotion.matches;
+  if (live) audio.analyzer.getByteTimeDomainData(waveform);
+  for (let layer = 0; layer < 3; layer++) {
+    paint.beginPath();
+    paint.strokeStyle = ["#ff8d66aa","#ff625a40","#ecfb6580"][layer];
+    paint.lineWidth = layer === 0 ? 2 : 1;
+    for (let i = 0; i <= 168; i++) {
+      const fraction = i/168;
+      const x = start + fraction * (width-start);
+      const sample = live ? (waveform[Math.floor(fraction*1023)]-128)/128 :
+        Math.sin(fraction*56)*Math.sin(fraction*9)*.31+Math.sin(fraction*117)*.07;
+      const y = height*(.54+layer*.095) + sample*height*(.43-layer*.073)*Math.sin(fraction*Math.PI);
+      if (i) paint.lineTo(x,y); else paint.moveTo(x,y);
+    }
+    paint.stroke();
+  }
+}
+function frame() {
+  if (running) {
+    let step = current;
+    while (playheads.length && playheads[0].time <= audio.ctx.currentTime) step = playheads.shift().step;
+    if (step !== current) showStep(step);
+  }
+  if (running || frame.wasRunning) drawScope();
+  frame.wasRunning = running;
+  requestAnimationFrame(frame);
+}
+new ResizeObserver(resizeScope).observe(canvas);
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
