@@ -19,4 +19,5 @@ $("copy").onclick=async()=>{if(currentIndex<0)draw();const name=entries[currentI
 $("search").addEventListener("input",render);$("refreshVotes").onclick=loadVotes;
 for(const [mode,id] of [["original","sortOriginal"],["popular","sortPopular"],["alpha","sortAlpha"]]){$(id).onclick=()=>{sortMode=mode;for(const x of ["sortOriginal","sortPopular","sortAlpha"])$(x).classList.toggle("active",x===id);render()}}
 drawLeaders();render();loadVotes();
-</script></body></html>
+</script><script src="../cave-shell.js" data-cave-root="../" defer></script>
+</body></html>

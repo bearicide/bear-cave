@@ -2,6 +2,7 @@
   if (window.self !== window.top || document.querySelector('[data-cave-shell]')) return;
   const script = document.currentScript;
   const root = script.dataset.caveRoot || './';
+  const inProgress = new URL('in-progress/', new URL(root, document.baseURI)).href;
   const overlay = script.dataset.cavePlacement === 'overlay';
 
   const style = document.createElement('style');
@@ -26,11 +27,28 @@
   shell.innerHTML = `
     <a class="cave-home"><span aria-hidden="true">←&nbsp;</span> Bear Cave</a>
     <a href="https://bearbeats-hub.mattbear86.chatgpt.site/">BearBeats</a>
+    <a class="cave-progress">NEW! In-Progress!</a>
     <button type="button" aria-expanded="false" aria-controls="caveQuickHelp">Quick start</button>
     <div class="cave-help" id="caveQuickHelp" hidden>Start at low volume. Tap a control to enable browser audio. Allow microphone, camera, or MIDI access when the tool you’re using asks for it.</div>
   `;
   shell.querySelector('.cave-home').href = root;
+  shell.querySelector('.cave-progress').href = inProgress;
   document.body.prepend(shell);
+
+  const footer = document.querySelector('footer') || document.createElement('footer');
+  const footerNav = document.createElement('nav');
+  footerNav.className = 'cave-shell';
+  footerNav.setAttribute('aria-label', 'Bear Cave footer links');
+  for (const link of shell.querySelectorAll('a')) {
+    if ([...footer.querySelectorAll('a')].some(existing => existing.href === link.href)) continue;
+    const footerLink = link.cloneNode(true);
+    footerLink.textContent = link.classList.contains('cave-home') ? 'Bear Cave' : link.textContent;
+    footerNav.append(footerLink);
+  }
+  if (footerNav.childElementCount) {
+    footer.append(footerNav);
+    if (!footer.isConnected) document.body.append(footer);
+  }
 
   const content = document.querySelector('main, [role="main"]');
   if (content && !document.querySelector('a.skip-link, a.cave-skip')) {
