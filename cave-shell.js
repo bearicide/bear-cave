@@ -26,7 +26,7 @@
   shell.setAttribute('aria-label', 'Bear Cave navigation');
   shell.innerHTML = `
     <a class="cave-home"><span aria-hidden="true">←&nbsp;</span> Bear Cave</a>
-    <a href="https://bearbeats-hub.mattbear86.chatgpt.site/">BearBeats</a>
+    <a href="${new URL('bearbeats.html', new URL(root, document.baseURI)).href}">BearBeats</a>
     <a class="cave-progress">NEW! In-Progress!</a>
     <button type="button" aria-expanded="false" aria-controls="caveQuickHelp">Quick start</button>
     <div class="cave-help" id="caveQuickHelp" hidden>Start at low volume. Tap a control to enable browser audio. Allow microphone, camera, or MIDI access when the tool you’re using asks for it.</div>

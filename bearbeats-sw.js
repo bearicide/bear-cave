@@ -1,13 +1,15 @@
 const launch = new URL(self.registration.scope);
 const slug = launch.pathname.split('/').pop().replace(/\.html$/, '');
 const prefix = 'bearbeats-' + slug + '-';
-const cacheName = prefix + 'v1';
+const cacheName = prefix + 'v2';
 const assets = [
   launch.href,
   ...['install.js', slug + '.webmanifest', slug + '-192.png', slug + '-512.png']
     .map((file) => new URL('bearbeats-pwa/' + file, launch).href),
 ];
 if (slug === 'prismatic') assets.push(new URL('cave-shell.js', launch).href);
+
+if (slug === 'knock') assets.push(new URL('assets/bearbeats-knock-card.png', launch).href);
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(cacheName).then((cache) => cache.addAll(assets)));

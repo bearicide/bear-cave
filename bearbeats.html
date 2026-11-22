@@ -1,37 +1,94 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#090719"><title>BearBeats | MATTBEAR Sound Machines</title><style>
-*{box-sizing:border-box}body{margin:0;background:#070613;color:white;font-family:system-ui,sans-serif}a{color:inherit;text-decoration:none}.wrap{max-width:1180px;margin:auto;padding:16px}.nav{display:flex;gap:18px;justify-content:space-between;flex-wrap:wrap;font-size:13px;color:#c9ddff;padding:12px 0}.nav a:hover{text-decoration:underline}.banner{position:relative;isolation:isolate;overflow:hidden;border:2px solid #9d65ff;border-radius:25px;padding:clamp(20px,4vw,46px);text-align:center;background:radial-gradient(ellipse at 15% 70%,#13408e 0%,transparent 40%),radial-gradient(ellipse at 85% 45%,#60196b 0%,transparent 43%),linear-gradient(135deg,#0a0623,#080f30 50%,#1c062b);box-shadow:0 0 50px #9b40ff33,inset 0 0 90px #261265}.banner:before{content:"";position:absolute;inset:-100%;z-index:-1;background:conic-gradient(from 0deg,transparent 0 28%,#ffffff16 32%,transparent 37% 70%,#ff59e514 74%,transparent 80%);animation:spin 16s linear infinite}.banner:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(110deg,transparent 20%,#ffffff00 37%,#ffffff20 48%,transparent 56%);background-size:250% 100%;animation:shine 5s ease-in-out infinite}.eyebrow{letter-spacing:.26em;font-size:clamp(10px,1.5vw,15px);color:#bbf9ff;font-weight:800}.logo{font-size:clamp(12px,2vw,19px);letter-spacing:.3em;font-weight:900}.bear{font-size:clamp(28px,5vw,50px)}h1{font-size:clamp(58px,11vw,142px);font-style:italic;letter-spacing:-.07em;line-height:1.03;margin:8px 0 0;background:linear-gradient(160deg,#fff 5%,#70efff 25%,#8867ff 50%,#f45dff 73%,#fff 92%);color:transparent;background-clip:text;-webkit-background-clip:text;filter:drop-shadow(0 0 15px #b542ff);text-shadow:none}.subtitle{font-weight:800;letter-spacing:.15em;font-size:clamp(11px,1.6vw,18px)}.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(10px,2vw,22px);margin:clamp(20px,4vw,40px) auto;max-width:950px}.card{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:clamp(165px,26vw,280px);padding:20px 10px;border:2px solid #9a8dff;border-radius:25px;overflow:hidden;box-shadow:0 0 22px #a551ff77,inset 0 0 36px #4b45c355;transition:transform .2s,box-shadow .2s}.card:hover,.card:focus-visible{transform:translateY(-5px) scale(1.02);box-shadow:0 0 42px #ff69fbbb,inset 0 0 50px #6353fb77}.card:before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(circle at 50% 20%,#b9e5ff55,transparent 25%),repeating-conic-gradient(from 20deg,#8e6bff20 0deg 8deg,transparent 8deg 20deg);animation:spin 30s linear infinite}.prismatic{border-color:#ff77e7;background:radial-gradient(circle at 50% 60%,#74107766,transparent 60%)}.ethereal{border-color:#60eaff;background:radial-gradient(circle at 50% 60%,#174caa66,transparent 60%)}.symbol{font-size:clamp(45px,9vw,94px);filter:drop-shadow(0 0 24px #f6aaff);animation:float 3.5s ease-in-out infinite}.card h2{font-size:clamp(22px,4.3vw,49px);font-style:italic;line-height:1;margin:8px 0;text-shadow:0 0 20px #b861ff}.card p{font-size:clamp(11px,1.6vw,16px);margin:0;color:#e7e7ff}.cta{display:inline-block;padding:13px clamp(20px,5vw,60px);border-radius:80px;background:linear-gradient(100deg,#ef4aff,#8ddcff,#30f4f4);color:#100e23;font-size:clamp(19px,4vw,38px);font-weight:1000;font-style:italic;box-shadow:0 0 30px #b955f5;transition:transform .2s}.cta:hover{transform:scale(1.04)}.note{font-size:12px;color:#d6caeb;margin-top:20px}.hint{font-size:12px;letter-spacing:.2em;margin:16px 0;color:#d9e9ff}footer{padding:18px 0;text-align:center;color:#c8bbdf;font-size:12px}@keyframes spin{to{transform:rotate(360deg)}}@keyframes shine{0%,20%{background-position:150% 0}65%,100%{background-position:-150% 0}}@keyframes float{50%{transform:translateY(-10px) rotate(5deg)}}@media(max-width:520px){.cards{gap:9px}.card{min-height:180px}.card h2{letter-spacing:-.04em}.banner{padding:16px 10px}.subtitle{letter-spacing:.08em}}@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
-
-.cards{grid-template-columns:repeat(2,minmax(0,1fr));text-align:left}
-.card{align-items:stretch;justify-content:flex-end;min-height:260px;padding:0;isolation:isolate}
-.card:before{animation:none}
-.card:hover,.card:focus-visible{transform:translateY(-4px)}
-.card:focus-visible{outline:3px solid white;outline-offset:4px}
-.card h2{font-size:clamp(24px,4vw,42px)}
-.card p{font-size:14px;line-height:1.45}
-.card .symbol{display:grid;place-items:center;min-height:150px}
-.card-copy{position:relative;padding:16px 19px 20px;background:#0b0919e8}
-.knock{border-color:#edff48;background:#141018}
-.knock-art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 42%;z-index:-1}
-.knock h2{text-shadow:0 0 15px #869400}
-.tectonic{border-color:#a7a0ff;background:radial-gradient(ellipse at center,#504389,#151129 64%)}
-.install-label{display:inline-block;margin-top:9px;color:#efff67;font-weight:750;font-size:14px}
-@media(max-width:600px){.cards{grid-template-columns:minmax(0,1fr);gap:15px}.card{min-height:245px}.card h2{letter-spacing:normal}}
-</style></head><body><div class="wrap"><nav class="nav"><a href="./index.html">🐻 BEAR CAVE</a><span>MATTBEAR · SOUND MACHINES</span><a href="https://github.com/bearicide">GITHUB ↗</a></nav><main class="banner"><div class="logo"><span class="bear">🐻</span> MATTBEAR</div><h1>BearBeats</h1><div class="subtitle">INTERACTIVE SOUND MACHINES COLLECTION</div>
-<div class="cards" id="machines">
-  <a class="card ethereal" href="https://ethereal-forces.mattbear86.chatgpt.site/">
-    <div class="symbol" aria-hidden="true">🌌</div>
-    <div class="card-copy"><h2>Ethereal Forces</h2><p>Layer elemental loops and shape the mix with effects.</p></div>
-  </a>
-  <a class="card prismatic" href="./prismatic.html">
-    <div class="symbol" aria-hidden="true">💎</div>
-    <div class="card-copy"><h2>Prismatic</h2><p>Drag sound orbs through a prism to reshape the rhythm.</p><span class="install-label">Play or install</span></div>
-  </a>
-  <a class="card tectonic" href="https://bearbeats-hub.mattbear86.chatgpt.site/tectonic">
-    <div class="symbol" aria-hidden="true">🔊</div>
-    <div class="card-copy"><h2>Tectonic</h2><p>Stack synced loops, bend the bass, and orbit the live spectrum.</p></div>
-  </a>
-  <a class="card knock" href="./knock.html">
-    <img class="knock-art" src="./assets/bearbeats-knock-card.png" width="1536" height="1024" alt="" decoding="async">
-    <div class="card-copy"><h2>Knock</h2><p>Drag the groove pad from boom bap to trap, switch kits, and throw fills.</p><span class="install-label">Play or install</span></div>
-  </a>
-</div></main><footer>© 2026 MATTBEAR · <a href="./index.html">Bear Cave</a> · <a href="https://ethereal-forces.mattbear86.chatgpt.site/">Ethereal</a> · <a href="./prismatic.html">Prismatic</a> · <a href="https://bearbeats-hub.mattbear86.chatgpt.site/tectonic">Tectonic</a> · <a href="./knock.html">Knock</a></footer></div></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#100c18">
+  <meta name="description" content="Play Ethereal Forces, Prismatic, Tectonic, and Knock in the BearBeats sound machine collection.">
+  <title>BearBeats | MATTBEAR Sound Machines</title>
+  <style>
+    :root { color-scheme: dark; font: 16px/1.55 system-ui, sans-serif; color: #f6f1ff; background: #100c18; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: radial-gradient(ellipse at 70% 0%, #37204f, transparent 42rem), #100c18; }
+    .wrap { width: min(1120px, calc(100% - 2rem)); margin-inline: auto; }
+    nav, footer .wrap { display: flex; align-items: center; flex-wrap: wrap; gap: 0 1.25rem; }
+    nav a, footer a { color: #ddccfa; display: inline-flex; align-items: center; min-height: 44px; text-underline-offset: .25em; }
+    header, footer { border-block: 1px solid #3a2b4d; padding-block: .3rem; }
+    [aria-current="page"] { color: white; font-weight: 700; }
+    .skip { position: absolute; top: .5rem; left: .5rem; z-index: 2; padding: .7rem; background: #f6f1ff; color: #100c18; transform: translateY(-150%); }
+    .skip:focus { transform: none; }
+    :focus-visible { outline: 3px solid #ead6ff; outline-offset: 4px; }
+    main { padding-block: clamp(1.25rem, 5vw, 3rem); }
+    .hero { display: grid; align-content: end; min-height: clamp(225px, 32vw, 350px); padding: clamp(1.25rem, 4vw, 3rem); margin-bottom: 1.2rem; border: 1px solid #624483; border-radius: 1.1rem; background: linear-gradient(90deg,#110a20f5,#1a0d2f73 68%,#1a0d2f2b), url("./assets/bearbeats-cavern.webp") right 56% / cover, #1b102b; }
+    h1 { margin: 0; font-size: clamp(3.15rem, 10vw, 7.15rem); line-height: .92; letter-spacing: -.075em; }
+    .hero p { margin: .9rem 0 0; color: #e2d4f3; font-size: clamp(1rem, 2vw, 1.2rem); }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; list-style: none; padding: 0; margin: 0; }
+    .card { --accent: #c5a5ff; display: flex; flex-direction: column; height: 100%; color: inherit; text-decoration: none; background: linear-gradient(145deg,#241932,#181322); border: 1px solid #534068; border-radius: 1rem; overflow: hidden; }
+    .card:hover, .card:focus-visible { border-color: var(--accent); }
+    .card img { display: block; width: 100%; height: auto; aspect-ratio: 2 / 1; object-fit: cover; background: #21152d; }
+    .copy { display: flex; flex: 1; flex-direction: column; padding: 1.15rem 1.25rem 1.3rem; }
+    .card h2 { margin: 0; line-height: 1.12; font-size: clamp(1.4rem, 3.7vw, 2.15rem); letter-spacing: -.035em; }
+    .copy p { margin: .45rem 0 0; color: #d3c7e4; }
+    .action { color: var(--accent); font-weight: 750; margin-top: auto; padding-top: .9rem; }
+    .ethereal { --accent: #a6efff; }
+    .prismatic { --accent: #e1b6ff; }
+    .tectonic { --accent: #ffb9d6; }
+    .knock { --accent: #efff55; }
+    .knock img { object-position: center 43%; }
+    footer .wrap { color: #d3c7e4; }
+    @media (max-width: 570px) { .grid { grid-template-columns: 1fr; } .hero { background-position: center, 58% center; } }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#machines">Skip to machines</a>
+  <header><nav class="wrap" aria-label="Bear Cave navigation">
+    <a href="./">Bear Cave</a><a href="./bearbeats.html" aria-current="page">BearBeats</a><a href="./in-progress/">NEW! In-Progress!</a>
+  </nav></header>
+  <main class="wrap">
+    <div class="hero"><h1>BearBeats</h1><p>Four sound machines from the Bear Cave.</p></div>
+    <ul class="grid" id="machines" aria-label="Sound machines" tabindex="-1">
+      <li>
+        <a class="card ethereal" href="https://ethereal-forces.mattbear86.chatgpt.site/">
+          <img src="https://bearbeats-hub.mattbear86.chatgpt.site/assets/ethereal.webp" alt="" decoding="async">
+          <div class="copy">
+            <h2>Ethereal Forces</h2>
+            <p>Layer elemental loops, swap variations, and shape your soundscape.</p>
+            <span class="action">Open instrument</span>
+          </div>
+        </a>
+      </li>
+      <li>
+        <a class="card prismatic" href="./prismatic.html">
+          <img src="https://bearbeats-hub.mattbear86.chatgpt.site/assets/prismatic.webp" alt="" decoding="async">
+          <div class="copy">
+            <h2>Prismatic</h2>
+            <p>Drag sound orbs through a prism to shift rhythm, pitch, and tone.</p>
+            <span class="action">Play or install</span>
+          </div>
+        </a>
+      </li>
+      <li>
+        <a class="card tectonic" href="https://bearbeats-hub.mattbear86.chatgpt.site/tectonic">
+          <img src="https://bearbeats-hub.mattbear86.chatgpt.site/assets/tectonic-nameplate.webp" alt="" decoding="async">
+          <div class="copy">
+            <h2>Tectonic</h2>
+            <p>Stack dub, garage, and halfstep loops inside a reactive speaker.</p>
+            <span class="action">Open instrument</span>
+          </div>
+        </a>
+      </li>
+      <li>
+        <a class="card knock" href="./knock.html">
+          <img src="./assets/bearbeats-knock-card.png" alt="" decoding="async">
+          <div class="copy">
+            <h2>Knock</h2>
+            <p>Push the groove from boom bap to trap, swap kits, and throw fills.</p>
+            <span class="action">Play or install</span>
+          </div>
+        </a>
+      </li>
+    </ul>
+  </main>
+  <footer><div class="wrap"><span>MATTBEAR · Flushing, MI</span><a href="./">Bear Cave</a><a href="./in-progress/">In-Progress</a></div></footer>
+</body>
+</html>

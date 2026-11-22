@@ -53,6 +53,60 @@ kbd,.pads kbd{background:#0e0d11;color:#fff28b;border-color:#66582d}
 button#secret-chug{display:grid;place-items:center;min-width:44px;min-height:44px;padding:0;background-color:transparent;border-color:transparent;color:#978756;box-shadow:none;font:700 15px monospace}
 button#secret-chug:hover,button#secret-chug[aria-pressed=true]{color:var(--heat)}
 button#secret-chug[aria-pressed=true]{text-shadow:0 0 12px #ffe42f80}
+
+/* Charcoal chassis, purple edge lighting, and acid-yellow performance controls. */
+:root {
+  --floor: #0c0812;
+  --surface: #16121d;
+  --border: #544063;
+  --text: #faf4ff;
+  --muted: #d1c4de;
+  --heat: #edff45;
+  --acid: #edff45;
+}
+body {
+  background: radial-gradient(ellipse at 76% 8%, #35204d, transparent 49rem), var(--floor);
+}
+header {
+  min-height: clamp(190px, 27vw, 310px);
+  align-items: end;
+  margin: 16px 0 14px;
+  padding: clamp(16px, 3vw, 35px);
+  border: 1px solid #755499;
+  border-radius: 19px;
+  background:
+    linear-gradient(90deg, #10091af9 0%, #12091bdb 25%, #12091b2e 68%),
+    linear-gradient(0deg, #10091ad9, transparent 48%),
+    url("assets/bearbeats-knock-card.png") right 46% / cover,
+    #21132e;
+  box-shadow: inset 0 1px #b489d85c, 0 8px 25px #09050e93;
+}
+header h1 { text-shadow: 0 3px #474f12, 0 6px 24px #08050f; }
+.header-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 8px; }
+.header-actions a { display: inline-flex; align-items: center; min-height: 44px; padding: 8px 12px; border: 1px solid #80699c; border-radius: 8px; background: #180e23e8; }
+.header-actions a:hover { border-color: var(--heat); }
+[data-bearbeats-install][hidden] { display: none; }
+.panel {
+  border-color: var(--border);
+  background: linear-gradient(155deg, #241b30, #15121b 48%, #100d15);
+  box-shadow: inset 0 1px #b58cdb37, inset 0 -2px #08070b, 0 5px 15px #07040c82;
+}
+.panel h2 { color: #f6f0ff; }
+button,.upload { background-color: #261e30; border-color: #69537f; }
+button.play { background-color: var(--acid); color: #1b200d; box-shadow: 0 0 13px #e8ff464a, inset 0 1px #ffffff85; }
+button[aria-pressed="true"]:not(.seq-grid button) { background-color: var(--acid); color: #1b200d; }
+button[aria-pressed="true"] kbd, button.play kbd { color: var(--heat); }
+.pad-section .pads button { background-color: #2e3020; border-inline-color: #625a3b; }
+.pad-section .pads button.is-hit { background: var(--acid); color: #181d09; box-shadow: 0 0 20px #edff4570; }
+.surface { border: 1px solid #72508c; box-shadow: 0 0 0 3px #110c18, 0 0 18px #9343e74a; }
+.surface .puck { background: var(--acid); border-color: #fcffc6; box-shadow: 0 0 0 5px #efff4532, 0 0 22px #efff4560; }
+.surface:active .puck { box-shadow: 0 0 0 8px #efff4542, 0 0 28px #efff4585; }
+.surface .bottom { color: #eccdff; }
+.numbers input, kbd, .pads kbd { border-color: #6b5b32; color: #f0ff87; }
+@media (max-width: 600px) {
+  header { flex-wrap: wrap; min-height: 195px; background-position: center, center, 64% center; }
+  .header-actions { justify-content: flex-start; }
+}
 </style>
 <link rel="manifest" href="bearbeats-pwa/knock.webmanifest">
 <link rel="apple-touch-icon" href="bearbeats-pwa/knock-192.png">
@@ -60,7 +114,7 @@ button#secret-chug[aria-pressed=true]{text-shadow:0 0 12px #ffe42f80}
 </head>
 <body>
 <main>
-<header><div><div class="brand-line"><p>BEARBEATS</p><button id="secret-chug" type="button" aria-label="Palm-muted guitar" aria-pressed="false" title="Palm-muted guitar">✦</button></div><h1>KNOCK</h1></div><a href="https://bearicide.github.io/bear-cave/">Bear Cave ↗</a><button type="button" data-bearbeats-install hidden>Install Knock</button></header>
+<header><div><div class="brand-line"><p>BEARBEATS</p><button id="secret-chug" type="button" aria-label="Palm-muted guitar" aria-pressed="false" title="Palm-muted guitar">✦</button></div><h1>KNOCK</h1></div><nav class="header-actions" aria-label="Project navigation"><a href="./bearbeats.html">BearBeats</a><a href="./">Bear Cave</a><button type="button" data-bearbeats-install hidden>Install Knock</button></nav></header>
 <div class="desk">
 <section class="instrument panel" aria-labelledby="surface-title">
 <h2 id="surface-title">Groove surface</h2>
@@ -1010,12 +1064,12 @@ function draw(stamp) {
   const driftSpot = positionAt(Math.max(0,shownPulse));
   if (drift && playing) paintSurface(driftSpot);
   const x = width*(.08+driftSpot.x*.84), y = height*(.14+(1-driftSpot.y)*.72), radius = Math.min(width*.24,height*.29);
-  ctx.fillStyle = '#0b0a0d';
+  ctx.fillStyle = '#100b18';
   ctx.fillRect(0,0,width,height);
   const glow = ctx.createRadialGradient(x,y,0,x,y,Math.max(width*.55,height));
   const hue = 39 + driftSpot.x*17;
   glow.addColorStop(0,`hsla(${hue},78%,54%,${.29+moving*.31})`);
-  glow.addColorStop(1,'rgba(35,28,10,0)');
+  glow.addColorStop(1,'rgba(41,19,64,0)');
   ctx.fillStyle = glow;
   ctx.fillRect(0,0,width,height);
   ctx.strokeStyle = '#332b1b';
@@ -1029,7 +1083,7 @@ function draw(stamp) {
   for (let ring=1;ring<=8;ring++) {
     ctx.beginPath();
     ctx.ellipse(x,y,Math.max(1,(radius+moving*12)*ring/8),Math.max(1,(radius*.67+moving*8)*ring/8),-.18,0,Math.PI*2);
-    ctx.strokeStyle = ring===8?'#b49437':ring%2?'#45391c':'#594820';
+    ctx.strokeStyle = ring===8?'#a18bbf':ring%2?'#49335b':'#604073';
     ctx.stroke();
   }
   if (!reducedMotion.matches) flashes.forEach((energy,i) => {
@@ -1051,7 +1105,7 @@ function draw(stamp) {
     if (pixel===0) ctx.moveTo(pixel,sampleY);
     else ctx.lineTo(pixel,sampleY);
   }
-  ctx.strokeStyle = '#ffe42f';
+  ctx.strokeStyle = '#edff45';
   ctx.lineWidth = 2;
   ctx.stroke();
   tracks.forEach((track,i) => {
