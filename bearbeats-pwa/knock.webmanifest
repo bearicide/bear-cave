@@ -1,0 +1,24 @@
+{
+  "id": "../knock.html",
+  "name": "BearBeats Knock",
+  "short_name": "Knock",
+  "start_url": "../knock.html",
+  "scope": "../knock.html",
+  "display": "standalone",
+  "background_color": "#0b0a0d",
+  "theme_color": "#0b0a0d",
+  "icons": [
+    {
+      "src": "knock-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "knock-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

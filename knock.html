@@ -54,10 +54,13 @@ button#secret-chug{display:grid;place-items:center;min-width:44px;min-height:44p
 button#secret-chug:hover,button#secret-chug[aria-pressed=true]{color:var(--heat)}
 button#secret-chug[aria-pressed=true]{text-shadow:0 0 12px #ffe42f80}
 </style>
+<link rel="manifest" href="bearbeats-pwa/knock.webmanifest">
+<link rel="apple-touch-icon" href="bearbeats-pwa/knock-192.png">
+<script defer src="bearbeats-pwa/install.js"></script>
 </head>
 <body>
 <main>
-<header><div><div class="brand-line"><p>BEARBEATS</p><button id="secret-chug" type="button" aria-label="Palm-muted guitar" aria-pressed="false" title="Palm-muted guitar">✦</button></div><h1>KNOCK</h1></div><a href="https://bearicide.github.io/bear-cave/">Bear Cave ↗</a></header>
+<header><div><div class="brand-line"><p>BEARBEATS</p><button id="secret-chug" type="button" aria-label="Palm-muted guitar" aria-pressed="false" title="Palm-muted guitar">✦</button></div><h1>KNOCK</h1></div><a href="https://bearicide.github.io/bear-cave/">Bear Cave ↗</a><button type="button" data-bearbeats-install hidden>Install Knock</button></header>
 <div class="desk">
 <section class="instrument panel" aria-labelledby="surface-title">
 <h2 id="surface-title">Groove surface</h2>
