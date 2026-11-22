@@ -150,7 +150,7 @@ button[aria-pressed="true"] kbd, button.play kbd { color: var(--heat); }
 <section class="pad-section panel"><h2>Live pads</h2>
 <div class="kit-picker" role="group" aria-labelledby="kit-heading"><h3 id="kit-heading">Drum kit</h3><div class="group" id="kit-buttons"></div><p id="kit-detail" class="hint" role="status"></p></div>
 <div class="pads" id="pads"></div>
-<div class="footline"><input class="clip-picker" id="clip" type="file" accept="audio/*,.wav,.mp3,.ogg,.m4a,.flac"><label class="upload" for="clip">Load your sample</label><button id="stock" type="button">Use built-in stabs</button><span id="status" role="status">Built-in grit stabs · A–D</span></div></section>
+<div class="footline"><input class="clip-picker" id="clip" type="file" accept="audio/*,.wav,.mp3,.ogg,.m4a,.flac"><label class="upload" for="clip">Load sample or loop</label><button id="stock" type="button">Use built-in stabs</button><span id="status" role="status">Built-in grit stabs · A–D</span></div></section>
 </main>
 <footer><span>MATTBEAR / BearBeats</span><span>Headphones recommended · Start low for the sub</span></footer>
 <script>
@@ -675,23 +675,34 @@ function noiseHit(row,when,length,frequency,volume) {
   voice.start(when,Math.random()*.64);
   voice.stop(when+length);
 }
-function playChop(when,value,maxLength=Infinity,level=sample===stock?.84:.54) {
+let longPadVoice;
+function playChop(when,value,maxLength=Infinity,level=sample===stock?.84:.54,manual=false) {
   const voice = audio.createBufferSource(), amp = audio.createGain(), filter = audio.createBiquadFilter();
-  const part = sample.duration/4, rate = sample===stock ? 1 : [.98,1,.94,1.025][value-1];
-  const sourceLength = Math.min(part,1.25,maxLength*rate), length = sourceLength/rate;
+  const part = sample.duration/4;
+  const fullChop = manual && sample !== stock && part > 1.25;
+  const rate = sample === stock || fullChop ? 1 : [.98,1,.94,1.025][value-1];
+  const sourceLength = Math.min(part,fullChop ? Infinity : 1.25,maxLength*rate);
+  const length = sourceLength/rate;
   voice.buffer = sample;
   voice.playbackRate.value = rate;
   filter.type = 'lowpass';
   filter.frequency.value = sample===stock?1850:8900;
   amp.gain.setValueAtTime(.0001,when);
   amp.gain.linearRampToValueAtTime(level,when+Math.min(.018,length*.15));
-  amp.gain.setValueAtTime(level,when+length*.72);
+  amp.gain.setValueAtTime(level,when+length-(fullChop ? .025 : length*.28));
   amp.gain.linearRampToValueAtTime(0,when+length);
   voice.connect(filter).connect(amp);
   connectVoice(voice,amp,trackBuses[5]);
+  if (fullChop) {
+    if (longPadVoice && active.has(longPadVoice)) longPadVoice.stop(when);
+    longPadVoice = voice;
+    voice.addEventListener('ended', () => {
+      if (longPadVoice === voice) longPadVoice = undefined;
+    }, { once: true });
+  }
   voice.start(when,part*(value-1),sourceLength);
 }
-function trigger(row,value,when,stepDuration) {
+function trigger(row,value,when,stepDuration,manual=false) {
   if (!busLevel(row)) return;
   const {kick,bass,snare,hats} = kits[kitKey];
   const hit = () => events.push({time:when,row});
@@ -734,7 +745,7 @@ function trigger(row,value,when,stepDuration) {
       }
       return;
     }
-    playChop(when,value);
+    playChop(when,value,undefined,undefined,manual);
   }
   hit();
 }
@@ -936,7 +947,7 @@ async function tap(row,value) {
     await audio.resume();
     if (version!==runVersion) return;
     gate.gain.setTargetAtTime(1,audio.currentTime,.003);
-    trigger(row,value,audio.currentTime+.008,pulseLength());
+    trigger(row,value,audio.currentTime+.008,pulseLength(),true);
   } catch {
     el('status').textContent = 'Could not play this pad.';
   }
@@ -994,13 +1005,17 @@ el('clip').onchange = async event => {
   const version = ++importVersion;
   el('status').textContent = 'Reading '+file.name+'…';
   try {
-    if (file.size>40*1024*1024) throw new Error('Choose an audio file under 40 MB.');
+    if (file.size>120*1024*1024) throw new Error('Choose an audio file up to 120 MiB.');
     setupAudio();
     const decoded = await audio.decodeAudioData(await file.arrayBuffer());
     if (version!==importVersion) return;
     if (decoded.duration<.2) throw new Error('Choose a sample at least 0.2 seconds long.');
+    if (decoded.length * decoded.numberOfChannels * Float32Array.BYTES_PER_ELEMENT > 128*1024*1024) {
+      throw new Error('This clip decodes to more than 128 MiB. Trim it or export it in mono.');
+    }
     sample = decoded;
-    sampleLabel = file.name+' · 4 chops across the clip';
+    const duration = Math.round(decoded.duration*10)/10;
+    sampleLabel = file.name+' · '+duration+'s · 4 chops on pads 1–4';
     el('status').textContent = sampleLabel;
   } catch (error) {
     if (version===importVersion) el('status').textContent = (error instanceof DOMException ?
