@@ -9,86 +9,78 @@
   <style>
     :root {
       color-scheme: dark;
-      font: 16px/1.5 system-ui, sans-serif;
-      --text: #eff2ff;
-      --muted: #c5cbe0;
-      --accent: #8ef3ed;
-      --line: #51476b;
+      font: 16px/1.55 system-ui, sans-serif;
+      --ink: #f5f1ff;
+      --muted: #c8c1da;
+      --violet: #c5a5ff;
+      --line: #4a3b61;
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
       min-height: 100vh;
-      background: radial-gradient(ellipse at 80% 0%, #30204c, transparent 52%), #0b0d16;
-      color: var(--text);
+      color: var(--ink);
+      background: radial-gradient(ellipse at 78% 0%, #2b1946, transparent 46rem), #100c18;
     }
-    .wrap { width: min(1080px, 100% - 2rem); margin-inline: auto; }
-    header, footer { border-bottom: 1px solid #3a3552; }
-    .site-links { display: flex; flex-wrap: wrap; gap: 0 .9rem; padding-block: .55rem; }
-    .site-links a {
-      display: inline-flex;
-      align-items: center;
-      min-height: 44px;
-      color: var(--accent);
-      text-underline-offset: .25em;
-    }
-    .skip {
-      position: absolute;
-      z-index: 1;
-      top: .5rem;
-      left: .5rem;
-      transform: translateY(-150%);
-      padding: .6rem .8rem;
-      background: var(--text);
-      color: #0b0d16;
-    }
+    .wrap { width: min(1080px, calc(100% - 2rem)); margin-inline: auto; }
+    header, footer { border-block: 1px solid #342944; }
+    header { border-top: 0; background: #120e1ce8; }
+    footer { border-bottom: 0; }
+    .site-links { display: flex; flex-wrap: wrap; gap: 0 1.2rem; padding-block: .3rem; }
+    .site-links a { display: inline-flex; align-items: center; min-height: 44px; color: var(--violet); text-underline-offset: .25em; }
+    .site-links [aria-current] { color: var(--ink); font-weight: 700; }
+    .skip { position: absolute; z-index: 1; left: 1rem; top: .5rem; transform: translateY(-150%); padding: .6rem .8rem; background: var(--ink); color: #100c18; }
     .skip:focus { transform: none; }
-    :focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
-    main { padding-block: clamp(1.6rem, 5vw, 3.5rem); }
-    h1 { font-size: clamp(2.35rem, 8vw, 5.25rem); line-height: 1; letter-spacing: -.055em; margin: 0 0 1.5rem; }
-    h1 span { color: var(--accent); }
-    h2 { font-size: 1.12rem; margin: 0 0 .65rem; }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr));
-      gap: .85rem;
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
+    :focus-visible { outline: 3px solid var(--violet); outline-offset: 4px; }
+    main { padding-block: clamp(2.25rem, 6vw, 4.5rem); }
+    h1 { margin: 0; font-size: clamp(2.45rem, 8.2vw, 5.5rem); line-height: 1; letter-spacing: -.055em; }
+    h1 span { color: var(--violet); }
+    .intro { color: var(--muted); margin: .8rem 0 2.3rem; }
+    h2 { font-size: 1.2rem; margin: 0 0 .9rem; }
+    .grid { display: grid; gap: .9rem; list-style: none; margin: 0; padding: 0; }
+    .featured { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .catalog { grid-template-columns: repeat(6, minmax(0, 1fr)); margin-top: .9rem; }
+    .catalog li { grid-column: span 2; }
+    .catalog li:nth-last-child(-n+2) { grid-column: span 3; }
     .card {
-      display: block;
+      --card-accent: var(--violet);
+      display: flex;
+      flex-direction: column;
       height: 100%;
-      padding: 1.15rem 1.2rem;
       border: 1px solid var(--line);
-      border-radius: .9rem;
-      background: #161829;
+      border-radius: 1rem;
+      background: linear-gradient(145deg, #231931, #191322);
       color: inherit;
       text-decoration: none;
+      transition: border-color .18s, background-color .18s;
     }
-    .card.stamp {
-      border-color: #8763b8;
-      background: linear-gradient(130deg, #291b3d, #181a30);
-    }
-    .card.knock { border-color: #a5a649; background: linear-gradient(130deg, #292235, #181a30); }
-    .knock .card-art { aspect-ratio: 3 / 2; }
-    .install-label { display: inline-block; margin-top: .55rem; color: #efff67; font-size: .88rem; font-weight: 700; }
-    .card-art { display:block; width:100%; aspect-ratio:3 / 1; object-fit:cover; object-position:center; border-radius:.5rem; margin-bottom:.8rem; }
-    .card h3 {
-      display: flex;
-      align-items: start;
-      justify-content: space-between;
-      gap: .65rem;
-      margin: 0 0 .4rem;
-      font-size: 1.13rem;
-      line-height: 1.25;
-    }
-    .card h3 span { color: var(--accent); }
+    .featured .card { overflow: hidden; }
+    .catalog .card { padding: 1.05rem 1.15rem 1.2rem; }
+    .collection { --card-accent: #abdbff; }
+    .knock { --card-accent: #efff67; }
+    .card-art { display: block; width: 100%; height: auto; aspect-ratio: 2 / 1; object-fit: cover; object-position: center; background: #241839; }
+    .knock .card-art { object-position: center 45%; }
+    .card-copy { display: flex; flex: 1; flex-direction: column; padding: 1.12rem 1.2rem 1.25rem; }
+    .card h3 { display: flex; justify-content: space-between; gap: .65rem; margin: 0 0 .35rem; font-size: 1.13rem; line-height: 1.25; }
+    .featured h3 { font-size: clamp(1.25rem, 3vw, 1.65rem); letter-spacing: -.02em; }
+    .card h3 span, .install-label { color: var(--card-accent); }
     .card p, .pending p { margin: 0; color: var(--muted); }
-    .card:is(:hover, :focus-visible) { border-color: var(--accent); background: #23243a; }
-    .pending { margin-top: 1.6rem; border-top: 1px solid #3a3552; padding-top: 1.1rem; }
-    .pending strong { color: var(--text); }
-    footer { border-block: 1px solid #3a3552; border-bottom: 0; }
+    .install-label { display: block; margin-top: auto; padding-top: .8rem; font-size: .91rem; font-weight: 700; }
+    .card:is(:hover, :focus-visible) { border-color: var(--card-accent); background: #292039; }
+    .pending { margin-top: 2rem; border-top: 1px solid var(--line); padding-top: 1.15rem; }
+    .pending h2 { margin-bottom: .35rem; }
+    .pending strong { color: var(--ink); }
+    @media (max-width: 680px) {
+      .catalog { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .catalog li, .catalog li:nth-last-child(-n+2) { grid-column: auto; }
+      .catalog li:last-child { grid-column: 1 / -1; }
+    }
+    @media (max-width: 480px) {
+      .featured, .catalog { grid-template-columns: minmax(0, 1fr); }
+      .card-art { aspect-ratio: 1.9 / 1; }
+      .site-links { gap: 0 .8rem; }
+    }
+    @media (prefers-reduced-motion: reduce) { .card { transition: none; } }
   </style>
 </head>
 <body>
@@ -102,28 +94,36 @@
   </header>
   <main id="content" class="wrap" tabindex="-1">
     <h1><span>NEW!</span> In-Progress!</h1>
+    <p class="intro">Try the latest instruments, visualizers, and games from Bear Cave.</p>
     <section aria-labelledby="playable">
       <h2 id="playable">Playable now</h2>
-      <ul class="grid">
+      <ul class="grid featured">
         <li>
-          <a class="card stamp" href="../stamp-cave/">
-            <h3>Stamp Cave <span aria-hidden="true">↗</span></h3>
-            <p>Paint with neon brushes, drop 50 MATTBEAR stamps, and save your art as a PNG.</p>
-          </a>
-        </li>
-        <li>
-          <a class="card" href="https://bearbeats-hub.mattbear86.chatgpt.site/">
+          <a class="card collection" href="https://bearbeats-hub.mattbear86.chatgpt.site/">
             <img class="card-art" src="../assets/bearbeats-cavern.webp" width="768" height="512" alt="" decoding="async">
+            <div class="card-copy">
             <h3>BearBeats <span aria-hidden="true">↗</span></h3>
-            <p>Play Ethereal Forces and Prismatic from one hub.</p>
+            <p>Explore Ethereal Forces, Prismatic, and Tectonic.</p>
+            <span class="install-label">Open collection</span>
+            </div>
           </a>
         </li>
         <li>
           <a class="card knock" href="../knock.html">
             <img class="card-art" src="../assets/bearbeats-knock-card.png" width="1536" height="1024" alt="" decoding="async">
+            <div class="card-copy">
             <h3>BearBeats Knock <span aria-hidden="true">↗</span></h3>
             <p>Drag the groove pad from boom bap to trap, switch kits, and throw fills.</p>
             <span class="install-label">Play or install</span>
+            </div>
+          </a>
+        </li>
+      </ul>
+      <ul class="grid catalog">
+        <li>
+          <a class="card stamp" href="../stamp-cave/">
+            <h3>Stamp Cave <span aria-hidden="true">↗</span></h3>
+            <p>Paint with neon brushes, drop 50 MATTBEAR stamps, and save your art as a PNG.</p>
           </a>
         </li>
         <li>
