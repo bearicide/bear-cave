@@ -1,4 +1,4 @@
-const CACHE = 'mattbear-retrocade-20261123-v5';
+const CACHE = 'mattbear-retrocade-20261123-v6';
 const files = [
   "./index.html",
   "../cave-shell.js",
@@ -11,6 +11,9 @@ const files = [
   "./art/mascot.webp",
   "./js/modern-games.js",
   "./js/sprites.js",
+  "./js/items.js",
+  "./art/items.webp",
+  "./update.js",
   "./art/characters.webp",
   "./js/scenery.js",
   "./art/orbit.webp",
@@ -47,7 +50,7 @@ const files = [
   "./art/frog.webp"
 ];
 self.addEventListener('install', event => {
-  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(files)));
+  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(files.map(file => new Request(file, {cache: "reload"})))).then(() => self.skipWaiting()));
 });
 self.addEventListener('activate', event => {
   event.waitUntil((async () => {
@@ -60,6 +63,7 @@ self.addEventListener('activate', event => {
 const urls = new Set(files.map(file => new URL(file, self.location).href));
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
+  if (url.searchParams.has('art')) url.searchParams.delete('art');
   if (url.href === self.registration.scope) url.pathname += 'index.html';
   if (event.request.method !== 'GET' || !urls.has(url.href)) return;
   event.respondWith(caches.open(CACHE).then(async cache =>

@@ -15,8 +15,26 @@ body{padding:18px;overflow-x:hidden}.app{width:min(1120px,100%);margin:0 auto}.t
 .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);opacity:0;pointer-events:none;padding:12px 16px;border:1px solid var(--line);border-radius:999px;background:rgba(12,18,34,.92);backdrop-filter:blur(16px);font-weight:850;box-shadow:var(--shadow);transition:.22s ease;z-index:20}.toast.show{opacity:1;transform:translate(-50%,0)}
 @media(max-width:760px){body{padding:10px}.hero{grid-template-columns:1fr}.hero-copy{padding:22px}.stats{grid-template-columns:repeat(4,1fr)}.stat{min-height:82px;padding:12px}.stat strong{font-size:1.55rem}.game-shell{padding:12px;border-radius:22px}.toolbar{align-items:flex-start;flex-direction:column}.board{gap:9px}.face{border-radius:15px}.btn{padding:10px 12px}.pill{display:none}}
 @media(max-width:480px){.stats{grid-template-columns:repeat(2,1fr)}.board{gap:7px}.hero h1{font-size:3rem}.front:after{font-size:1.5rem}.symbol{font-size:2.2rem}}
+
+.item-sprite{display:inline-block;width:65%;aspect-ratio:1;background-image:url('../art/items.webp');background-size:400% 400%;background-repeat:no-repeat}
+.item-0{background-position:0.00000% 0.00000%}
+.item-1{background-position:33.33333% 0.00000%}
+.item-2{background-position:66.66667% 0.00000%}
+.item-3{background-position:100.00000% 0.00000%}
+.item-4{background-position:0.00000% 33.33333%}
+.item-5{background-position:33.33333% 33.33333%}
+.item-6{background-position:66.66667% 33.33333%}
+.item-7{background-position:100.00000% 33.33333%}
+.item-8{background-position:0.00000% 66.66667%}
+.item-9{background-position:33.33333% 66.66667%}
+.item-10{background-position:66.66667% 66.66667%}
+.item-11{background-position:100.00000% 66.66667%}
+.item-12{background-position:0.00000% 100.00000%}
+.item-13{background-position:33.33333% 100.00000%}
+.item-14{background-position:66.66667% 100.00000%}
+.item-15{background-position:100.00000% 100.00000%}
 </style>
-<link rel="stylesheet" href="../cabinet.css"></head>
+<link rel="stylesheet" href="../cabinet.css"><script defer src="../update.js?art=6"></script></head>
 <body>
 <main class="app cabinet" style="--paint:#e6a2ff">
 <header class="topbar"><a class="back" href="../index.html">← RETROCADE</a><span class="pill">MATTBEAR / MEMORY MATCH</span></header>
@@ -26,14 +44,14 @@ body{padding:18px;overflow-x:hidden}.app{width:min(1120px,100%);margin:0 auto}.t
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
 (()=>{
-const icons=['🐻','🌈','🎛️','🎧','⚡','🛸','🧠','🎟️'];
+const icons=['Diamond','Star','Bolt','Seven','Emerald','Crystal','Chest','Cherries'];
 const board=document.getElementById('board'),movesEl=document.getElementById('moves'),pairsEl=document.getElementById('pairs'),streakEl=document.getElementById('streak'),bestEl=document.getElementById('best'),toast=document.getElementById('toast');
 let deck=[],open=[],matched=new Set(),moves=0,streak=0,locked=false,selected=0;
 const best=Number(localStorage.getItem('retrocade-memory-best')||0);bestEl.textContent=best||'—';
 function shuffle(items){for(let i=items.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[items[i],items[j]]=[items[j],items[i]]}return items}
 function notify(text){toast.textContent=text;toast.classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>toast.classList.remove('show'),1300)}
 function updateStats(){movesEl.textContent=moves;pairsEl.textContent=(matched.size/2)+'/8';streakEl.textContent=streak}
-function render(){board.innerHTML='';deck.forEach((value,index)=>{const card=document.createElement('button');card.type='button';card.className='card';card.setAttribute('role','gridcell');card.setAttribute('aria-label','Hidden memory card');card.tabIndex=index===selected?0:-1;card.innerHTML='<span class="card-inner"><span class="face front"></span><span class="face back"><span class="symbol">'+value+'</span></span></span>';if(index===selected)card.classList.add('selected');if(open.includes(index))card.classList.add('flipped');if(matched.has(index)){card.classList.add('matched');card.setAttribute('aria-label','Matched '+value)}card.addEventListener('click',()=>{selected=index;flip(index)});card.addEventListener('focus',()=>{selected=index;syncSelection()});board.appendChild(card)})}
+function render(){board.innerHTML='';deck.forEach((value,index)=>{const card=document.createElement('button');card.type='button';card.className='card';card.setAttribute('role','gridcell');card.setAttribute('aria-label','Hidden memory card');card.tabIndex=index===selected?0:-1;card.innerHTML='<span class="card-inner"><span class="face front"></span><span class="face back"><span class="item-sprite item-'+icons.indexOf(value)+'" role="img" aria-label="'+value+'"></span></span></span>';if(index===selected)card.classList.add('selected');if(open.includes(index)){card.classList.add('flipped');card.setAttribute('aria-label',value)}if(matched.has(index)){card.classList.add('matched');card.setAttribute('aria-label','Matched '+value)}card.addEventListener('click',()=>{selected=index;flip(index)});card.addEventListener('focus',()=>{selected=index;syncSelection()});board.appendChild(card)})}
 function syncSelection(){[...board.children].forEach((card,index)=>{card.classList.toggle('selected',index===selected);card.tabIndex=index===selected?0:-1})}
 function start(){deck=shuffle([...icons,...icons]);open=[];matched=new Set();moves=0;streak=0;locked=false;selected=0;updateStats();render()}
 function flip(index){if(locked||matched.has(index)||open.includes(index))return;open.push(index);render();if(open.length<2)return;moves++;locked=true;const[a,b]=open;if(deck[a]===deck[b]){matched.add(a);matched.add(b);streak++;open=[];locked=false;updateStats();render();notify(streak>1?'Streak x'+streak:'Pair matched');if(matched.size===deck.length){const previous=Number(localStorage.getItem('retrocade-memory-best')||0);if(!previous||moves<previous){localStorage.setItem('retrocade-memory-best',moves);bestEl.textContent=moves;notify('New best: '+moves+' moves')}else notify('Board cleared in '+moves+' moves')}}else{streak=0;updateStats();setTimeout(()=>{open=[];locked=false;render()},650)}}

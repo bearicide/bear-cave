@@ -16,8 +16,26 @@ body{padding:12px;overflow-x:hidden}.app{width:min(1120px,100%);margin:auto}.top
 @media(max-width:780px){body{padding:8px}.hero{grid-template-columns:1fr}.stats{grid-template-columns:repeat(4,1fr)}.stat{min-height:68px;padding:9px}.stage{grid-template-columns:1fr}.side{grid-template-columns:1fr 1fr}.toolbar{align-items:flex-start;flex-direction:column}.btns{width:100%;display:grid;grid-template-columns:1fr 1fr}.tag{display:none}.hero-copy{padding:18px}.shell{border-radius:18px}.machine{padding:9px}}
 @media(max-width:500px){body{padding:6px}.stats{grid-template-columns:repeat(2,1fr)}.side{grid-template-columns:1fr}.hero h1{font-size:3.2rem}.reels{gap:4px;padding:6px}.reel{gap:4px}.cell{border-radius:10px;font-size:1.55rem}.cell small{display:none}.machine{border-radius:15px}.spin{min-height:76px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
+.item-sprite{display:inline-block;width:65%;aspect-ratio:1;background-image:url('../art/items.webp');background-size:400% 400%;background-repeat:no-repeat}
+.item-0{background-position:0.00000% 0.00000%}
+.item-1{background-position:33.33333% 0.00000%}
+.item-2{background-position:66.66667% 0.00000%}
+.item-3{background-position:100.00000% 0.00000%}
+.item-4{background-position:0.00000% 33.33333%}
+.item-5{background-position:33.33333% 33.33333%}
+.item-6{background-position:66.66667% 33.33333%}
+.item-7{background-position:100.00000% 33.33333%}
+.item-8{background-position:0.00000% 66.66667%}
+.item-9{background-position:33.33333% 66.66667%}
+.item-10{background-position:66.66667% 66.66667%}
+.item-11{background-position:100.00000% 66.66667%}
+.item-12{background-position:0.00000% 100.00000%}
+.item-13{background-position:33.33333% 100.00000%}
+.item-14{background-position:66.66667% 100.00000%}
+.item-15{background-position:100.00000% 100.00000%}
 </style>
-<link rel="stylesheet" href="../cabinet.css"></head>
+<link rel="stylesheet" href="../cabinet.css"><script defer src="../update.js?art=6"></script></head>
 <body>
 <main class="app cabinet" style="--paint:#ffdb66">
 <header class="top"><a href="../index.html">← RETROCADE</a><span class="tag">NEON VAULT</span></header>
@@ -42,7 +60,7 @@ const reelsEl=document.getElementById('reels'),ticketsEl=document.getElementById
 let grid=[],tickets=0,best=0,freeSpins=0,spins=0,spinning=false,sound=true,ac=null;
 function pick(){const total=symbols.reduce((n,s)=>n+s.weight,0);let n=Math.random()*total;for(const s of symbols){n-=s.weight;if(n<=0)return s}return symbols[0]}
 function makeGrid(){return Array.from({length:5},()=>Array.from({length:3},pick))}
-function render(winCells=[]){reelsEl.innerHTML='';grid.forEach((reel,r)=>{const col=document.createElement('div');col.className='reel';reel.forEach((s,row)=>{const cell=document.createElement('div');cell.className='cell'+(winCells.some(([wr,wc])=>wr===r&&wc===row)?' win':'');cell.style.setProperty('--symbol-color',({vault:'#9beaff',star:'#ffdb58',bolt:'#adff78',seven:'#ff779c',gem:'#d4abff'})[s.id]||'#fff5aa');cell.dataset.reel=r;cell.dataset.row=row;cell.innerHTML=`${s.face}<small>${s.label}</small>`;col.appendChild(cell)});reelsEl.appendChild(col)})}
+function render(winCells=[]){reelsEl.innerHTML='';grid.forEach((reel,r)=>{const col=document.createElement('div');col.className='reel';reel.forEach((s,row)=>{const cell=document.createElement('div');cell.className='cell'+(winCells.some(([wr,wc])=>wr===r&&wc===row)?' win':'');cell.style.setProperty('--symbol-color',({vault:'#9beaff',star:'#ffdb58',bolt:'#adff78',seven:'#ff779c',gem:'#d4abff'})[s.id]||'#fff5aa');cell.dataset.reel=r;cell.dataset.row=row;cell.innerHTML=`<span class="item-sprite item-${symbols.indexOf(s)}" role="img" aria-label="${s.label}"></span><small>${s.label}</small>`;col.appendChild(cell)});reelsEl.appendChild(col)})}
 function tone(f=440,d=.08,type='triangle',v=.04,delay=0){if(!sound)return;const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;ac=ac||new AC();if(ac.state==='suspended')ac.resume();const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime+delay;o.type=type;o.frequency.value=f;o.connect(g);g.connect(ac.destination);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.start(t);o.stop(t+d+.01)}
 function toastMsg(text){toast.textContent=text;toast.classList.add('show');clearTimeout(window.__slotToast);window.__slotToast=setTimeout(()=>toast.classList.remove('show'),1100)}
 function saveTickets(n){tickets+=n;ticketsEl.textContent=tickets;best=Math.max(best,n);bestEl.textContent=best;try{const state=JSON.parse(localStorage.getItem('retrocadeState')||'{}');state.tickets=(state.tickets||0)+n;localStorage.setItem('retrocadeState',JSON.stringify(state))}catch{}if(n)toastMsg('+'+n+' tickets')}
