@@ -1,3 +1,4 @@
+import { wallet, saveWallet, addPaws, spendPaws } from './wallet.mjs';
 import { setupMidi } from './midi.mjs';
 import { tracks, levels, createChart, createRound, rank } from './rhythm.mjs';
 import { createAudio } from './audio.mjs';
@@ -24,14 +25,6 @@ const reverseLabel = $('reverse-label');
 const themeSelect = $('theme');
 const themeApply = $('theme-apply');
 const palettes = { classic: 0, ember: 30, aurora: 30 };
-let wallet;
-try { wallet = JSON.parse(readStorage('beatbear:paws')) || {}; } catch { wallet = {}; }
-wallet = {
-  paws: Number.isSafeInteger(wallet.paws) ? Math.max(0, wallet.paws) : 0,
-  unlocked: ['classic', ...Object.keys(palettes).filter(key => key !== 'classic' && wallet.unlocked?.includes?.(key))],
-  applied: wallet.applied && typeof wallet.applied === 'object' ? wallet.applied : {},
-};
-
 function updateShop(reset = false) {
   const activeTheme = wallet.unlocked.includes(wallet.applied[trackId]) ? wallet.applied[trackId] : 'classic';
   $('game').closest('.cabinet').dataset.theme = activeTheme;
@@ -49,11 +42,11 @@ function buyTheme() {
   if (!Object.hasOwn(palettes, choice)) return;
   if (!wallet.unlocked.includes(choice)) {
     if (wallet.paws < palettes[choice]) return;
-    wallet.paws -= palettes[choice];
+    if (!spendPaws(palettes[choice], choice + ' track colors')) return;
     wallet.unlocked.push(choice);
   }
   wallet.applied[trackId] = choice;
-  writeStorage('beatbear:paws', JSON.stringify(wallet));
+  saveWallet();
   updateShop();
 }
 const huntTarget = 12;
@@ -313,8 +306,8 @@ function finish() {
   const stats = round.stats();
   const earned = Math.floor((stats.counts.perfect + stats.counts.great) / 5);
   if (earned > 0) {
-    wallet.paws += earned;
-    writeStorage('beatbear:paws', JSON.stringify(wallet));
+    addPaws(earned, 'Track completed', 'earned');
+    saveWallet();
     updateShop();
   }
   if (stats.score > 0) submitRun().catch(() => {
@@ -599,3 +592,7 @@ updateSound();
 ready();
 
 setupMidi(hit, pause);
+
+window.addEventListener('bear-wallet', () => updateShop());
+window.addEventListener('bear-shop-open', pause);
+document.querySelectorAll('a[href="#paw-shop"]').forEach(link => link.addEventListener('click', pause));

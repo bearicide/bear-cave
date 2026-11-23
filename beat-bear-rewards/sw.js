@@ -1,5 +1,5 @@
-const cacheName = 'beatbear-release-1a6405f05924';
-const files = ["./", "./game.mjs", "./audio.mjs", "./loverkrafted.ogg", "./gacha-grunge-girls.mp3", "./pad-paw.webp", "./pad-roar.webp", "./icon-512.png", "./pad-fang.webp", "./bear.webp", "./icon-192.png", "./paw.svg", "./midnight.ogg", "./rhythm.mjs", "./deadsea.ogg", "./manifest.webmanifest", "./pad-claw.webp", "./midi.mjs", "./pwa.mjs", "./style.css", "./icon-maskable.png", "./index.html"];
+const cacheName = 'beatbear-release-696a24e3c89888cf';
+const files = ["./", "./game.mjs", "./audio.mjs", "./loverkrafted.ogg", "./gacha-grunge-girls.mp3", "./pad-paw.webp", "./wallet.mjs", "./.nojekyll", "./pad-roar.webp", "./icon-512.png", "./pad-fang.webp", "./bear.webp", "./icon-192.png", "./paw.svg", "./midnight.ogg", "./rhythm.mjs", "./deadsea.ogg", "./manifest.webmanifest", "./pad-claw.webp", "./midi.mjs", "./pwa.mjs", "./style.css", "./catalog.mjs", "./icon-maskable.png", "./index.html", "./rewards.mjs", "./rewards.css"];
 const paths = new Set(files.map(path => new URL(path, self.registration.scope).pathname));
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(cacheName).then(cache => cache.addAll(files)));

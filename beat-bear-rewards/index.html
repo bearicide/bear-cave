@@ -7,6 +7,7 @@
   <meta name="description" content="Beat Bear is a four-lane rhythm arcade. Play original beats with your keyboard or tap the pads.">
   <link rel="icon" href="paw.svg" type="image/svg+xml">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="rewards.css">
   <title>Beat Bear Rewards · Rhythm Arcade</title>
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./icon-192.png">
@@ -32,7 +33,7 @@
       <div class="brand" aria-label="Beat Bear"><span class="brand-mark"><svg class="icon"><use href="#paw"/></svg></span><span>BEAT<span class="slash">/</span>BEAR</span></div>
       <div class="header-actions">
         <button id="midi-button" class="tool-button midi-button" type="button">MIDI</button>
-        <a class="tool-button contact-link" href="#contact">Contact</a>
+        <a class="tool-button" href="#paw-shop">Paw Shop</a>
         <button id="sound-button" class="tool-button" type="button" aria-label="Mute sound" title="Toggle sound (M)"><svg class="icon"><use id="sound-icon" href="#sound"/></svg><span id="sound-label">Sound on</span></button>
         <button id="help-button" class="tool-button" type="button" title="How to play"><svg class="icon"><use href="#help-icon"/></svg><span>How to play</span></button>
       </div>
@@ -52,7 +53,7 @@
           <div class="track-name"><label class="sr-only" for="track">Track</label><select id="track"><option value="cave">Cave Circuit</option><option value="fuzz">Fuzz Trail</option><option value="claw">Claw Signal</option><option value="gacha">Gacha Grunge Girls</option><option value="loverkrafted">Loverkrafted</option><option value="deadsea">Deadsea</option><option value="midnight">Midnight Hollows</option></select><span id="track-meta">120 BPM · Warehouse house</span></div>
           <svg class="icon track-arrow"><use href="#down"/></svg>
         </div>
-        <p>Bear Paws are saved on this device for game unlocks. No cash value. Sponsored rewards are not live yet.</p>
+        <p class="wallet-note">Preview wallet · saved on this device. <a href="#paw-shop">Get Bear Paws</a></p>
         <div class="theme-shop">
           <label for="theme">Track colors</label><span id="paw-balance">0 Bear Paws</span>
           <select id="theme"><option value="classic">Classic · Free</option><option value="ember">Ember · 30 Paws</option><option value="aurora">Aurora · 30 Paws</option></select>
@@ -115,6 +116,25 @@
       <p id="announcer" class="sr-only" role="status" aria-live="polite"></p>
     </section>
   </main>
+  <section class="shell rewards-hub" id="paw-shop" aria-labelledby="shop-title">
+    <div class="shop-intro"><div><p class="eyebrow">PLAY. COLLECT. MAKE IT YOURS.</p><h2 id="shop-title">THE PAW SHOP</h2><p>Your beats. Your colors. A little more bear.</p></div><div class="preview-chip">INTERACTIVE PREVIEW · NO PAYMENTS</div></div>
+    <div class="wallet-strip"><div><span>YOUR BEAR PAWS</span><strong id="shop-balance">0</strong><small>Game currency · no cash value</small></div><div><span>EARNED IN GAME</span><strong id="earned-balance">0</strong><small>Play tracks to collect Paws</small></div><div><span>DEMO PACK PAWS</span><strong id="demo-balance">0</strong><small>Example packs · no money charged</small></div></div>
+    <div class="shop-tabs" role="tablist" aria-label="Paw Shop sections"><button id="packs-tab" role="tab" aria-selected="true" aria-controls="packs-panel">Get Paws</button><button id="colors-tab" role="tab" aria-selected="false" aria-controls="colors-panel" tabindex="-1">Spend Paws</button><button id="activity-tab" role="tab" aria-selected="false" aria-controls="activity-panel" tabindex="-1">Wallet activity</button></div>
+    <div id="packs-panel" role="tabpanel" aria-labelledby="packs-tab">
+      <p class="shop-caption">Proposed one-time packs in USD. Try the full demo flow below; real checkout is not connected.</p>
+      <div class="pack-grid">
+        <article class="paw-pack"><span class="pack-name">POCKET PAWS</span><div class="pack-art" aria-hidden="true">🐾</div><h3>200 <small>PAWS</small></h3><p class="pack-price">$1.99 <small>USD</small></p><p>A little color for your next session.</p><button type="button" data-pack="pocket">Preview $1.99 pack</button></article>
+        <article class="paw-pack featured-pack"><span class="pack-name">BEAR STASH</span><div class="pack-art" aria-hidden="true">🐾 🐾</div><h3>550 <small>PAWS</small></h3><p class="pack-price">$4.99 <small>USD</small></p><p>500 Paws + 50 bonus Paws.</p><button type="button" data-pack="stash">Preview $4.99 pack</button></article>
+        <article class="paw-pack"><span class="pack-name">CAVE RESERVE</span><div class="pack-art" aria-hidden="true">🐻</div><h3>1,200 <small>PAWS</small></h3><p class="pack-price">$9.99 <small>USD</small></p><p>1,000 Paws + 200 bonus Paws.</p><button type="button" data-pack="reserve">Preview $9.99 pack</button></article>
+      </div>
+      <p class="currency-note">Bear Paws unlock digital extras inside Beat Bear. They cannot be cashed out, transferred, or used to enter cash-prize games. Any future sponsor rewards will have their own separate balance. Example prices may change before launch.</p>
+    </div>
+    <div id="colors-panel" role="tabpanel" aria-labelledby="colors-tab" hidden><p class="shop-caption">Unlock once, then apply from Track colors beside the game. These are cosmetic: scoring stays the same.</p><div class="pack-grid"><article class="paw-pack"><div class="swatches ember" aria-hidden="true"><i></i><i></i><i></i><i></i></div><h3>EMBER</h3><p>Hot peach, gold, and molten pink.</p><button type="button" data-unlock="ember">Unlock · 30 Paws</button></article><article class="paw-pack"><div class="swatches aurora" aria-hidden="true"><i></i><i></i><i></i><i></i></div><h3>AURORA</h3><p>Cold mint, ice blue, and violet.</p><button type="button" data-unlock="aurora">Unlock · 30 Paws</button></article><article class="paw-pack earn-card"><span class="pack-name">EARN AS YOU PLAY</span><h3>HIT THE BEAT</h3><p>Every five Perfect or Great hits earn one Paw when your track finishes. Purchases are optional.</p><a class="shop-play" href="#main">Play a track</a></article></div></div>
+    <div id="activity-panel" role="tabpanel" aria-labelledby="activity-tab" hidden><p class="shop-caption">Activity for this device’s preview wallet. This is not a payment receipt or an online account.</p><ol id="wallet-activity" class="wallet-activity"></ol></div>
+    <p id="shop-status" class="shop-status" role="status" aria-live="polite"></p>
+    <details class="shop-faq"><summary>Accounts, purchases &amp; saving</summary><p>You can play without an account. This preview saves Paws and unlocks in this browser; clearing browser data removes them. Cloud accounts are not connected yet. At launch, dollar purchases will require an account and verified payment before paid Paws appear. No card details are collected here.</p></details>
+  </section>
+  <dialog id="pack-dialog" aria-labelledby="pack-title"><div class="help-body"><div class="help-top"><h2 id="pack-title">Pack preview</h2><form method="dialog"><button class="tool-button" aria-label="Close pack preview">✕</button></form></div><p class="preview-chip">DEMO · NO MONEY CHARGED</p><p id="pack-summary" class="pack-summary"></p><p>Try adding this pack to your demo wallet, then spend Paws on track colors. This does not create a purchase or a cash balance.</p><button type="button" id="demo-pack-confirm" class="shop-confirm">Add demo Paws</button><p>Real dollar checkout is unavailable until accounts and payments are connected.</p></div></dialog>
   <footer class="shell game-footer">
     <nav aria-label="Sitemap">
       <h2>Sitemap</h2>
@@ -158,6 +178,7 @@
     </div>
   </dialog>
   <script type="module" src="game.mjs"></script>
+  <script type="module" src="rewards.mjs"></script>
   <script type="module" src="./pwa.mjs"></script>
 </body>
 </html>
