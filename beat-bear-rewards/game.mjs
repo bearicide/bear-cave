@@ -562,7 +562,7 @@ pads.forEach((pad, lane) => {
   });
 });
 document.addEventListener('keydown', event => {
-  if (event.defaultPrevented || event.repeat || event.altKey || event.ctrlKey || event.metaKey || document.querySelector('dialog[open]')) return;
+  if (document.getElementById('main').hidden || event.defaultPrevented || event.repeat || event.altKey || event.ctrlKey || event.metaKey || document.querySelector('dialog[open]')) return;
   if (event.target.closest('input, select, textarea, [contenteditable]')) return;
   const lane = laneKeys[event.code];
   const isButton = event.target.closest('button');

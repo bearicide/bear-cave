@@ -34,7 +34,7 @@
   <header class="site-header" id="top">
     <div class="shell header-inner">
       <a class="brand" href="#top" aria-label="Beat Bear Rewards home"><span class="brand-mark"><svg class="icon"><use href="#paw"/></svg></span><span>BEAT<span class="slash">/</span>BEAR<small>REWARDS ARCADE</small></span></a>
-      <nav class="primary-nav" aria-label="Main navigation"><a href="#main">Play</a><a href="#paw-shop">Paw Shop</a><button id="account-open" type="button">Account</button><a href="https://bearicide.github.io/bear-cave/">Bear Cave</a></nav><div class="header-actions">
+      <nav class="primary-nav" aria-label="Main navigation"><a href="#main">Play</a><a href="#paw-shop">Paw Shop</a><button id="account-open" type="button">Account</button><a href="#guide">Guide</a></nav><div class="header-actions">
         <button id="midi-button" class="tool-button midi-button" type="button">MIDI</button>
         
         <button id="sound-button" class="tool-button" type="button" aria-label="Mute sound" title="Toggle sound (M)"><svg class="icon"><use id="sound-icon" href="#sound"/></svg><span id="sound-label">Sound on</span></button>
@@ -42,7 +42,7 @@
       </div>
     </div>
   </header>
-  <section class="shell arcade-banner" aria-labelledby="arcade-title"><div class="banner-copy"><p class="eyebrow">MATTBEAR ORIGINALS</p><h1 id="arcade-title">BEAT BEAR<span>PLAY IT YOUR WAY.</span></h1><p>Catch the rhythm. Collect Paws. Color your cave.</p><div class="banner-actions"><a class="banner-play" href="#main">Play free</a><a href="#paw-shop">Explore Paw Shop</a></div></div><span class="banner-tag">SHOP PREVIEW · NO PAYMENTS</span></section>
+  <section id="home" class="shell arcade-banner" aria-labelledby="arcade-title"><div class="banner-copy"><p class="eyebrow">MATTBEAR ORIGINALS</p><h1 id="arcade-title">BEAT BEAR<span>PLAY IT YOUR WAY.</span></h1><p>Catch the rhythm. Collect Paws. Color your cave.</p><div class="banner-actions"><a class="banner-play" href="#main">Play free</a><a href="#paw-shop">Explore Paw Shop</a></div></div><span class="banner-tag">SHOP PREVIEW · NO PAYMENTS</span></section>
   <main class="shell layout" id="main" tabindex="-1">
     <aside id="setup" class="sidebar" aria-label="Track setup">
       <div class="poster">
@@ -139,12 +139,19 @@
     <details class="shop-faq" id="wallet-info"><summary>Accounts, purchases &amp; saving</summary><p>You can play without an account. This preview saves Paws and unlocks in this browser; clearing browser data removes them. Use Account to sign in, then save or load demo progress across devices. Cloud saving needs an internet connection. New email registration is in beta while email delivery is completed. At launch, dollar purchases will require an account and verified payment before paid Paws appear. No card details are collected here.</p></details>
   </section>
   <div id="app-update" class="app-update" role="status" hidden><p>A new Beat Bear version is ready. Updating restarts your run; your wallet stays saved.</p><button id="update-app" type="button">Update &amp; restart</button></div>
+  <section id="guide" tabindex="-1" class="shell guide-screen" aria-labelledby="guide-heading">
+    <h1 id="guide-heading">Arcade guide</h1>
+    <article><h2>Install &amp; offline play</h2><p>On Android, open this preview in Chrome and sign in to ChatGPT if prompted. Tap Install Beat Bear. Keep the game open online until the download finishes.</p><button id="install-app" class="tool-button" type="button">Install Beat Bear</button><p id="offline-status" role="status"></p></article>
+    <article><h2>Play a track</h2><p>Choose a song and difficulty on the Play screen. Start the track and tap the matching pad as each note reaches the hit line. On a keyboard, use A, S, W and D or the arrow keys.</p><a href="#main">Choose a track</a></article>
+    <article><h2>Where your Paws go</h2><p>Earn Paws in the game or try a free demo pack. Spend them on track colors. The shop shows example dollar prices. Every pack in this preview is free and Paws have no cash value.</p><a href="#paw-shop">Open Paw Shop</a></article>
+    <article><h2>Saving progress</h2><p>This browser keeps your wallet and scores. Clearing site data can erase them. Account offers manual cloud saves when signed in and online. Email signup is still in testing.</p></article>
+  </section>
   <dialog id="account-dialog" aria-labelledby="account-title"><div class="help-body account-body"><div class="help-top"><h2 id="account-title">Save your cave</h2><form method="dialog"><button class="tool-button" aria-label="Close account">✕</button></form></div>
     <div id="account-guest"><h3 id="account-mode-title">Sign in to your cave</h3><p>An optional Beat Bear account saves your demo Paws, unlocks and best scores across devices. You can always play as a guest.</p><form id="account-form"><label for="account-email">Email</label><input id="account-email" name="email" type="email" autocomplete="username" required maxlength="254"><label for="account-password">Password</label><input id="account-password" name="password" type="password" autocomplete="current-password" required minlength="1" maxlength="128"><button id="account-submit" data-account-action type="submit">Sign in</button></form><button id="account-switch" data-account-action class="account-text-button" type="button">New here? Create an account</button><p class="account-beta">Account beta: new signup emails are limited while email delivery is completed. After confirming an email, return here and sign in.</p></div>
     <div id="account-member" hidden><p id="account-email-label"></p><form id="account-profile"><label for="account-name">Display name</label><input id="account-name" type="text" minlength="2" maxlength="40" required autocomplete="nickname"><button data-account-action type="submit">Save name</button></form><div class="cloud-save-card"><h3>Demo progress</h3><p id="cloud-save-date">Checking your save…</p><div class="cloud-actions"><button id="account-save" data-account-action type="button">Save this device</button><button id="account-load" data-account-action type="button">Load cloud save</button></div><p>Saving replaces your previous cloud save. Loading replaces this device’s demo Paws, unlocks and best scores. Saves do not merge automatically.</p></div><div id="restore-confirmation" class="restore-confirmation" hidden><p>Load the save from <strong id="restore-date"></strong>? This replaces your current device’s demo progress and restarts the game.</p><button id="account-restore" data-account-action type="button">Load &amp; restart</button><button id="restore-cancel" type="button">Keep this device</button></div><p class="paid-paw-note"><strong id="paid-paws">0</strong> paid Paws · dollar purchases are not live. Demo progress cannot change this balance.</p><button id="account-signout" data-account-action class="account-text-button" type="button">Sign out on this device</button></div>
     <p id="account-status" role="status" aria-live="polite"></p><p class="account-privacy">Your cloud save is private to your account. Demo progress remains on a shared device after sign-out. This account is separate from the ChatGPT sign-in used to open the private preview.</p>
   </div></dialog>
-  <dialog id="install-dialog" aria-labelledby="install-title"><div class="help-body"><div class="help-top"><h2 id="install-title">Take Beat Bear with you</h2><form method="dialog"><button class="tool-button" aria-label="Close install help">✕</button></form></div><p>Install from your browser for an app icon and its own window.</p><ul><li><strong>Android / Chrome:</strong> open the browser menu and choose Install app or Add to Home screen.</li><li><strong>iPhone / Safari:</strong> open Share, then Add to Home Screen.</li><li><strong>Desktop:</strong> use your browser’s install icon or app menu.</li></ul><p>Open Beat Bear online once and wait for “Offline ready” before leaving your connection. Demo play and the shop work offline. Future cloud accounts and dollar payments need an internet connection.</p><p>Using the ChatGPT app? Open this page in Chrome or Safari first.</p></div></dialog>
+  <dialog id="install-dialog" aria-labelledby="install-title"><div class="help-body"><div class="help-top"><h2 id="install-title">Take Beat Bear with you</h2><form method="dialog"><button class="tool-button" aria-label="Close install help">✕</button></form></div><p>Install from your browser for an app icon and its own window.</p><ul><li><strong>Android / Chrome:</strong> open the browser menu and choose Install app or Add to Home screen.</li><li><strong>iPhone / Safari:</strong> open Share, then Add to Home Screen.</li><li><strong>Desktop:</strong> use your browser’s install icon or app menu.</li></ul><p>Open Beat Bear online once and wait for “Offline ready” before leaving your connection. Demo play and the shop work offline. Cloud saves need an internet connection. Dollar checkout is unavailable.</p><p>Using the ChatGPT app? Open this page in Chrome or Safari first.</p></div></dialog>
   <dialog id="pack-dialog" aria-labelledby="pack-title"><div class="help-body"><div class="help-top"><h2 id="pack-title">Pack preview</h2><form method="dialog"><button class="tool-button" aria-label="Close pack preview">✕</button></form></div><p class="preview-chip">DEMO · NO MONEY CHARGED</p><img class="dialog-pack-art" id="dialog-pack-art" src="assets/pocket_paws.png" alt="" width="1280" height="1280"><p id="pack-summary" class="pack-summary"></p><p>Try adding this pack to your demo wallet, then spend Paws on track colors. This does not create a purchase or a cash balance.</p><button type="button" id="demo-pack-confirm" class="shop-confirm">Add demo Paws</button><p>Real dollar checkout is not connected. Demo Paws never become paid Paws.</p></div></dialog>
   <footer class="shell game-footer">
     <nav aria-label="Sitemap">
@@ -167,7 +174,7 @@
       <a href="https://bearicide.github.io/music/">Music</a>
       <a href="https://bearicide.github.io/">MATTBEAR home</a>
     </section>
-    <div class="footer-install"><button id="install-app" class="tool-button" type="button">Install Beat Bear</button><p id="offline-status" role="status"></p></div>
+    <div class="footer-install"><a href="#guide">Install &amp; offline help</a></div>
     <div class="footer-bottom"><span>© MATTBEAR · Flushing, Michigan</span><span>Play free · purchases optional at launch</span><a href="#top">Back to top</a></div>
   </footer>
   <dialog id="help-dialog" aria-labelledby="help-title">
@@ -191,6 +198,7 @@
       <div class="midi-grid"><button class="tool-button" id="midi-enable" type="button">Enable MIDI</button><button class="tool-button" id="midi-reset" type="button">Reset mapping</button></div>
     </div>
   </dialog>
+  <script type="module" src="screens.mjs"></script>
   <script type="module" src="game.mjs"></script>
   <script type="module" src="rewards.mjs"></script>
   <script type="module" src="accounts.mjs"></script>

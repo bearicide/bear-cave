@@ -47,13 +47,20 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' }).then(async reg => {
     registration = reg;
     offerUpdate();
-    reg.addEventListener('updatefound', () => {
+    function watchInstall() {
       const worker = reg.installing;
-      worker?.addEventListener('statechange', () => {
+      if (!worker) return;
+      function changed() {
         if (worker.state === 'installed') offerUpdate();
-        if (worker.state === 'redundant' && !cached) status.textContent = 'Offline download did not finish. Open online and reload to retry.';
-      });
-    });
+        if (worker.state === 'redundant' && !cached) {
+          status.textContent = 'Offline download interrupted. Reconnect and reload Beat Bear to retry.';
+        }
+      }
+      worker.addEventListener('statechange', changed);
+      changed();
+    }
+    reg.addEventListener('updatefound', watchInstall);
+    watchInstall();
     await navigator.serviceWorker.ready;
     cached = true;
     showStatus();
