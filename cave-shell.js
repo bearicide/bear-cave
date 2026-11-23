@@ -1,6 +1,10 @@
 (() => {
   if (window.self !== window.top || document.querySelector('[data-cave-shell]')) return;
   const script = document.currentScript;
+  const adsScript = document.createElement('script');
+  adsScript.src = new URL('site-ads.js', script.src).href;
+  adsScript.defer = true;
+  document.head.appendChild(adsScript);
   const root = script.dataset.caveRoot || './';
   const inProgress = new URL('in-progress/', new URL(root, document.baseURI)).href;
   const overlay = script.dataset.cavePlacement === 'overlay';
