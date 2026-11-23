@@ -70,6 +70,7 @@ const audio = createAudio(() => {
 });
 
 let state = 'ready';
+let pauseWhenReady = false;
 let trackId = trackSelect.value;
 let difficulty = 'normal';
 let chart;
@@ -284,6 +285,7 @@ function refreshSetup() {
 }
 
 function ready(focusTrack = false) {
+  pauseWhenReady = false;
   setState('ready');
   refreshSetup();
   clearNotes();
@@ -450,7 +452,9 @@ function beginPlayback(offset, countBeats) {
   setOverlay({});
   focusGame();
   render();
-  if (document.hidden || document.querySelector('dialog[open]')) pause();
+  const mustPause = pauseWhenReady || document.hidden || document.querySelector('dialog[open]');
+  pauseWhenReady = false;
+  if (mustPause) pause();
 }
 
 async function start() {
@@ -481,6 +485,7 @@ async function start() {
 }
 
 function pause() {
+  if (state === 'starting') { pauseWhenReady = true; return; }
   if (state !== 'playing') return;
   pausedAt = time();
   cancelAnimationFrame(frame);

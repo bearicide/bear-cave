@@ -26,5 +26,41 @@
       "type": "image/png",
       "purpose": "maskable"
     }
+  ],
+  "description": "Catch the rhythm, collect Bear Paws and customize your Beat Bear arcade.",
+  "lang": "en",
+  "orientation": "any",
+  "categories": [
+    "games",
+    "music",
+    "entertainment"
+  ],
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "shortcuts": [
+    {
+      "name": "Play Beat Bear",
+      "short_name": "Play",
+      "url": "./#main",
+      "icons": [
+        {
+          "src": "./icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Paw Shop",
+      "short_name": "Paw Shop",
+      "url": "./#paw-shop",
+      "icons": [
+        {
+          "src": "./icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
   ]
 }

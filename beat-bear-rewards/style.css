@@ -64,8 +64,8 @@ h1, h2, p { margin: 0; }
 .poster-content { padding: 21px 22px; }
 .eyebrow { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; color: var(--green); font: 700 10px var(--mono); letter-spacing: .18em; }
 .eyebrow span { width: 15px; height: 1px; background: var(--green); }
-.poster h1 { font: 950 clamp(55px, 6.65vw, 97px)/.78 var(--display); letter-spacing: -.085em; transform: skewX(-7deg); transform-origin: left bottom; text-shadow: 0 3px 23px #080a07; }
-.poster h1 em { color: var(--green); font-style: normal; }
+.poster .poster-title { font: 950 clamp(55px, 6.65vw, 97px)/.78 var(--display); letter-spacing: -.085em; transform: skewX(-7deg); transform-origin: left bottom; text-shadow: 0 3px 23px #080a07; }
+.poster .poster-title em { color: var(--green); font-style: normal; }
 .poster-credit { position: absolute; display: flex; align-items: center; gap: 10px; left: 20px; right: 20px; bottom: 13px; color: #e2ecd3; font: 700 9px var(--mono); letter-spacing: .25em; }
 .poster-credit span { height: 1px; flex: 1; background: #c5f95570; }
 .setup { padding: 13px; border: 1px solid var(--edge); border-radius: 11px; background: #181a17; }
@@ -183,7 +183,7 @@ dialog::backdrop { background: #080b08bc; }
 @media (max-width: 820px) {
   .shell { width: calc(100% - 32px); }
   .layout { gap: 10px; }
-  .poster h1 { font-size: clamp(58px, 9vw, 78px); }
+  .poster .poster-title { font-size: clamp(58px, 9vw, 78px); }
   .stat { padding-inline: 7px; }
 }
 @media (max-width: 640px) {
@@ -199,7 +199,7 @@ dialog::backdrop { background: #080b08bc; }
   .sidebar { gap: 0; display: grid; grid-template-columns: minmax(93px, .39fr) minmax(0, 1fr); }
   .poster { min-height: 0; border-radius: 8px 0 0 8px; border-right: 0; }
   .poster-content { padding: 10px 5px 0 9px; }
-  .poster h1 { font-size: clamp(26px, 7vw, 45px); }
+  .poster .poster-title { font-size: clamp(26px, 7vw, 45px); }
   .eyebrow { font-size: 7px; letter-spacing: 0; margin-bottom: 5px; }
   .eyebrow span { display: none; }
   .poster-credit { display: none; }
@@ -238,7 +238,7 @@ dialog::backdrop { background: #080b08bc; }
   .sidebar { display: flex; gap: 5px; }
   .poster { min-height: 76px; border-radius: 8px; border-right: 1px solid #414933; }
   .poster-content { padding: 10px; }
-  .poster h1 { font-size: clamp(31px, 6vw, 58px); }
+  .poster .poster-title { font-size: clamp(31px, 6vw, 58px); }
   .eyebrow { margin-bottom: 6px; }
   .poster-credit { display: none; }
   .setup { border-radius: 7px; padding: 6px; }

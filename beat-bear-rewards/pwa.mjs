@@ -1,6 +1,19 @@
 const install = document.querySelector('#install-app');
 const status = document.querySelector('#offline-status');
+const help = document.querySelector('#install-dialog');
+const updateNotice = document.querySelector('#app-update');
+const updateButton = document.querySelector('#update-app');
 let promptEvent;
+let registration;
+let updating = false;
+let cached = false;
+const standalone = () => window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+function showStatus() {
+  status.textContent = cached
+    ? (navigator.onLine ? 'Offline ready · demo progress saved on this device' : 'Offline · game and demo shop are ready')
+    : (navigator.onLine ? 'Preparing offline play…' : 'Offline · connect once to finish setup');
+}
+install.hidden = standalone();
 window.addEventListener('beforeinstallprompt', event => {
   event.preventDefault();
   promptEvent = event;
@@ -8,20 +21,43 @@ window.addEventListener('beforeinstallprompt', event => {
 });
 window.addEventListener('appinstalled', () => { install.hidden = true; promptEvent = undefined; });
 install.addEventListener('click', async () => {
-  if (!promptEvent) return;
+  window.dispatchEvent(new Event('bear-shop-open'));
+  if (!promptEvent) { help.showModal(); return; }
   const prompt = promptEvent;
   promptEvent = undefined;
-  install.hidden = true;
-  try { await prompt.prompt(); }
-  catch { status.textContent = 'Use your browser menu to install Beat Bear.'; }
+  try {
+    await prompt.prompt();
+    const result = await prompt.userChoice;
+    if (result.outcome === 'accepted') install.hidden = true;
+  } catch { help.showModal(); }
+});
+window.addEventListener('online', showStatus);
+window.addEventListener('offline', showStatus);
+function offerUpdate() { updateNotice.hidden = !registration?.waiting; }
+updateButton.addEventListener('click', () => {
+  if (!registration?.waiting || updating) return;
+  window.dispatchEvent(new Event('bear-shop-open'));
+  updating = true;
+  updateButton.disabled = true;
+  registration.waiting.postMessage({ type: 'SKIP_WAITING' });
 });
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' }).then(registration => {
-    const ready = () => { status.textContent = 'Offline ready · game progress stays on this device'; };
-    if (registration.active) ready();
-    else navigator.serviceWorker.ready.then(ready);
-    registration.installing?.addEventListener('statechange', event => {
-      if (event.target.state === 'redundant' && !registration.active) status.textContent = 'Offline download failed. Reload to retry.';
+  showStatus();
+  navigator.serviceWorker.addEventListener('controllerchange', () => { if (updating) window.location.reload(); });
+  navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' }).then(async reg => {
+    registration = reg;
+    offerUpdate();
+    reg.addEventListener('updatefound', () => {
+      const worker = reg.installing;
+      worker?.addEventListener('statechange', () => {
+        if (worker.state === 'installed') offerUpdate();
+        if (worker.state === 'redundant' && !cached) status.textContent = 'Offline download did not finish. Open online and reload to retry.';
+      });
     });
-  }).catch(() => { status.textContent = 'Offline play unavailable in this browser.'; });
+    await navigator.serviceWorker.ready;
+    cached = true;
+    showStatus();
+  }).catch(() => { status.textContent = 'Play online · offline storage is unavailable in this browser'; });
+} else {
+  status.textContent = 'Play online · this browser does not support offline installation';
 }

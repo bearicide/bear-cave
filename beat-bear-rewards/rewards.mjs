@@ -39,6 +39,7 @@ document.querySelectorAll('[data-pack]').forEach(button => button.addEventListen
   if (!pack) return;
   returnFocus = button;
   $('pack-title').textContent = pack.name;
+  $('dialog-pack-art').src = 'assets/' + ({ pocket: 'pocket_paws', stash: 'bear_stash', reserve: 'cave_reserve' })[selected] + '.png';
   $('pack-summary').textContent = number(pack.paws) + ' Paws · ' + money(pack.cents) + ' USD example price';
   $('demo-pack-confirm').textContent = 'Add ' + number(pack.paws) + ' demo Paws';
   window.dispatchEvent(new Event('bear-shop-open'));
@@ -82,4 +83,5 @@ tabs.forEach((tab, index) => {
   });
 });
 window.addEventListener('bear-wallet', render);
+document.querySelector('[data-wallet-info]').addEventListener('click', () => { $('wallet-info').open = true; });
 render();
