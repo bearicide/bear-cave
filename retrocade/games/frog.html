@@ -55,10 +55,10 @@ function loop(t){const dt=Math.min(.04,(t-last)/1000||0);last=t;update(dt);draw(
 function keyDir(k){return({arrowup:'up',w:'up',arrowdown:'down',s:'down',arrowleft:'left',a:'left',arrowright:'right',d:'right'})[k]}
 document.addEventListener('keydown',e=>{const dir=keyDir(e.key.toLowerCase());if(dir){e.preventDefault();move(dir)}});
 document.querySelectorAll('[data-dir]').forEach(btn=>btn.addEventListener('pointerdown',e=>{e.preventDefault();move(btn.dataset.dir)}));
-let sx=0,sy=0;canvas.addEventListener('pointerdown',e=>{sx=e.clientX;sy=e.clientY});canvas.addEventListener('pointerup',e=>{const dx=e.clientX-sx,dy=e.clientY-sy;if(Math.max(Math.abs(dx),Math.abs(dy))<18)return;move(Math.abs(dx)>Math.abs(dy)?(dx>0?'right':'left'):(dy>0?'down':'up'))});
+let sx=0,sy=0;canvas.addEventListener('pointerdown',e=>{sx=e.clientX;sy=e.clientY});canvas.addEventListener('pointerup',e=>{const dx=e.clientX-sx,dy=e.clientY-sy;if(Math.max(Math.abs(dx),Math.abs(dy))<(18/(window.rcSensitivity||.55)))return;move(Math.abs(dx)>Math.abs(dy)?(dx>0?'right':'left'):(dy>0?'down':'up'))});
 document.getElementById('pauseBtn').addEventListener('click',()=>{if(!running)return;paused=!paused;updateHud()});document.getElementById('resetBtn').addEventListener('click',reset);
 reset();requestAnimationFrame(loop);
 })();
 </script>
-<script src="../js/game-sound.js?v=1"></script><script src="../js/game-sound.js?v=2"></script></body>
+<script src="../js/game-sound.js?v=1"></script><script src="../js/game-sound.js?v=2"></script><script src="../js/game-tuning.js?v=7"></script></body>
 </html>
