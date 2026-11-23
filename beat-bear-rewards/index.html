@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101110">
+  <meta name="description" content="Beat Bear is a four-lane rhythm arcade. Play original beats with your keyboard or tap the pads.">
+  <link rel="icon" href="paw.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <title>Beat Bear Rewards · Rhythm Arcade</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./icon-192.png">
+</head>
+<body>
+  <svg class="symbol-bank" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="paw" viewBox="0 0 24 24"><path fill="currentColor" d="M12 11.2c-1.9 0-3.1 1.5-4.5 3.1C6 15.9 5 16.9 5 18.4c0 1.6 1.2 2.7 2.8 2.7 1.5 0 2.4-.8 4.2-.8s2.7.8 4.2.8c1.6 0 2.8-1.1 2.8-2.7 0-1.5-1-2.5-2.5-4.1-1.4-1.6-2.6-3.1-4.5-3.1Z"/><ellipse fill="currentColor" cx="4.4" cy="10.1" rx="2.1" ry="2.8" transform="rotate(-22 4.4 10.1)"/><ellipse fill="currentColor" cx="9.2" cy="6.4" rx="2.2" ry="3" transform="rotate(-8 9.2 6.4)"/><ellipse fill="currentColor" cx="14.8" cy="6.4" rx="2.2" ry="3" transform="rotate(8 14.8 6.4)"/><ellipse fill="currentColor" cx="19.6" cy="10.1" rx="2.1" ry="2.8" transform="rotate(22 19.6 10.1)"/></symbol>
+    <symbol id="sound" viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4zM15 9a4 4 0 0 1 0 6m2.5-8.5a7.8 7.8 0 0 1 0 11"/></symbol>
+    <symbol id="mute" viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4zm5 4 5 6m0-6-5 6"/></symbol>
+    <symbol id="pause-icon" viewBox="0 0 24 24"><path d="M9 5v14m6-14v14"/></symbol>
+    <symbol id="play-icon" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M8 4.8v14.4L20 12z"/></symbol>
+    <symbol id="disc" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2"/><path d="M7 12a5 5 0 0 1 5-5m5 5a5 5 0 0 1-5 5"/></symbol>
+    <symbol id="left" viewBox="0 0 24 24"><path d="m14 5-7 7 7 7"/></symbol>
+    <symbol id="down" viewBox="0 0 24 24"><path d="m5 9 7 7 7-7"/></symbol>
+    <symbol id="up" viewBox="0 0 24 24"><path d="m5 15 7-7 7 7"/></symbol>
+    <symbol id="right" viewBox="0 0 24 24"><path d="m10 5 7 7-7 7"/></symbol>
+    <symbol id="help-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 5 .3c0 1.5-2.5 1.7-2.5 3.2m0 3.4h.01"/></symbol>
+    <symbol id="restart-icon" viewBox="0 0 24 24"><path d="M4 11a8 8 0 1 1 2 6m-2-6V5m0 6h6"/></symbol>
+  </svg>
+  <a class="skip-link" href="#main">Skip to Beat Bear</a>
+  <header class="site-header" id="top">
+    <div class="shell header-inner">
+      <div class="brand" aria-label="Beat Bear"><span class="brand-mark"><svg class="icon"><use href="#paw"/></svg></span><span>BEAT<span class="slash">/</span>BEAR</span></div>
+      <div class="header-actions">
+        <button id="midi-button" class="tool-button midi-button" type="button">MIDI</button>
+        <a class="tool-button contact-link" href="#contact">Contact</a>
+        <button id="sound-button" class="tool-button" type="button" aria-label="Mute sound" title="Toggle sound (M)"><svg class="icon"><use id="sound-icon" href="#sound"/></svg><span id="sound-label">Sound on</span></button>
+        <button id="help-button" class="tool-button" type="button" title="How to play"><svg class="icon"><use href="#help-icon"/></svg><span>How to play</span></button>
+      </div>
+    </div>
+  </header>
+  <main class="shell layout" id="main" tabindex="-1">
+    <aside id="setup" class="sidebar" aria-label="Track setup">
+      <div class="poster">
+        <div class="poster-art"></div>
+        <div class="poster-content"><p class="eyebrow"><span></span> REWARDS EDITION</p><h1>BEAT<br><em>BEAR</em></h1></div>
+        <div class="poster-credit">MATTBEAR<span></span></div>
+      </div>
+      <section class="setup" aria-label="Game settings">
+        <div class="setup-heading"><h2>TRACK SELECT</h2><span>ORIGINAL BEATS</span></div>
+        <div class="track" id="track-display">
+          <span class="disc"><svg class="icon"><use href="#disc"/></svg></span>
+          <div class="track-name"><label class="sr-only" for="track">Track</label><select id="track"><option value="cave">Cave Circuit</option><option value="fuzz">Fuzz Trail</option><option value="claw">Claw Signal</option><option value="gacha">Gacha Grunge Girls</option><option value="loverkrafted">Loverkrafted</option><option value="deadsea">Deadsea</option><option value="midnight">Midnight Hollows</option></select><span id="track-meta">120 BPM · Warehouse house</span></div>
+          <svg class="icon track-arrow"><use href="#down"/></svg>
+        </div>
+        <p>Bear Paws are saved on this device for game unlocks. No cash value. Sponsored rewards are not live yet.</p>
+        <div class="theme-shop">
+          <label for="theme">Track colors</label><span id="paw-balance">0 Bear Paws</span>
+          <select id="theme"><option value="classic">Classic · Free</option><option value="ember">Ember · 30 Paws</option><option value="aurora">Aurora · 30 Paws</option></select>
+          <button type="button" id="theme-apply">Apply</button>
+        </div>
+        <label class="hunt-option"><input id="hunt-mode" type="checkbox" checked> HUNT power-up</label>
+        <fieldset class="difficulty">
+          <legend>DIFFICULTY</legend>
+          <div class="difficulty-options">
+            <input type="radio" name="difficulty" id="easy" value="easy"><label for="easy">Easy</label>
+            <input type="radio" name="difficulty" id="normal" value="normal" checked><label for="normal">Normal</label>
+            <input type="radio" name="difficulty" id="hard" value="hard"><label for="hard">Hard</label><input type="radio" name="difficulty" id="beast" value="beast"><label for="beast">Beast</label>
+          </div>
+        </fieldset>
+      </section>
+    </aside>
+    <section class="cabinet" aria-label="Rhythm game">
+      <div class="hud">
+        <div class="stat"><span>SCORE</span><strong id="score">000000</strong></div>
+        <div class="stat"><span>COMBO</span><strong id="combo">0<span>×</span></strong></div>
+        <div class="stat"><span>ACCURACY</span><strong id="accuracy">—</strong></div>
+        <div class="stat best"><span>BEST</span><strong id="best">000000</strong></div>
+        <button class="tool-button pause" id="pause" type="button" disabled aria-label="Pause" title="Pause (Space or Esc)"><svg class="icon"><use id="pause-icon-use" href="#pause-icon"/></svg></button>
+      </div>
+      <div class="game" id="game" data-state="ready">
+        <div class="lane-field" id="lane-field" aria-hidden="true">
+          <div class="lane lane-0"><div class="receptor"><svg class="icon"><use href="#left"/></svg></div><div class="note-layer"></div></div>
+          <div class="lane lane-1"><div class="receptor"><svg class="icon"><use href="#down"/></svg></div><div class="note-layer"></div></div>
+          <div class="lane lane-2"><div class="receptor"><svg class="icon"><use href="#up"/></svg></div><div class="note-layer"></div></div>
+          <div class="lane lane-3"><div class="receptor"><svg class="icon"><use href="#right"/></svg></div><div class="note-layer"></div></div>
+        </div>
+        <div class="judgment" id="judgment" aria-hidden="true"><strong id="judgment-title"></strong><span id="judgment-detail"></span></div>
+        <div class="count" id="count" aria-hidden="true" hidden></div>
+        <div class="overlay" id="overlay">
+          <div class="overlay-mark" id="overlay-mark" aria-hidden="true"><svg class="icon"><use href="#paw"/></svg></div>
+          <h2 id="overlay-title">READY TO PLAY?</h2>
+          <p id="overlay-copy">Tap the pads or press A S W D as notes cross the line.</p>
+          <div id="result-details" class="result-details" hidden></div>
+          <div class="overlay-actions">
+            <button id="primary" class="play-button" type="button"><svg class="icon"><use href="#play-icon"/></svg><span id="primary-label">Play track</span></button>
+            <button id="secondary" class="tool-button secondary" type="button" hidden><svg class="icon"><use href="#restart-icon"/></svg><span id="secondary-label">Restart</span></button>
+          </div>
+          <div class="overlay-shortcut" id="overlay-shortcut">or press <kbd>ENTER</kbd></div>
+        </div>
+      </div>
+      <div class="pads" aria-label="Rhythm pads">
+        <button type="button" class="pad lane-0" data-lane="0" aria-label="Left lane, A"><svg class="icon"><use href="#left"/></svg><kbd>A</kbd></button>
+        <button type="button" class="pad lane-1" data-lane="1" aria-label="Down lane, S"><svg class="icon"><use href="#down"/></svg><kbd>S</kbd></button>
+        <button type="button" class="pad lane-2" data-lane="2" aria-label="Up lane, W"><svg class="icon"><use href="#up"/></svg><kbd>W</kbd></button>
+        <button type="button" class="pad lane-3" data-lane="3" aria-label="Right lane, D"><svg class="icon"><use href="#right"/></svg><kbd>D</kbd></button>
+      </div>
+      <div class="power-buttons">
+      <button class="hunt-button" id="hunt" type="button" disabled><span id="hunt-label">HUNT · 0 / 12</span><kbd>E</kbd></button>
+      <button class="hunt-button" id="reverse" type="button" disabled><span id="reverse-label">REVERSE · 0 CLAWS</span><kbd>R</kbd></button>
+      </div>
+      <div class="transport">
+        <span class="clock" id="clock">0:00</span><div class="progress" aria-hidden="true"><div id="progress-fill"></div></div><span class="clock" id="duration">0:32</span>
+      </div>
+      <details id="scoreboard" class="scoreboard"><summary>Online Top 10</summary><p id="board-status" role="status"></p><ol id="board-scores"></ol></details>
+      <p id="announcer" class="sr-only" role="status" aria-live="polite"></p>
+    </section>
+  </main>
+  <footer class="shell game-footer">
+    <nav aria-label="Sitemap">
+      <h2>Sitemap</h2>
+      <a href="#main">Play Beat Bear</a>
+      <a href="#setup">Track setup</a>
+      <a href="#scoreboard">Online Top 10</a>
+      <a href="#credits">About &amp; credits</a>
+      <a href="https://bearicide.github.io/bear-cave/">Bear Cave</a>
+    </nav>
+    <section id="credits" aria-labelledby="credits-title">
+      <h2 id="credits-title">About &amp; credits</h2>
+      <p>Beat Bear is a four-lane rhythm arcade by <strong>MATTBEAR</strong>. Original beats and arcade design by MATTBEAR. Grizzly artwork generated for Beat Bear.</p>
+    </section>
+    <section id="contact" aria-labelledby="contact-title">
+      <h2 id="contact-title">Contact MATTBEAR</h2>
+      <a href="https://bearicide.github.io/discord/">Discord &amp; community</a>
+      <a href="https://bearicide.github.io/music/">Music</a>
+      <a href="https://bearicide.github.io/">MATTBEAR home</a>
+    </section>
+    <div><button id="install-app" class="tool-button" type="button" hidden>Install Beat Bear</button><p id="offline-status" role="status"></p></div>
+  </footer>
+  <dialog id="help-dialog" aria-labelledby="help-title">
+    <div class="help-body">
+      <div class="help-top"><h2 id="help-title">How to play</h2><form method="dialog"><button class="tool-button" type="submit" aria-label="Close help">✕</button></form></div>
+      <p>Press <kbd>A</kbd> <kbd>S</kbd> <kbd>W</kbd> <kbd>D</kbd>, or click or tap the matching pads when the notes cross the hit line. Hit stacked notes together. Use <kbd>Tab</kbd> to move between controls and <kbd>Enter</kbd> or <kbd>Space</kbd> to activate a focused button. <kbd>M</kbd> toggles sound. <kbd>Space</kbd> on the playfield or <kbd>Esc</kbd> pauses or resumes.</p>
+      <p>Closer hits earn more points. Build a streak to raise your multiplier. Missing a note or tapping off beat breaks the streak.</p>
+      <div class="help-keys"><span><kbd>ENTER</kbd> Play / replay</span><span><kbd>SPACE</kbd> Pause / resume</span><span><kbd>M</kbd> Toggle sound</span></div>
+      <p><strong>Beast</strong> adds rapid fills and two-pad chords with tighter timing. Hit both pads together on a chord.</p>
+      <p>In HUNT mode, land 12 Perfect or Great hits to charge. Press <kbd>E</kbd> or tap HUNT to double hit points for 8 beats. Misses still break combos.</p>
+      <p>Earn one Claw every 8 Perfect hits in HUNT mode, up to 3 per run. Press <kbd>R</kbd> or tap Reverse within 2 seconds of a miss, before your next judgment, to restore your combo. The miss still counts toward accuracy.</p>
+      <p class="help-records">Best scores are saved on this device for each track and difficulty.</p>
+    </div>
+  </dialog>
+  <dialog id="midi-dialog" aria-labelledby="midi-title">
+    <div class="help-body">
+      <div class="help-top"><h2 id="midi-title">MIDI controls</h2><form method="dialog"><button class="tool-button" aria-label="Close MIDI controls">✕</button></form></div>
+      <p id="midi-status" role="status">Connect your Launchkey or another MIDI controller.</p>
+      <p>Select a lane below, then play a key or pad to assign it.</p>
+      <div class="midi-grid"><button class="tool-button" type="button" data-learn></button><button class="tool-button" type="button" data-learn></button><button class="tool-button" type="button" data-learn></button><button class="tool-button" type="button" data-learn></button></div>
+      <div class="midi-grid"><button class="tool-button" id="midi-enable" type="button">Enable MIDI</button><button class="tool-button" id="midi-reset" type="button">Reset mapping</button></div>
+    </div>
+  </dialog>
+  <script type="module" src="game.mjs"></script>
+  <script type="module" src="./pwa.mjs"></script>
+</body>
+</html>
