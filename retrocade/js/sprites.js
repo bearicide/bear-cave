@@ -1,5 +1,23 @@
-// Small indexed-color sprites stay sharp at cabinet and phone sizes.
+// The generated atlas uses a tightly cropped 128px cell for each sprite.
 const ArcadeSprites = (() => {
+  const atlas = new Image();
+  atlas.src = new URL('../art/characters.webp', document.currentScript.src);
+  const cells = {
+    car: 0, bear: 4, alien: 8, ship: 10, rock: 11,
+    apple: 12, frog: 13, block: 14, pod: 15
+  };
+  const colors = {
+    car: ['#46ddff', '#ff758f', '#96e65b', '#ffd166'],
+    bear: ['#ff7bae', '#ffd166', '#6fe5a2', '#5edcff'],
+    alien: ['#42ddff', '#9aff6a']
+  };
+  function paint(ctx, name, x, y, width, height, accent) {
+    if (!atlas.complete || !atlas.naturalWidth) return false;
+    const index = cells[name] + Math.max(0, colors[name]?.indexOf(accent) ?? 0);
+    ctx.drawImage(atlas, index % 4 * 128, Math.floor(index / 4) * 128, 128, 128,
+      x, y, width, height);
+    return true;
+  }
   const patterns = {
     car: ['..111111..','.12222221.','1123223211','4122222214','4123333214','.12355321.','.12355321.','.12222221.','4122332214','4122332214','.12622621.','..111111..'],
     bear: ['.111..111.','1222112221','.12222221.','1222222221','1234224321','1222552221','.12244221.','..122221..','.12255221.','1222552221','.111..111.'],
@@ -10,6 +28,7 @@ const ArcadeSprites = (() => {
   };
   const cache = new Map();
   function draw(ctx, name, x, y, width, height, accent) {
+    if (paint(ctx, name, x, y, width, height, accent)) return;
     const key = name + accent;
     if (!cache.has(key)) {
       const rows = patterns[name];
@@ -30,5 +49,5 @@ const ArcadeSprites = (() => {
     ctx.drawImage(cache.get(key), x, y, width, height);
     ctx.restore();
   }
-  return { draw };
+  return { draw, paint };
 })();
