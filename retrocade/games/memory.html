@@ -16,11 +16,11 @@ body{padding:18px;overflow-x:hidden}.app{width:min(1120px,100%);margin:0 auto}.t
 @media(max-width:760px){body{padding:10px}.hero{grid-template-columns:1fr}.hero-copy{padding:22px}.stats{grid-template-columns:repeat(4,1fr)}.stat{min-height:82px;padding:12px}.stat strong{font-size:1.55rem}.game-shell{padding:12px;border-radius:22px}.toolbar{align-items:flex-start;flex-direction:column}.board{gap:9px}.face{border-radius:15px}.btn{padding:10px 12px}.pill{display:none}}
 @media(max-width:480px){.stats{grid-template-columns:repeat(2,1fr)}.board{gap:7px}.hero h1{font-size:3rem}.front:after{font-size:1.5rem}.symbol{font-size:2.2rem}}
 </style>
-</head>
+<link rel="stylesheet" href="../cabinet.css"></head>
 <body>
 <main class="app">
 <header class="topbar"><a class="back" href="../index.html">← RETROCADE</a><span class="pill">MATTBEAR / MEMORY MATCH</span></header>
-<section class="hero"><div class="hero-copy"><span class="eyebrow">Focus Mode • 16 Cards</span><h1>Memory Match</h1><p>Mouse or touch: tap cards. Keyboard: arrows choose a card and Enter or Space flips it.</p></div><div class="stats" aria-label="Game statistics"><div class="stat"><span>Moves</span><strong id="moves">0</strong></div><div class="stat"><span>Pairs</span><strong id="pairs">0/8</strong></div><div class="stat"><span>Streak</span><strong id="streak">0</strong></div><div class="stat"><span>Best</span><strong id="best">—</strong></div></div></section>
+<section class="hero"><div class="hero-copy" style="--cover:url(../art/memory.webp)"><span class="eyebrow">Focus Mode • 16 Cards</span><h1>Memory Match</h1><p>Mouse or touch: tap cards. Keyboard: arrows choose a card and Enter or Space flips it.</p></div><div class="stats" aria-label="Game statistics"><div class="stat"><span>Moves</span><strong id="moves">0</strong></div><div class="stat"><span>Pairs</span><strong id="pairs">0/8</strong></div><div class="stat"><span>Streak</span><strong id="streak">0</strong></div><div class="stat"><span>Best</span><strong id="best">—</strong></div></div></section>
 <section class="game-shell"><div class="toolbar"><div class="toolbar-copy"><strong>Match all eight pairs</strong><span>Use mouse, touch, arrows, Enter, or Space.</span></div><div class="buttons"><button class="btn" id="shuffleBtn" type="button">Shuffle</button><button class="btn primary" id="newBtn" type="button">New Game</button></div></div><div class="board" id="board" aria-label="Memory card grid" role="grid"></div></section>
 </main>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>

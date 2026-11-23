@@ -1,0 +1,6 @@
+.app,.stage>*,.hero>*,.toolbar>*{min-width:0}
+.hero .hero-copy{background:linear-gradient(90deg,#15132afc 0%,#15132aeb 48%,#15132a66 100%),var(--cover) right center/auto 155% no-repeat,#16132b}
+.hero h1{color:#fff2bd;text-shadow:2px 3px #602850}
+.top,.topbar,.toolbar{flex-wrap:wrap}
+button:focus-visible,a:focus-visible{outline:3px solid #fff598;outline-offset:2px}
+@media(max-width:700px){body{padding:10px}.app{width:100%}.app .hero,.app .stage{grid-template-columns:minmax(0,1fr);gap:8px}.app .hero-copy{padding:14px}.app .hero h1{font-size:clamp(2rem,9vw,3rem)}.app .stats{grid-template-columns:repeat(4,minmax(0,1fr));padding:6px;gap:4px}.app .stat{padding:6px;min-height:0;border-radius:9px}.app .stat span{font-size:.64rem;overflow-wrap:anywhere}.app .stat strong{font-size:1.25rem}.app .toolbar{gap:6px}.app .buttons,.app .btns{flex-wrap:wrap}.app .game-shell,.app .shell{padding:8px}.app .side{min-width:0}.app button{min-height:44px}}
