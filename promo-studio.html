@@ -276,66 +276,7 @@ ui.export.onclick=async()=>{
 document.querySelector('[data-format="9/16"]').click();render();
 </script>
 
-<style>
-#mbPromo{max-width:1400px;margin:18px auto;padding:16px;color:#f6f3ff;font:14px system-ui,sans-serif}
-#mbPromo h2{font-size:clamp(22px,4vw,34px);margin:0 0 8px;color:#fff}
-#mbPromo p{color:#c7c2d8;line-height:1.55}
-.mbPromoGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:14px}
-.mbAd{background:#10101c;border:1px solid #554080;border-radius:14px;overflow:hidden;box-shadow:0 10px 35px #0008}
-.mbAd .inside{padding:14px}.mbAd h3{margin:0 0 8px;color:#fff;font-size:19px}
-.mbArt{position:relative;min-height:165px;overflow:hidden;padding:22px;background:radial-gradient(circle at 85% 70%,#194f89,transparent 35%),radial-gradient(circle at 15% 10%,#8c1ca1,transparent 48%),linear-gradient(135deg,#0a0719,#19102e 60%,#060a1b);border-bottom:2px solid #a93dff}
-.mbArt:before{content:'◆ ◆ ◆';position:absolute;right:15px;top:10px;color:#36eaff;letter-spacing:15px;text-shadow:0 0 20px #0ff;animation:mbSpark 2.4s ease-in-out infinite alternate}
-.mbArt strong{position:relative;display:block;font-size:clamp(27px,4vw,42px);font-weight:1000;letter-spacing:-.04em;color:#f7dcff;text-shadow:3px 4px #491c7c,0 0 19px #c74cff}
-.mbArt em{position:relative;display:block;color:#42f0ff;font-size:20px;font-weight:900;font-style:normal;text-shadow:0 0 12px #00baff}
-.mbArt small{position:relative;display:inline-block;margin-top:16px;padding:7px 11px;background:#ffdb2d;color:#181022;font-weight:900;transform:rotate(-2deg)}
-.mbArt .mbEqual{position:absolute;bottom:0;right:15px;display:flex;gap:4px;align-items:end;height:60px}
-.mbEqual i{display:block;width:9px;height:var(--h);background:linear-gradient(#36eaff,#ff30c2);animation:mbBeat .8s ease-in-out infinite alternate;animation-delay:var(--d)}
-@keyframes mbBeat{to{height:10px;filter:brightness(1.7)}}@keyframes mbSpark{to{opacity:.3;filter:hue-rotate(70deg)}}
-.mbAd a.mbGo,#mbPromo button{display:inline-block;border:1px solid #6cf1ff;border-radius:7px;padding:10px 13px;background:#24203c;color:#fff;font-weight:800;text-decoration:none;cursor:pointer;min-height:42px}
-.mbAd a.mbGo{background:#ffe13a;color:#15101f;border-color:#ffe13a}
-.mbActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.mbSynth{display:flex;gap:3px;touch-action:none;user-select:none;margin:14px 0 8px;min-height:118px}
-.mbKey{position:relative;flex:1;min-width:0;border:1px solid #aaa!important;background:linear-gradient(#fff,#b8c4d7)!important;border-radius:0 0 6px 6px!important;padding:0!important;min-height:118px!important;color:#151322!important}
-.mbKey.black{background:linear-gradient(#32334f,#070814)!important;color:white!important;min-height:78px!important;align-self:start;border-color:#151522!important}
-.mbKey.active{background:#3cefff!important;box-shadow:0 0 22px #3cefff}
-.mbAd label{display:inline-flex;align-items:center;gap:7px;margin:4px 12px 4px 0;font-size:12px;color:#ddd}
-.mbAd select,.mbAd input{accent-color:#43eeff;background:#0a0a17;color:#fff;border:1px solid #685d8b;border-radius:5px;padding:6px}
-.mbAd input[type=range]{width:90px}
-.mbCode{width:100%;height:76px;background:#080912;color:#b9ffec;border:1px solid #4a5871;border-radius:7px;padding:8px;font:11px monospace;resize:vertical}
-@media(prefers-reduced-motion:reduce){#mbPromo *{animation:none!important}}
-</style>
-<section id="mbPromo" aria-label="MATTBEAR promotional showcase">
-<h2>⚡ MATTBEAR PROMO LAB</h2>
-<p>Animated-style banners, a playable synth ad, and copy-ready embeds. Built for the Bear Cave. These are browser-rendered promotions, not uploaded GIF assets.</p>
-<div class="mbPromoGrid">
-<article class="mbAd"><div class="mbArt"><strong>MATTBEAR</strong><em>BEAR CAVE</em><small>MAKE MORE FUN STUFF!</small><div class="mbEqual" aria-hidden="true"><i style="--h:28px;--d:0s"></i><i style="--h:45px;--d:.2s"></i><i style="--h:34px;--d:.4s"></i><i style="--h:54px;--d:.1s"></i><i style="--h:21px;--d:.3s"></i></div></div><div class="inside"><h3>Bear Cave • Animated Header</h3><p>Apps, music tools, games, visuals and more.</p><div class="mbActions"><a class="mbGo" href="https://bearicide.github.io/bear-cave/">ENTER THE CAVE</a><button type="button" data-mb-copy="header">COPY EMBED</button></div></div></article>
-<article class="mbAd"><div class="mbArt" style="background:radial-gradient(circle at 25% 40%,#09556b,transparent 42%),linear-gradient(115deg,#0c0921,#4b1264,#0c0921)"><strong>YOUR IDEA.</strong><em>MY SKILZzz!!</em><small>ROBOTS ARE FRIENDS</small><div class="mbEqual" aria-hidden="true"><i style="--h:42px;--d:.1s"></i><i style="--h:24px;--d:.4s"></i><i style="--h:55px;--d:.2s"></i><i style="--h:32px;--d:.3s"></i></div></div><div class="inside"><h3>Creative Services • Promo Banner</h3><p>Interactive media, unusual websites and delightful internet nonsense.</p><div class="mbActions"><a class="mbGo" href="https://bearicide.github.io/">VISIT MATTBEAR</a><button type="button" data-mb-copy="creative">COPY EMBED</button></div></div></article>
-<article class="mbAd"><div class="inside"><h3>🎹 Playable Synth Advertisement</h3><p>Enable sound, play the keys, and enter the Cave. Touch and mouse supported.</p><div class="mbActions"><button id="mbAudio" type="button">▶ ENABLE AUDIO</button><button id="mbPanic" type="button">■ STOP ALL</button></div><div class="mbSynth" id="mbKeys" aria-label="Playable synth keyboard"></div><label>WAVE <select id="mbWave"><option value="sawtooth">SAW</option><option value="sine">SINE</option><option value="square">SQUARE</option><option value="triangle">TRIANGLE</option></select></label><label>LEVEL <input id="mbLevel" type="range" min="0" max=".25" step=".01" value=".12"></label><div class="mbActions"><a class="mbGo" href="https://bearicide.github.io/bear-cave/">ENTER THE CAVE</a><button type="button" data-mb-copy="synth">COPY EMBED</button></div></div></article>
-</div><p id="mbFeedback" role="status" aria-live="polite"></p>
-<details><summary style="cursor:pointer;color:#4deaff;font-weight:800">VIEW / COPY EMBED HTML</summary><textarea id="mbEmbedCode" class="mbCode" readonly aria-label="Embed code"></textarea><p>For the synth, the embed points to a dedicated synth HTML page. Publish that file at the target URL before using it.</p></details>
-</section>
-<script>
-(()=>{'use strict';
-const root=document.getElementById('mbPromo'),keys=root.querySelector('#mbKeys'),feedback=root.querySelector('#mbFeedback');
-let ac=null,master=null;const voices=new Map();
-const notes=[['C',261.63],['C♯',277.18],['D',293.66],['D♯',311.13],['E',329.63],['F',349.23],['F♯',369.99],['G',392],['G♯',415.3],['A',440],['A♯',466.16],['B',493.88],['C',523.25]];
-function init(){if(!ac){ac=new (window.AudioContext||window.webkitAudioContext)();master=ac.createGain();master.gain.value=.12;master.connect(ac.destination)}ac.resume();root.querySelector('#mbAudio').textContent='● AUDIO ON'}
-function stop(n){const v=voices.get(n);if(!v)return;const t=ac.currentTime;v.g.gain.cancelScheduledValues(t);v.g.gain.setTargetAtTime(0,t,.035);try{v.o.stop(t+.18)}catch(e){}voices.delete(n);v.k.classList.remove('active')}
-function play(n,k){init();stop(n);const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.type=root.querySelector('#mbWave').value;o.frequency.value=notes[n][1];g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.7,t+.02);o.connect(g);g.connect(master);o.start();voices.set(n,{o,g,k});k.classList.add('active')}
-notes.forEach(([name],n)=>{const k=document.createElement('button');k.type='button';k.className='mbKey'+(name.includes('♯')?' black':'');k.textContent=name;k.setAttribute('aria-label','Play '+name);k.addEventListener('pointerdown',e=>{e.preventDefault();k.setPointerCapture(e.pointerId);play(n,k)});k.addEventListener('pointerup',()=>stop(n));k.addEventListener('pointercancel',()=>stop(n));k.addEventListener('lostpointercapture',()=>stop(n));keys.append(k)});
-root.querySelector('#mbAudio').addEventListener('click',init);
-root.querySelector('#mbPanic').addEventListener('click',()=>{[...voices.keys()].forEach(stop)});
-root.querySelector('#mbLevel').addEventListener('input',e=>{if(master)master.gain.value=Number(e.target.value)});
-window.addEventListener('blur',()=>{[...voices.keys()].forEach(stop)});
-const base='https://bearicide.github.io/bear-cave/';
-const embeds={
-header:'<a href="'+base+'" style="display:block;padding:28px;text-align:center;background:linear-gradient(120deg,#15072e,#51177a,#06334b);color:white;border:2px solid #42eaff;border-radius:12px;text-decoration:none;font:900 26px system-ui">🐻 MATTBEAR · BEAR CAVE<br><small style="font-size:15px;color:#ffe13a">MAKE MORE FUN STUFF! →</small></a>',
-creative:'<a href="https://bearicide.github.io/" style="display:block;padding:26px;text-align:center;background:#180c35;color:#42efff;border:2px solid #e44bff;border-radius:12px;text-decoration:none;font:900 23px system-ui">YOUR IDEA. MY SKILZzz!!<br><small style="color:#ffe13a">ROBOTS ARE FRIENDS →</small></a>',
-synth:'<iframe title="MATTBEAR Playable Synth" src="'+base+'MATTBEAR_SYNTH_BANNER.html" style="width:100%;height:390px;border:0;border-radius:12px" allow="autoplay"></iframe>'
-};
-root.querySelectorAll('[data-mb-copy]').forEach(b=>b.addEventListener('click',async()=>{const code=embeds[b.dataset.mbCopy];root.querySelector('#mbEmbedCode').value=code;try{await navigator.clipboard.writeText(code);feedback.textContent='Embed HTML copied.'}catch(e){feedback.textContent='Select the embed HTML below to copy it.'}root.querySelector('details').open=true}));
-})();
-</script>
+
 
 </body>
 </html>
