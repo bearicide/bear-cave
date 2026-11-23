@@ -71,5 +71,5 @@ function reset(){grid=makeGrid();tickets=0;best=0;freeSpins=0;spins=0;spinning=f
 spinBtn.addEventListener('click',spin);document.getElementById('newBtn').addEventListener('click',reset);document.getElementById('soundBtn').addEventListener('click',e=>{sound=!sound;e.currentTarget.textContent=sound?'Sound On':'Sound Off';if(sound)tone(440)});document.addEventListener('keydown',e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();spin()}if(e.key.toLowerCase()==='r')reset()},{passive:false});reset();
 })();
 </script>
-<script src="../js/game-sound.js?v=2"></script></body>
+<script src="../js/game-sound.js?v=2"></script><script src="../js/game-tuning.js?v=7"></script></body>
 </html>
