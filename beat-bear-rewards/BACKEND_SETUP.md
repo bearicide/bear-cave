@@ -2,7 +2,7 @@
 
 ## What is online now
 
-The original version 13 game plus an interactive shop preview. Three proposed USD packs, a device-only demo wallet, earning from completed tracks, cosmetic purchases, and transaction history work. No payments are accepted and no online player accounts have been provisioned. Preview Paws are intentionally isolated under `beatbear:rewards:preview:v1`; never import them into paid balances.
+The original version 13 game plus an interactive shop preview. Three proposed USD packs, a device-only demo wallet, earning from completed tracks, cosmetic purchases, and transaction history work. No payments are accepted. A dedicated Supabase account backend is now provisioned, and the Account panel connects to Auth and private demo cloud saves. Public registration email/redirect configuration remains unfinished; see backend/SETUP_STATUS.md. Preview Paws are intentionally isolated under `beatbear:rewards:preview:v1`; never import them into paid balances.
 
 ## Proposed packs (owner can revise before launch)
 
@@ -16,7 +16,7 @@ Dollar purchases buy nontransferable digital game currency, with no cash-out or 
 
 ## Account and payment flow to implement after provisioning
 
-1. Provision a dedicated Supabase project after confirming organization and cost. Do not modify the existing name-voting database.
+1. Completed: dedicated free Supabase project provisioned after approval in bearicide productions. The existing name-voting database is unchanged.
 2. Enable email/password accounts, email confirmation, recovery, rate limits, and production email delivery. Player authentication is separate from GitHub sign-in.
 3. Store profiles, server-verified earned Paws, purchased Paws, orders, ledger entries and entitlements in PostgreSQL. Players may read only their own private records through RLS. Only server transactions may change balances. Keep real and demo wallets separate.
 4. Connect the owner's Stripe merchant account, first in test mode. Create one-time USD Prices for the approved pack amounts, with no recurring subscription.

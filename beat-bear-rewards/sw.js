@@ -1,6 +1,6 @@
 const cachePrefix = 'beatbear-rewards-' + encodeURIComponent(new URL(self.registration.scope).pathname) + '-';
-const cacheName = cachePrefix + '8dcf4b204781f159';
-const files = ["./","./assets/bear_rewards_banner.png","./assets/bear_stash.png","./assets/cave_reserve.png","./assets/pocket_paws.png","./audio.mjs","./bear.webp","./catalog.mjs","./deadsea.ogg","./gacha-grunge-girls.mp3","./game.mjs","./icon-192.png","./icon-512.png","./icon-maskable.png","./index.html","./loverkrafted.ogg","./manifest.webmanifest","./midi.mjs","./midnight.ogg","./pad-claw.webp","./pad-fang.webp","./pad-paw.webp","./pad-roar.webp","./paw.svg","./pwa.mjs","./rewards.css","./rewards.mjs","./rhythm.mjs","./style.css","./wallet.mjs"];
+const cacheName = cachePrefix + '93f9448ce3099dd5';
+const files = ["./","./accounts.mjs","./assets/bear_rewards_banner.png","./assets/bear_stash.png","./assets/cave_reserve.png","./assets/pocket_paws.png","./audio.mjs","./backend-config.mjs","./bear.webp","./catalog.mjs","./deadsea.ogg","./gacha-grunge-girls.mp3","./game.mjs","./icon-192.png","./icon-512.png","./icon-maskable.png","./index.html","./loverkrafted.ogg","./manifest.webmanifest","./midi.mjs","./midnight.ogg","./pad-claw.webp","./pad-fang.webp","./pad-paw.webp","./pad-roar.webp","./paw.svg","./pwa.mjs","./rewards.css","./rewards.mjs","./rhythm.mjs","./style.css","./wallet.mjs"];
 const urls = new Set(files.map(path => new URL(path, self.registration.scope).href));
 self.addEventListener('install', event => {
   event.waitUntil((async () => {

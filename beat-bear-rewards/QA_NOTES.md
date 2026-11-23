@@ -2,7 +2,7 @@
 
 ## Delivered
 
-- Generated bear-in-cave header and three separate transparent pack illustrations; original files copied into `assets/`.
+- Generated bear-in-cave header and three separate transparent pack illustrations; original files copied into `dist/assets/`.
 - Shared Play, Paw Shop and Bear Cave navigation, clear preview labels, contact/footer links, wallet-information link, and mobile layouts.
 - Install manifest with verified icon dimensions, standalone mode, Play/Shop shortcuts and platform install help.
 - Versioned offline cache including tracks and artwork; own-scope cache cleanup, media byte ranges, manual update/restart prompt and no account/payment request caching.
@@ -20,4 +20,4 @@
 
 ## Limits
 
-Native installation on the user's Android phone and a real disconnected-device run remain to be checked on that device. Offline fetch behavior was tested in a simulated service-worker environment; browser installation guidance and update flow were tested in Chrome. The published preview remains owner-private and requires ChatGPT sign-in on first access. No cloud player accounts or dollar checkout are connected. Supabase quoted $0/month to create a project in bearicide productions; provisioning awaits confirmation of that quoted cost. Stripe remains unconnected.
+Native installation on the user's Android phone and a real disconnected-device run remain to be checked on that device. Offline fetch behavior was tested in a simulated service-worker environment; browser installation guidance and update flow were tested in Chrome. The published preview remains owner-private and requires ChatGPT sign-in on first access. The cloud account backend and Account panel are connected after approval of the $0/month project quote. SQL isolation/permissions tests passed and security/performance advisors returned no warnings. Public signup email delivery and redirect configuration remain unfinished; authenticated browser saves have not been tested end to end. Stripe remains unconnected. See backend/SETUP_STATUS.md.

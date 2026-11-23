@@ -45,3 +45,33 @@ export function spendPaws(amount, label) {
   saveWallet();
   return true;
 }
+export function getDemoSnapshot() {
+  const scores = {};
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (/^beatbear:score:[a-z]+:(easy|normal|hard|beast)(:hunt-reverse)?$/.test(key)) {
+        const value = Number(localStorage.getItem(key));
+        if (safe(value)) scores[key] = value;
+      }
+    }
+  } catch { /* Wallet can still be saved when score storage is unavailable. */ }
+  return { version: 1, wallet: JSON.parse(JSON.stringify(wallet)), scores };
+}
+export function replaceDemoSnapshot(snapshot) {
+  if (snapshot?.version !== 1 || !snapshot.wallet || typeof snapshot.wallet !== 'object') throw Error('This cloud save has an unsupported format.');
+  Object.assign(wallet, normalize(snapshot.wallet));
+  const scores = snapshot.scores && typeof snapshot.scores === 'object' ? snapshot.scores : {};
+  try {
+    const remove = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (/^beatbear:score:[a-z]+:(easy|normal|hard|beast)(:hunt-reverse)?$/.test(key)) remove.push(key);
+    }
+    for (const key of remove) localStorage.removeItem(key);
+    for (const [key, value] of Object.entries(scores)) {
+      if (/^beatbear:score:[a-z]+:(easy|normal|hard|beast)(:hunt-reverse)?$/.test(key) && safe(value)) localStorage.setItem(key, value);
+    }
+  } catch { /* Session-only wallet still works. */ }
+  saveWallet();
+}
