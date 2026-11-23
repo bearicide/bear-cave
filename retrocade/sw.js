@@ -1,4 +1,4 @@
-const CACHE = 'mattbear-retrocade-20261123-v10';
+const CACHE = 'mattbear-retrocade-20261123-v11';
 const files = [
   "./index.html",
   "../cave-shell.js",
@@ -67,7 +67,7 @@ self.addEventListener('activate', event => {
 const urls = new Set(files.map(file => new URL(file, self.location).href));
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
-  if (url.searchParams.has('art')) url.searchParams.delete('art');
+  for (const key of ['art','v']) url.searchParams.delete(key);
   if (url.href === self.registration.scope) url.pathname += 'index.html';
   if (event.request.method !== 'GET' || !urls.has(url.href)) return;
   event.respondWith(caches.open(CACHE).then(async cache =>
