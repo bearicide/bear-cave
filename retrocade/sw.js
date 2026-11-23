@@ -1,4 +1,4 @@
-const CACHE = 'mattbear-retrocade-20261123-v19';
+const CACHE = 'mattbear-retrocade-20261123-v20';
 const files = [
   "./index.html",
   "../cave-shell.js",
