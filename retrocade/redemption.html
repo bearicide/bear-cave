@@ -8,13 +8,58 @@
 *{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 15% 0%,#4b245b 0,transparent 34rem),radial-gradient(circle at 90% 10%,#10445b 0,transparent 30rem),var(--bg);color:var(--text);font:500 16px/1.5 system-ui,sans-serif}
 .wrap{max-width:1120px;margin:auto;padding:14px}.top{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:12px 0}.back{color:var(--blue);font-weight:900;text-decoration:none}.label{letter-spacing:.12em;text-transform:uppercase;font-size:.75rem;color:var(--pink);font-weight:900}
 .hero{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(225px,.65fr);gap:16px;margin:15px 0 25px}.head,.balance,.prize,.inventory{border:2px solid var(--line);background:linear-gradient(145deg,#2c1a45,#171329);border-radius:16px;box-shadow:0 8px 0 #080712}.head{padding:clamp(20px,4vw,38px);position:relative;overflow:hidden}.head:after{content:'🎟';position:absolute;right:-18px;bottom:-75px;font-size:230px;opacity:.13;transform:rotate(-22deg);pointer-events:none}.head h1{font-size:clamp(2.8rem,8vw,5.5rem);line-height:.95;letter-spacing:-.065em;margin:12px 0 18px;color:var(--gold);text-shadow:4px 4px #8b286b}.head p{max-width:43ch;color:var(--muted)}.balance{padding:20px;display:flex;flex-direction:column;justify-content:center}.balance strong{font-size:clamp(2.5rem,7vw,4.5rem);font-weight:1000;color:var(--gold);font-variant-numeric:tabular-nums}.balance small{color:var(--muted)}.balance a,.button{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:10px 14px;text-decoration:none;font-size:.95rem;font-weight:900;border-radius:6px;border:2px solid #ffe48b;background:#ffe174;color:#23152a;cursor:pointer;box-shadow:0 4px 0 #896b24}.button:active,.balance a:active{transform:translateY(3px);box-shadow:0 1px 0 #896b24}.button:disabled{background:#504960;color:#d1c9dd;border-color:#655b76;box-shadow:none;cursor:not-allowed}.button.secondary{background:#302645;color:#fff;border-color:#776b97;box-shadow:0 3px 0 #080712}.section-title{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin:30px 0 14px}.section-title h2{font-size:clamp(1.5rem,4vw,2.4rem);margin:0}.section-title span{color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.prize{overflow:hidden;display:flex;flex-direction:column;min-width:0}.art{height:158px;display:grid;place-items:center;position:relative;background:radial-gradient(circle at 40% 30%,var(--glow,#514477),transparent 64%),linear-gradient(135deg,#211832,#131120);border-bottom:2px solid var(--line)}.art span{font-size:clamp(4.4rem,9vw,6rem);filter:drop-shadow(0 10px 0 #0005);transition:transform .18s}.prize:hover .art span{transform:translateY(-5px) rotate(-5deg)}.inner{padding:16px;display:flex;flex-direction:column;gap:8px;flex:1}.inner h3{font-size:1.25rem;margin:0}.inner p{margin:0;color:var(--muted);flex:1}.price{font-size:1.15rem;font-weight:900;color:var(--gold);padding:7px 0}.inventory{padding:18px;margin-bottom:20px}.shelf{display:flex;gap:8px;flex-wrap:wrap;min-height:45px}.chip{border:1px solid #74609b;background:#302445;border-radius:7px;padding:10px 12px;font-weight:750}.message{padding:12px 14px;margin-top:16px;border-left:4px solid var(--gold);background:#30233f;min-height:48px}.note{font-size:.88rem;color:var(--muted);padding-bottom:28px}a:focus-visible,button:focus-visible{outline:3px solid var(--blue);outline-offset:4px}@media(max-width:840px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:620px){.hero{grid-template-columns:1fr}.grid{grid-template-columns:1fr 1fr;gap:9px}.art{height:118px}.art span{font-size:3.7rem}.inner{padding:12px}.inner h3{font-size:1.05rem}.inner p{font-size:.87rem}.button{padding:9px}.head:after{font-size:170px}}@media(max-width:400px){.grid{grid-template-columns:1fr}.art{height:130px}}@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;animation:none!important}}
-</style><script defer src="update.js?art=6"></script></head>
+</style><script defer src="update.js?art=6"></script>
+<style>
+/* RETROCADE Prize Counter / marquee facelift. Gentle LED shimmer, no high-frequency flashing. */
+:root{--gold:#ffda51;--pink:#ff67d7;--blue:#46e9ff;--line:#904bd0}
+body{background:radial-gradient(ellipse at 50% -10%,#76236e 0,transparent 48%),radial-gradient(ellipse at 20% 70%,#0c315f 0,transparent 42%),repeating-linear-gradient(0deg,transparent 0 4px,#00000010 5px 6px),#120a2b}
+.wrap{max-width:1300px}
+.top{padding:16px;border:2px solid #ff67d7;border-radius:12px;margin:12px 0;background:linear-gradient(105deg,#210d4b,#40134c,#152a55);box-shadow:0 0 18px #e23bbd77,inset 0 0 18px #9e45e144}
+.back{color:#fff;text-shadow:0 0 12px #44eaff}
+.hero{grid-template-columns:minmax(0,1.7fr) minmax(230px,.6fr);margin:16px 0 24px}
+.head{border:4px ridge #fdbd5b;background:linear-gradient(120deg,#311357dd,#0a163be8),radial-gradient(ellipse at 70% 35%,#8c2f97,transparent 55%);box-shadow:0 0 9px #ffac35,0 0 38px #ee3dc285,inset 0 0 28px #bd60ff44,0 9px 0 #070510;min-height:300px}
+.head:after{content:'🧸';right:2%;bottom:-45px;font-size:220px;opacity:.45;filter:drop-shadow(0 0 20px #ffcb78);transform:rotate(-10deg)}
+.head h1{position:relative;z-index:1;color:#fff0a1;text-shadow:0 3px #8d3670,0 6px #45165b,0 0 22px #f9ab5e;font-size:clamp(3.3rem,7vw,6.6rem)}
+.head p{position:relative;z-index:1;color:#f6eafd;text-shadow:0 2px 7px #0b0822;font-weight:650}
+.head .label{color:#7fffff;text-shadow:0 0 14px #4afffa}
+.head:before,.balance:before{content:'';position:absolute;inset:8px;border:3px dotted #ffdf75;pointer-events:none;opacity:.75;filter:drop-shadow(0 0 5px #ffb43d);border-radius:8px;animation:ledGlow 2.8s ease-in-out infinite alternate}
+.balance{position:relative;overflow:hidden;border:3px solid #3de8ff;background:linear-gradient(150deg,#163052,#1a1043);box-shadow:0 0 24px #28dfff77,inset 0 0 35px #2073bf55,0 9px 0 #060510}
+.balance strong{text-shadow:0 0 18px #ffc64b}
+.balance:before{border-color:#5febff}
+.balance .label{color:#a0f7ff}
+.balance a:hover,.button:hover:not(:disabled){filter:brightness(1.13);box-shadow:0 0 24px #ffc65c,0 4px 0 #896b24}
+.section-title h2{color:#fff5c3;text-transform:uppercase;text-shadow:3px 3px #7a2279,0 0 18px #f856ba;letter-spacing:-.035em}
+.section-title span{color:#b0eeff;font-weight:800}
+.ad-strip{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;margin:20px 0 8px;padding:13px 22px;border:3px double #ffca69;border-radius:10px;background:linear-gradient(100deg,#4d1668,#842f54 48%,#2b236f);box-shadow:0 0 20px #ff4bc966,inset 0 0 22px #ffb15233;position:relative;overflow:hidden}
+.ad-strip:after{content:'';position:absolute;inset:-80% auto -80% -25%;width:18%;background:linear-gradient(90deg,transparent,#ffffff44,transparent);transform:rotate(17deg);animation:signSweep 8s ease-in-out infinite;pointer-events:none}
+.ad-strip strong{display:block;font-size:clamp(1rem,2.5vw,1.4rem);text-transform:uppercase;letter-spacing:.02em;text-shadow:0 0 10px #ff9cd7}
+.ad-strip small{display:block;color:#f4d8f7;font-weight:700}
+.ad-strip .ad-mark{font-size:2.8rem;filter:drop-shadow(0 0 12px #ffe76c)}
+.led-border{height:20px;margin:12px 0 22px;border-radius:9px;background:radial-gradient(circle,#ffda63 0 30%,#ff7c3a 35%,transparent 55%) 0 50%/27px 20px repeat-x,linear-gradient(#43204b,#2d1747);box-shadow:0 0 10px #ffba5d88,inset 0 0 8px #140b24;animation:ledGlow 2.8s ease-in-out infinite alternate}
+.prize{border:3px solid var(--prize-accent,#ff6bd9);background:linear-gradient(160deg,#311648,#12142f);box-shadow:0 0 13px color-mix(in srgb,var(--prize-accent,#ff6bd9) 54%,transparent),inset 0 0 22px #895cbd22,0 8px 0 #080713;transition:transform .17s,box-shadow .17s}
+.prize:nth-child(5n+1){--prize-accent:#ffc64c}.prize:nth-child(5n+2){--prize-accent:#42ffe0}.prize:nth-child(5n+3){--prize-accent:#ff72c7}.prize:nth-child(5n+4){--prize-accent:#57ccff}.prize:nth-child(5n+5){--prize-accent:#a68aff}
+.prize:hover{transform:translateY(-5px);box-shadow:0 0 25px var(--prize-accent),0 11px 0 #080713}
+.art{background:radial-gradient(ellipse at 50% 60%,var(--glow,#62428f),transparent 63%),repeating-linear-gradient(90deg,#ffffff04 0 2px,transparent 2px 12px),linear-gradient(#241137,#15112c);min-height:160px}
+.art:after{content:'✧  ★  ✧';position:absolute;left:8px;top:7px;color:#ffe9a8;font-size:1rem;letter-spacing:.25em;text-shadow:0 0 11px #ffc76c}
+.art span{font-size:clamp(4.6rem,8vw,7rem);filter:drop-shadow(0 0 19px var(--prize-accent)) drop-shadow(0 10px 0 #08081ba0)}
+.price{border-top:1px dashed #9a74ae;padding-top:11px;font-size:1.22rem;text-shadow:0 0 11px #b98d1d}
+.inner h3{text-shadow:0 0 10px #fa9ad7}
+.inventory{border:3px solid #57e4ff;box-shadow:0 0 24px #37d6fc77,0 8px 0 #080713}
+.chip{background:#301943;border-color:#be72ff;box-shadow:inset 0 0 12px #bc72ff33}
+.note{max-width:950px;margin:auto;text-align:center}
+@keyframes ledGlow{from{filter:brightness(.86) drop-shadow(0 0 3px #ffbf66)}to{filter:brightness(1.1) drop-shadow(0 0 7px #ffdf8e)}}
+@keyframes signSweep{0%,25%{left:-25%}65%,100%{left:125%}}
+@media(max-width:750px){.hero{grid-template-columns:1fr}.head{min-height:240px}.head:after{font-size:150px;right:0;bottom:-34px}.ad-strip{padding:12px 14px}.art{min-height:122px}.head h1{font-size:clamp(2.6rem,11vw,5.2rem)}}
+@media(max-width:430px){.head{min-height:230px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.art span{font-size:3.7rem}.art{min-height:110px}.ad-strip .ad-mark{font-size:2rem}}
+@media(max-width:350px){.grid{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.ad-strip:after,.head:before,.balance:before,.led-border{animation:none!important}.prize:hover{transform:none}}
+</style></head>
 <body><main class="wrap">
 <nav class="top" aria-label="RETROCADE navigation"><a class="back" href="./index.html">← Back to the arcade</a><span class="label">MATTBEAR / Prize Counter</span></nav>
 <div class="hero"><section class="head"><span class="label">Digital prize redemption</span><h1>THE PRIZE<br>COUNTER</h1><p>Every cabinet has tickets. Now your tickets have a purpose. Earn them in games, collect arcade goodies here, and build your own prize shelf.</p></section>
 <section class="balance"><span class="label">Available tickets</span><strong id="balance" aria-live="polite">0</strong><small>Stored on this device only</small><p><a href="./index.html#grid">🎮 Earn more tickets</a></p></section></div>
-<section aria-labelledby="shopTitle"><div class="section-title"><h2 id="shopTitle">Choose your prize</h2><span>One-time digital unlocks</span></div><div class="grid" id="shop"></div></section>
-<section class="inventory" aria-labelledby="shelfTitle"><div class="section-title"><h2 id="shelfTitle">Your prize shelf</h2><span id="count">0 collected</span></div><div class="shelf" id="shelf"></div><p id="message" class="message" role="status" aria-live="polite">Play arcade games to earn tickets, then redeem them here.</p></section>
+<aside class="ad-strip" aria-label="Arcade promotion"><div><strong>🎟️ Play • Earn • Redeem!</strong><small>Every score gets you closer to a legendary prize. No cash needed, only arcade skills.</small></div><div class="ad-mark" aria-hidden="true">🌟</div></aside><div class="led-border" aria-hidden="true"></div><section aria-labelledby="shopTitle"><div class="section-title"><h2 id="shopTitle">Choose your prize</h2><span>One-time digital unlocks</span></div><div class="grid" id="shop"></div></section>
+<div class="led-border" aria-hidden="true"></div><section class="inventory" aria-labelledby="shelfTitle"><div class="section-title"><h2 id="shelfTitle">Your prize shelf</h2><span id="count">0 collected</span></div><div class="shelf" id="shelf"></div><p id="message" class="message" role="status" aria-live="polite">Play arcade games to earn tickets, then redeem them here.</p></section>
 <p class="note">RETROCADE tickets and prizes are fictional digital collectibles. They have no cash value, cannot be exchanged for money or physical merchandise, and cannot transfer between browsers. Clearing site data may erase them. Redemption is processed in your browser, not by a payment service.</p>
 </main>
 <script>
