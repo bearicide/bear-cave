@@ -11,6 +11,7 @@
 </style><script defer src="update.js?art=6"></script>
 <style>
 /* RETROCADE Prize Counter / marquee facelift. Gentle LED shimmer, no high-frequency flashing. */
+.redemption-banner{display:block;width:100%;height:auto;max-height:250px;object-fit:contain;margin:12px auto 0;filter:drop-shadow(0 0 15px #d34ab877)}
 :root{--gold:#ffda51;--pink:#ff67d7;--blue:#46e9ff;--line:#904bd0}
 body{background:radial-gradient(ellipse at 50% -10%,#76236e 0,transparent 48%),radial-gradient(ellipse at 20% 70%,#0c315f 0,transparent 42%),repeating-linear-gradient(0deg,transparent 0 4px,#00000010 5px 6px),#120a2b}
 .wrap{max-width:1300px}
@@ -58,7 +59,7 @@ body{background:radial-gradient(ellipse at 50% -10%,#76236e 0,transparent 48%),r
 <nav class="top" aria-label="RETROCADE navigation"><a class="back" href="./index.html">← Back to the arcade</a><span class="label">MATTBEAR / Prize Counter</span></nav>
 <div class="hero"><section class="head"><span class="label">Digital prize redemption</span><h1>THE PRIZE<br>COUNTER</h1><p>Every cabinet has tickets. Now your tickets have a purpose. Earn them in games, collect arcade goodies here, and build your own prize shelf.</p></section>
 <section class="balance"><span class="label">Available tickets</span><strong id="balance" aria-live="polite">0</strong><small>Stored on this device only</small><p><a href="./index.html#grid">🎮 Earn more tickets</a></p></section></div>
-<aside class="ad-strip" aria-label="Arcade promotion"><div><strong>🎟️ Play • Earn • Redeem!</strong><small>Every score gets you closer to a legendary prize. No cash needed, only arcade skills.</small></div><div class="ad-mark" aria-hidden="true">🌟</div></aside><div class="led-border" aria-hidden="true"></div><section aria-labelledby="shopTitle"><div class="section-title"><h2 id="shopTitle">Choose your prize</h2><span>One-time digital unlocks</span></div><div class="grid" id="shop"></div></section>
+<img src="art/redemption-sign.svg" alt="Prize Time! Play, earn, redeem at RETROCADE" class="redemption-banner" width="1200" height="250"><aside class="ad-strip" aria-label="Arcade promotion"><div><strong>🎟️ Play • Earn • Redeem!</strong><small>Every score gets you closer to a legendary prize. No cash needed, only arcade skills.</small></div><div class="ad-mark" aria-hidden="true">🌟</div></aside><div class="led-border" aria-hidden="true"></div><section aria-labelledby="shopTitle"><div class="section-title"><h2 id="shopTitle">Choose your prize</h2><span>One-time digital unlocks</span></div><div class="grid" id="shop"></div></section>
 <div class="led-border" aria-hidden="true"></div><section class="inventory" aria-labelledby="shelfTitle"><div class="section-title"><h2 id="shelfTitle">Your prize shelf</h2><span id="count">0 collected</span></div><div class="shelf" id="shelf"></div><p id="message" class="message" role="status" aria-live="polite">Play arcade games to earn tickets, then redeem them here.</p></section>
 <p class="note">RETROCADE tickets and prizes are fictional digital collectibles. They have no cash value, cannot be exchanged for money or physical merchandise, and cannot transfer between browsers. Clearing site data may erase them. Redemption is processed in your browser, not by a payment service.</p>
 </main>
