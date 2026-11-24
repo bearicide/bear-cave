@@ -13,9 +13,9 @@
 </style>
 <link rel="manifest" href="arcade.webmanifest"><link rel="apple-touch-icon" href="art/icon-192.png"><link rel="stylesheet" href="lobby.css"><script defer src="install.js"></script><script defer src="update.js?art=6"></script></head>
 <body>
-<header class="top"><div class="wrap top-inner"><a class="brand" href="./"><span>MATTBEAR</span> RETROCADE</a><div class="actions"><button class="btn" id="install" hidden>Install arcade</button><button class="btn" id="audioBtn" type="button">Sound Off</button></div></div></header>
+<header class="top"><div class="wrap top-inner"><a class="brand" href="./"><span>MATTBEAR</span> RETROCADE</a><div class="actions"><button class="btn" id="install" hidden>Install arcade</button><a class="btn" href="redemption.html" style="display:inline-flex;align-items:center;text-decoration:none;color:#24142c;background:#ffe174;border-color:#ffe174">🎟️ Redeem</a><button class="btn" id="audioBtn" type="button">Sound Off</button></div></div></header>
 <main class="wrap">
-<section class="hero"><div class="panel hero-copy"><span class="kicker">MATTBEAR • Flushing, Michigan</span><h1>Retro<span>cade</span></h1><p>Pick a cabinet. Chase your high score.</p></div><div class="panel quick"><div class="stat"><span>Games</span><strong>13</strong></div><div class="stat"><span>Your Tickets</span><strong id="tickets">0</strong></div><div class="ticket-info"><strong>🎟️ What are tickets?</strong><p>Earn tickets across cabinets. Your total stays on this device.</p></div></div></section>
+<section class="hero"><div class="panel hero-copy"><span class="kicker">MATTBEAR • Flushing, Michigan</span><h1>Retro<span>cade</span></h1><p>Pick a cabinet. Chase your high score.</p></div><div class="panel quick"><div class="stat"><span>Games</span><strong>13</strong></div><div class="stat"><span>Your Tickets</span><strong id="tickets">0</strong></div><div class="ticket-info"><strong>🎟️ Earn tickets. Claim prizes.</strong><p>Play cabinets, build your balance, and spend tickets at the <a href="redemption.html" style="color:#ffe174;font-weight:900">Prize Counter</a>. Digital prizes stay on this device.</p></div></div></section>
 <section><div class="section-head"><div><h2>Choose a game</h2><p></p></div></div><div class="grid" id="grid"></div></section>
 </main><div class="hint" id="hint" role="status" aria-live="polite"></div>
 <script>
