@@ -1,7 +1,9 @@
-const CACHE = 'mattbear-retrocade-20261123-v22';
+const CACHE = 'mattbear-retrocade-20261123-v23';
 const files = [
   "./index.html",
   "./redemption.html",
+  "./progress.html",
+  "./js/arcade-economy.js",
   "./art/redemption-sign.svg",
   "../cave-shell.js",
   "./lobby.css",
