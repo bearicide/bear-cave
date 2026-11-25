@@ -1,4 +1,4 @@
-const CACHE = 'mattbear-retrocade-20261125-v24';
+const CACHE = 'mattbear-retrocade-20261125-v25';
 const files = [
   "./index.html",
   "./redemption.html",
