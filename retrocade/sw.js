@@ -1,4 +1,4 @@
-const CACHE = 'mattbear-retrocade-20261123-v23';
+const CACHE = 'mattbear-retrocade-20261125-v24';
 const files = [
   "./index.html",
   "./redemption.html",
@@ -53,6 +53,7 @@ const files = [
   "./art/racer.webp",
   "./art/rhythm.webp",
   "./art/blocks.webp",
+  "./art/blocks-reborn.svg",
   "./art/frog.webp"
 ];
 self.addEventListener('install', event => {
